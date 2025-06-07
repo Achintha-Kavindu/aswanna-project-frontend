@@ -10,33 +10,68 @@ const ItemsGrid = ({ filters }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const itemsPerPage = 12;
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     fetchItems();
   }, []);
 
+  // FIXED: Updated fetchItems function
   const fetchItems = async () => {
     try {
       setLoading(true);
+      console.log("Fetching items from backend...");
+
+      // FIXED: Use correct API endpoints
       const [galleryResponse, offersResponse] = await Promise.all([
-        api.get("/api/gallery/approved"),
-        api.get("/api/offers/approved"),
+        api.get("/api/gallery/approved"), // Fixed endpoint
+        api.get("/api/offers/approved"), // Fixed endpoint
       ]);
 
-      const galleryItems = galleryResponse.data.map((item) => ({
+      console.log("Gallery API response:", galleryResponse.data);
+      console.log("Offers API response:", offersResponse.data);
+
+      // Process gallery items
+      let galleryItems = [];
+      if (galleryResponse.data && galleryResponse.data.success) {
+        galleryItems = galleryResponse.data.data || [];
+      }
+
+      // Process offers
+      let offerItems = [];
+      if (offersResponse.data && offersResponse.data.success) {
+        offerItems = offersResponse.data.data || [];
+      }
+
+      // Add type identifier to items
+      const processedGalleryItems = galleryItems.map((item) => ({
         ...item,
         type: "gallery",
       }));
 
-      const offerItems = offersResponse.data.map((item) => ({
+      const processedOfferItems = offerItems.map((item) => ({
         ...item,
         type: "offer",
       }));
 
-      const combinedItems = [...galleryItems, ...offerItems];
-      setItems(combinedItems);
+      // Combine and shuffle items
+      const allItems = [...processedGalleryItems, ...processedOfferItems];
+      const shuffledItems = allItems.sort(() => Math.random() - 0.5);
+
+      console.log(
+        `Total items loaded: ${allItems.length} (${galleryItems.length} gallery + ${offerItems.length} offers)`
+      );
+
+      setItems(shuffledItems);
+
+      if (allItems.length === 0) {
+        setMessage(
+          "No approved items available. Please check if farmers have uploaded items and admin has approved them."
+        );
+      }
     } catch (error) {
       console.error("Error fetching items:", error);
+      setMessage(`Failed to load items: ${error.message}`);
       setItems([]);
     } finally {
       setLoading(false);
@@ -83,12 +118,22 @@ const ItemsGrid = ({ filters }) => {
           <h3>Available Products ({filteredItems.length})</h3>
         </div>
 
+        {/* FIXED: Add message display */}
+        {message && (
+          <div className="no-items-message">
+            <p>{message}</p>
+          </div>
+        )}
+
         <div className="items-grid">
           {currentItems.map((item) => (
             <div key={item._id} className="item-card">
               <div className="item-image-container">
                 <img
-                  src={item.image}
+                  src={
+                    item.image ||
+                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"
+                  }
                   alt={item.name}
                   onError={(e) => {
                     e.target.src =
@@ -110,7 +155,7 @@ const ItemsGrid = ({ filters }) => {
                 </div>
 
                 <p className="item-description">
-                  {item.description.length > 80
+                  {item.description && item.description.length > 80
                     ? `${item.description.substring(0, 80)}...`
                     : item.description}
                 </p>
@@ -134,7 +179,7 @@ const ItemsGrid = ({ filters }) => {
           </div>
         )}
 
-        {filteredItems.length === 0 && (
+        {filteredItems.length === 0 && !message && (
           <div className="no-items">
             <h3>No products found</h3>
             <p>
@@ -161,7 +206,17 @@ const ItemsGrid = ({ filters }) => {
 
             <div className="modal-content">
               <div className="modal-image">
-                <img src={selectedItem.image} alt={selectedItem.name} />
+                <img
+                  src={
+                    selectedItem.image ||
+                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"
+                  }
+                  alt={selectedItem.name}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+                  }}
+                />
               </div>
 
               <div className="modal-details">
@@ -176,7 +231,9 @@ const ItemsGrid = ({ filters }) => {
                 </div>
                 <div className="detail-item">
                   <strong>Harvest Date:</strong>{" "}
-                  {new Date(selectedItem.harvestDay).toLocaleDateString()}
+                  {selectedItem.harvestDay
+                    ? new Date(selectedItem.harvestDay).toLocaleDateString()
+                    : "N/A"}
                 </div>
                 <div className="detail-item">
                   <strong>Type:</strong>{" "}
@@ -189,6 +246,20 @@ const ItemsGrid = ({ filters }) => {
                   <strong>Description:</strong>
                   <p>{selectedItem.description}</p>
                 </div>
+
+                {/* FIXED: Add conditions display for offers */}
+                {selectedItem.condition &&
+                  Array.isArray(selectedItem.condition) &&
+                  selectedItem.condition.length > 0 && (
+                    <div className="conditions-section">
+                      <strong>Offer Conditions:</strong>
+                      <ul>
+                        {selectedItem.condition.map((condition, index) => (
+                          <li key={index}>{condition}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
               </div>
             </div>
           </div>
