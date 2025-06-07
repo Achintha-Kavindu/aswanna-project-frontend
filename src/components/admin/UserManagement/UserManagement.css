@@ -360,3 +360,103 @@
     flex-direction: column;
   }
 }
+/* Add to UserManagement.css */
+.message {
+  position: relative;
+  padding: 1rem 3rem 1rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.message-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-badge.approved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.user-detail-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 2rem;
+  border: 4px solid #3498db;
+}
+
+.user-detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-detail-info {
+  text-align: left;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.detail-value {
+  color: #666;
+}
+
+.detail-value.status-approved {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.detail-value.status-pending {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.approval-status {
+  margin-top: 0.5rem;
+  text-align: center;
+}

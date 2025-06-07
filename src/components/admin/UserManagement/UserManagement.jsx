@@ -13,6 +13,7 @@ const UserManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     fetchUsers();
@@ -29,6 +30,7 @@ const UserManagement = () => {
       setUsers(response.data.users);
     } catch (error) {
       console.error("Error fetching users:", error);
+      setMessage("Failed to fetch users");
     } finally {
       setLoading(false);
     }
@@ -55,10 +57,23 @@ const UserManagement = () => {
 
   const approveUser = async (userId) => {
     try {
-      await api.put(`/api/users/approve/${userId}`);
-      fetchUsers();
+      console.log("Approving user:", userId);
+
+      const response = await api.put(`/api/users/approve/${userId}`);
+
+      if (response.data.success) {
+        setMessage("User approved successfully!");
+        fetchUsers();
+      } else {
+        setMessage("Failed to approve user");
+      }
     } catch (error) {
       console.error("Error approving user:", error);
+      setMessage(
+        `Failed to approve user: ${
+          error.response?.data?.message || error.message
+        }`
+      );
     }
   };
 
@@ -66,9 +81,11 @@ const UserManagement = () => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         await api.delete(`/api/users/${userId}`);
+        setMessage("User deleted successfully!");
         fetchUsers();
       } catch (error) {
         console.error("Error deleting user:", error);
+        setMessage("Failed to delete user");
       }
     }
   };
@@ -106,6 +123,20 @@ const UserManagement = () => {
         <p>Manage farmers and buyers registration</p>
       </div>
 
+      {/* FIXED: Add message display */}
+      {message && (
+        <div
+          className={`message ${
+            message.includes("successfully") ? "success" : "error"
+          }`}
+        >
+          {message}
+          <button onClick={() => setMessage("")} className="message-close">
+            ×
+          </button>
+        </div>
+      )}
+
       {/* Enhanced Search & Filter */}
       <SearchFilterBar
         searchTerm={searchTerm}
@@ -121,7 +152,13 @@ const UserManagement = () => {
         {filteredUsers.map((user) => (
           <div key={user._id} className="user-card">
             <div className="user-avatar">
-              <img src={user.img} alt={user.firstName} />
+              <img
+                src={user.img || "https://via.placeholder.com/150"}
+                alt={user.firstName}
+                onError={(e) => {
+                  e.target.src = "https://via.placeholder.com/150";
+                }}
+              />
             </div>
 
             <div className="user-info">
@@ -136,6 +173,19 @@ const UserManagement = () => {
                 <span className="user-location">{user.location}</span>
               </div>
               {user.phone && <p className="user-phone">{user.phone}</p>}
+
+              {/* FIXED: Add approval status display */}
+              <div className="approval-status">
+                <span
+                  className={`status-badge ${
+                    user.approvalStatus ||
+                    (user.emailVerified ? "approved" : "pending")
+                  }`}
+                >
+                  {user.approvalStatus ||
+                    (user.emailVerified ? "Approved" : "Pending")}
+                </span>
+              </div>
             </div>
 
             <div className="user-actions">
@@ -144,10 +194,12 @@ const UserManagement = () => {
                 View
               </button>
 
-              {!user.emailVerified && (
+              {/* FIXED: Better approval status check */}
+              {(!user.emailVerified || user.approvalStatus === "pending") && (
                 <button
                   className="approve-btn"
                   onClick={() => approveUser(user._id)}
+                  disabled={loading}
                 >
                   <Check size={16} />
                   Approve
@@ -157,6 +209,7 @@ const UserManagement = () => {
               <button
                 className="delete-btn"
                 onClick={() => deleteUser(user._id)}
+                disabled={loading}
               >
                 <Trash2 size={16} />
                 Delete
@@ -173,7 +226,78 @@ const UserManagement = () => {
         </div>
       )}
 
-      {/* Modal remains the same */}
+      {/* FIXED: Complete User Detail Modal */}
+      {showModal && selectedUser && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>User Details</h3>
+              <button className="close-btn" onClick={() => setShowModal(false)}>
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="user-detail-image">
+                <img
+                  src={selectedUser.img || "https://via.placeholder.com/150"}
+                  alt={selectedUser.firstName}
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/150";
+                  }}
+                />
+              </div>
+              <div className="user-detail-info">
+                <div className="detail-row">
+                  <span className="detail-label">Name:</span>
+                  <span className="detail-value">
+                    {selectedUser.firstName} {selectedUser.lastName}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Email:</span>
+                  <span className="detail-value">{selectedUser.email}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Type:</span>
+                  <span className="detail-value">{selectedUser.type}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Location:</span>
+                  <span className="detail-value">{selectedUser.location}</span>
+                </div>
+                {selectedUser.phone && (
+                  <div className="detail-row">
+                    <span className="detail-label">Phone:</span>
+                    <span className="detail-value">{selectedUser.phone}</span>
+                  </div>
+                )}
+                <div className="detail-row">
+                  <span className="detail-label">Status:</span>
+                  <span
+                    className={`detail-value status-${
+                      selectedUser.approvalStatus ||
+                      (selectedUser.emailVerified ? "approved" : "pending")
+                    }`}
+                  >
+                    {selectedUser.approvalStatus ||
+                      (selectedUser.emailVerified ? "Approved" : "Pending")}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Joined:</span>
+                  <span className="detail-value">
+                    {new Date(selectedUser.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">User ID:</span>
+                  <span className="detail-value">{selectedUser._id}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

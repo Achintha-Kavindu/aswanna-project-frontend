@@ -120,9 +120,23 @@ const OfferManagement = () => {
     }
   };
 
-  const viewOffer = (offer) => {
-    setSelectedOffer(offer);
-    setShowModal(true);
+  const viewOffer = async (offer) => {
+    try {
+      console.log("Viewing offer:", offer);
+
+      // You can either use the local offer data or fetch fresh data from backend
+      setSelectedOffer(offer);
+      setShowModal(true);
+
+      // Optional: Fetch fresh data from backend
+      // const response = await api.get(`/api/offers/${offer.itemId || offer._id}`);
+      // if (response.data.success) {
+      //   setSelectedOffer(response.data.offer);
+      // }
+    } catch (error) {
+      console.error("Error viewing offer:", error);
+      setMessage(`Failed to view offer: ${error.message}`);
+    }
   };
 
   const filterOptions = [
@@ -156,7 +170,6 @@ const OfferManagement = () => {
         <h2>Offer Management</h2>
         <p>Manage farmer special offers ({offers.length} total offers)</p>
       </div>
-
       {/* Message */}
       {message && (
         <div
@@ -171,6 +184,87 @@ const OfferManagement = () => {
         </div>
       )}
 
+      {showModal && selectedOffer && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Special Offer Details</h3>
+              <button className="close-btn" onClick={() => setShowModal(false)}>
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="offer-detail-image">
+                <img
+                  src={
+                    selectedOffer.image ||
+                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"
+                  }
+                  alt={selectedOffer.name}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+                  }}
+                />
+                <div className="modal-offer-badge">SPECIAL OFFER</div>
+              </div>
+              <div className="offer-details">
+                <h4>{selectedOffer.name}</h4>
+                <div className="detail-row">
+                  <span className="detail-label">Special Price:</span>
+                  <span className="detail-value">
+                    Rs. {selectedOffer.price}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Category:</span>
+                  <span className="detail-value">{selectedOffer.category}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Location:</span>
+                  <span className="detail-value">{selectedOffer.location}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Harvest Date:</span>
+                  <span className="detail-value">
+                    {selectedOffer.harvestDay
+                      ? new Date(selectedOffer.harvestDay).toLocaleDateString()
+                      : "N/A"}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Status:</span>
+                  <span
+                    className={`detail-value status-${selectedOffer.status}`}
+                  >
+                    {selectedOffer.status?.toUpperCase()}
+                  </span>
+                </div>
+                <div className="description-section">
+                  <strong>Description:</strong>
+                  <p>{selectedOffer.description}</p>
+                </div>
+                {selectedOffer.condition &&
+                  Array.isArray(selectedOffer.condition) &&
+                  selectedOffer.condition.length > 0 && (
+                    <div className="conditions-section">
+                      <strong>Offer Conditions:</strong>
+                      <ul>
+                        {selectedOffer.condition.map((condition, index) => (
+                          <li key={index}>{condition}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                <div className="offer-id-section">
+                  <strong>Offer ID:</strong>{" "}
+                  {selectedOffer.itemId || selectedOffer._id}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Enhanced Search & Filter */}
       <SearchFilterBar
         searchTerm={searchTerm}
@@ -181,7 +275,6 @@ const OfferManagement = () => {
         onRefresh={fetchOffers}
         placeholder="Search by offer name, category, or location..."
       />
-
       <div className="offers-grid">
         {Array.isArray(filteredOffers) && filteredOffers.length > 0 ? (
           filteredOffers.map((offer) => (
@@ -273,7 +366,6 @@ const OfferManagement = () => {
           </div>
         )}
       </div>
-
       {/* Modal remains the same */}
     </div>
   );
