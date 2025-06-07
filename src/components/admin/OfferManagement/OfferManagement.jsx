@@ -96,16 +96,26 @@ const OfferManagement = () => {
     }
   };
 
+  // src/components/admin/OfferManagement/OfferManagement.jsx
+  // Update the deleteOffer function
+
   const deleteOffer = async (itemId) => {
     if (window.confirm("Are you sure you want to delete this offer?")) {
       try {
         console.log("Deleting offer:", itemId);
-        await api.delete(`/api/offers/${itemId}`);
+
+        // FIXED: Use the correct API endpoint
+        await api.delete(`/api/offers/delete/${itemId}`);
+
         setMessage("Offer deleted successfully!");
         fetchOffers();
       } catch (error) {
         console.error("Error deleting offer:", error);
-        setMessage(`Failed to delete offer: ${error.message}`);
+        setMessage(
+          `Failed to delete offer: ${
+            error.response?.data?.message || error.message
+          }`
+        );
       }
     }
   };

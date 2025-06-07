@@ -2785,16 +2785,26 @@ const OfferManagement = () => {
     }
   };
 
+  // src/components/admin/OfferManagement/OfferManagement.jsx
+  // Update the deleteOffer function
+
   const deleteOffer = async (itemId) => {
     if (window.confirm("Are you sure you want to delete this offer?")) {
       try {
         console.log("Deleting offer:", itemId);
-        await api.delete(`/api/offers/${itemId}`);
+
+        // FIXED: Use the correct API endpoint
+        await api.delete(`/api/offers/delete/${itemId}`);
+
         setMessage("Offer deleted successfully!");
         fetchOffers();
       } catch (error) {
         console.error("Error deleting offer:", error);
-        setMessage(`Failed to delete offer: ${error.message}`);
+        setMessage(
+          `Failed to delete offer: ${
+            error.response?.data?.message || error.message
+          }`
+        );
       }
     }
   };
@@ -9099,194 +9109,6 @@ export default BuyerDashboard;
 }
 ```
 
-## File: src/pages/FarmerDashboard.jsx
-```javascript
-// src/pages/FarmerDashboard.jsx
-import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import Sidebar from "../components/common/Sidebar/Sidebar";
-import FarmerProfile from "../components/farmer/FarmerProfile/FarmerProfile";
-import FarmerGallery from "../components/farmer/FarmerGallery/FarmerGallery";
-import FarmerOffers from "../components/farmer/FarmerOffers/FarmerOffers";
-import api from "../utils/api";
-import "./FarmerDashboard.css";
-
-const FarmerDashboard = () => {
-  const { user } = useAuth();
-  const [activeSection, setActiveSection] = useState("profile");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-
-  // Redirect if not farmer
-  if (!user || user.type !== "farmer") {
-    window.location.href = "/";
-    return null;
-  }
-
-  // Check if farmer is approved
-  if (!user.emailVerified) {
-    return (
-      <div className="farmer-dashboard">
-        <div className="approval-pending">
-          <div className="approval-content">
-            <div className="approval-icon">⏳</div>
-            <h2>Account Pending Approval</h2>
-            <p>
-              Your farmer account is currently under review by our
-              administrators. You will be able to access your dashboard and
-              upload items once your account is approved.
-            </p>
-            <div className="approval-info">
-              <h3>What happens next?</h3>
-              <ul>
-                <li>Our team will review your registration details</li>
-                <li>You'll receive an email notification once approved</li>
-                <li>After approval, you can start uploading your products</li>
-              </ul>
-            </div>
-            <button
-              className="back-home-btn"
-              onClick={() => (window.location.href = "/")}
-            >
-              Back to Home
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Gallery item create function
-  const handleCreateGalleryItem = async (formData) => {
-    try {
-      setLoading(true);
-      setMessage("");
-
-      // Image field optional කරන්න
-      const galleryData = {
-        name: formData.name,
-        price: formData.price,
-        category: formData.category,
-        location: formData.location,
-        description: formData.description,
-        harvestDay: formData.harvestDay,
-        // Image optional - only include if provided
-        ...(formData.image && { image: formData.image }),
-      };
-
-      console.log("Creating gallery item:", galleryData);
-
-      const response = await api.post("/api/gallery/create", galleryData);
-
-      setMessage("Gallery item created successfully!");
-
-      // Refresh gallery items if needed
-      if (window.refreshGalleryItems) {
-        window.refreshGalleryItems();
-      }
-    } catch (error) {
-      console.error("Error creating gallery item:", error);
-      setMessage(
-        error.response?.data?.message || "Failed to create gallery item"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Offer create function
-  const handleCreateOffer = async (formData) => {
-    try {
-      setLoading(true);
-      setMessage("");
-
-      // Image field optional කරන්න
-      const offerData = {
-        name: formData.name,
-        price: formData.price,
-        category: formData.category,
-        location: formData.location,
-        description: formData.description,
-        harvestDay: formData.harvestDay,
-        condition: formData.conditions || [], // if applicable
-        // Image optional - only include if provided
-        ...(formData.image && { image: formData.image }),
-      };
-
-      console.log("Creating offer:", offerData);
-
-      const response = await api.post("/api/offers", offerData);
-
-      setMessage("Offer created successfully!");
-
-      // Refresh offers if needed
-      if (window.refreshOffers) {
-        window.refreshOffers();
-      }
-    } catch (error) {
-      console.error("Error creating offer:", error);
-      setMessage(error.response?.data?.message || "Failed to create offer");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const renderContent = () => {
-    switch (activeSection) {
-      case "profile":
-        return <FarmerProfile />;
-      case "gallery":
-        return (
-          <FarmerGallery
-            onCreateItem={handleCreateGalleryItem}
-            loading={loading}
-            message={message}
-            setMessage={setMessage}
-          />
-        );
-      case "offers":
-        return (
-          <FarmerOffers
-            onCreateOffer={handleCreateOffer}
-            loading={loading}
-            message={message}
-            setMessage={setMessage}
-          />
-        );
-      default:
-        return <FarmerProfile />;
-    }
-  };
-
-  return (
-    <div className="farmer-dashboard">
-      <Sidebar
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-        userType="farmer"
-      />
-      <div className="dashboard-content">
-        <div className="dashboard-header">
-          <h1>Farmer Dashboard</h1>
-          <div className="breadcrumb">
-            <span>Dashboard</span>
-            <span className="separator">›</span>
-            <span className="current">
-              {activeSection === "profile" && "Profile"}
-              {activeSection === "gallery" && "Gallery Items"}
-              {activeSection === "offers" && "Special Offers"}
-            </span>
-          </div>
-        </div>
-        <div className="content-area">{renderContent()}</div>
-      </div>
-    </div>
-  );
-};
-
-export default FarmerDashboard;
-```
-
 ## File: src/pages/Home.css
 ```css
 /* src/pages/Home.css */
@@ -10483,6 +10305,652 @@ export default defineConfig({
 }
 ```
 
+## File: src/components/farmer/FarmerOffers/FarmerOffers.css
+```css
+/* src/components/farmer/FarmerOffers/FarmerOffers.css */
+.farmer-offers {
+  padding: 2rem;
+  background: #f8f9fa;
+  min-height: calc(100vh - 80px);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.offers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header-content h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.header-content p {
+  color: #666;
+  margin: 0;
+}
+
+/* Offers Grid */
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.offer-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid #e74c3c;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.offer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(231, 76, 60, 0.2);
+}
+
+.offer-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.offer-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offer-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.offer-content {
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.offer-content h3 {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.offer-price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #e74c3c;
+  margin: 0 0 1rem 0;
+}
+
+.offer-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.offer-category,
+.offer-location {
+  background: #f8f9fa;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.offer-category {
+  background: #ffebee;
+  color: #e74c3c;
+}
+
+.offer-description {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.offer-conditions {
+  background: #fff3e0;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 3px solid #ff9800;
+}
+
+.offer-conditions strong {
+  color: #e65100;
+  font-size: 0.9rem;
+}
+
+.offer-conditions ul {
+  margin: 0.5rem 0 0 1rem;
+  padding: 0;
+}
+
+.offer-conditions li {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.offer-date {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.offer-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1.5rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* No Offers */
+.no-offers {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #666;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.no-offers h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* Enhanced Modal Styles for Offers - Smaller & Wider */
+.offer-modal .modal-header {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.offer-preview {
+  border: 2px solid #e74c3c;
+}
+
+.offer-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.offer-badge-preview {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: bold;
+}
+
+.offer-upload {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+}
+
+.offer-upload:hover {
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.offer-title {
+  color: #e74c3c;
+}
+
+.offer-form .form-group input:focus,
+.offer-form .form-group select:focus,
+.offer-form .form-group textarea:focus {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.price-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.price-label {
+  position: absolute;
+  right: 0.8rem;
+  color: #6c757d;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Conditions Input */
+.conditions-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.condition-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.condition-input-wrapper input {
+  flex: 1;
+}
+
+.add-condition-btn {
+  background: linear-gradient(45deg, #17a2b8, #138496);
+  color: white;
+  border: none;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.add-condition-btn:hover:not(:disabled) {
+  background: linear-gradient(45deg, #138496, #117a8b);
+  transform: translateY(-2px);
+}
+
+.add-condition-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.conditions-list h5 {
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.condition-tag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff3e0;
+  border: 1px solid #ffcc02;
+  padding: 0.6rem;
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+}
+
+.remove-condition {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.remove-condition:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+/* Offer Highlights */
+.offer-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(45deg, #ffebee, #fce4ec);
+  color: #e74c3c;
+  padding: 0.8rem;
+  border-radius: 10px;
+  font-weight: 500;
+  border: 2px solid #f8bbd9;
+  font-size: 0.85rem;
+}
+
+/* Form Actions for Offers */
+.offer-actions .form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f8f9fa;
+}
+
+.offer-submit {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+}
+
+.offer-submit:hover:not(:disabled) {
+  background: linear-gradient(45deg, #c0392b, #a93226);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+/* View Modal for Offers */
+.modal-offer-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.conditions-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.conditions-section h5 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.conditions-view-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.conditions-view-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  color: #666;
+  border-bottom: 1px solid #eee;
+}
+
+.conditions-view-list li:last-child {
+  border-bottom: none;
+}
+
+.offer-id-section {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .farmer-offers {
+    padding: 1rem;
+  }
+
+  .offers-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .offers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .offer-actions {
+    flex-direction: column;
+  }
+
+  .condition-input-wrapper {
+    flex-direction: column;
+  }
+
+  .offer-highlights {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .offer-highlights {
+    grid-template-columns: 1fr;
+  }
+}
+```
+
+## File: src/pages/FarmerDashboard.jsx
+```javascript
+// src/pages/FarmerDashboard.jsx
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import Sidebar from "../components/common/Sidebar/Sidebar";
+import FarmerProfile from "../components/farmer/FarmerProfile/FarmerProfile";
+import FarmerGallery from "../components/farmer/FarmerGallery/FarmerGallery";
+import FarmerOffers from "../components/farmer/FarmerOffers/FarmerOffers";
+import api from "../utils/api";
+import "./FarmerDashboard.css";
+
+const FarmerDashboard = () => {
+  const { user } = useAuth();
+  const [activeSection, setActiveSection] = useState("profile");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  // Redirect if not farmer
+  if (!user || user.type !== "farmer") {
+    window.location.href = "/";
+    return null;
+  }
+
+  // Check if farmer is approved
+  if (!user.emailVerified) {
+    return (
+      <div className="farmer-dashboard">
+        <div className="approval-pending">
+          <div className="approval-content">
+            <div className="approval-icon">⏳</div>
+            <h2>Account Pending Approval</h2>
+            <p>
+              Your farmer account is currently under review by our
+              administrators. You will be able to access your dashboard and
+              upload items once your account is approved.
+            </p>
+            <div className="approval-info">
+              <h3>What happens next?</h3>
+              <ul>
+                <li>Our team will review your registration details</li>
+                <li>You'll receive an email notification once approved</li>
+                <li>After approval, you can start uploading your products</li>
+              </ul>
+            </div>
+            <button
+              className="back-home-btn"
+              onClick={() => (window.location.href = "/")}
+            >
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Gallery item create function
+  const handleCreateGalleryItem = async (formData) => {
+    try {
+      setLoading(true);
+      setMessage("");
+
+      // Image field optional කරන්න
+      const galleryData = {
+        name: formData.name,
+        price: formData.price,
+        category: formData.category,
+        location: formData.location,
+        description: formData.description,
+        harvestDay: formData.harvestDay,
+        // Image optional - only include if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      console.log("Creating gallery item:", galleryData);
+
+      const response = await api.post("/api/gallery/create", galleryData);
+
+      setMessage("Gallery item created successfully!");
+
+      // Refresh gallery items if needed
+      if (window.refreshGalleryItems) {
+        window.refreshGalleryItems();
+      }
+    } catch (error) {
+      console.error("Error creating gallery item:", error);
+      setMessage(
+        error.response?.data?.message || "Failed to create gallery item"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Offer create function
+  const handleCreateOffer = async (formData) => {
+    try {
+      setLoading(true);
+      setMessage("");
+
+      // Image field optional කරන්න
+      const offerData = {
+        name: formData.name,
+        price: formData.price,
+        category: formData.category,
+        location: formData.location,
+        description: formData.description,
+        harvestDay: formData.harvestDay,
+        condition: formData.conditions || [], // if applicable
+        // Image optional - only include if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      console.log("Creating offer:", offerData);
+
+      const response = await api.post("/api/offers", offerData);
+
+      setMessage("Offer created successfully!");
+
+      // Refresh offers if needed
+      if (window.refreshOffers) {
+        window.refreshOffers();
+      }
+    } catch (error) {
+      console.error("Error creating offer:", error);
+      setMessage(error.response?.data?.message || "Failed to create offer");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case "profile":
+        return <FarmerProfile />;
+      case "gallery":
+        return (
+          <FarmerGallery
+            onCreateItem={handleCreateGalleryItem}
+            loading={loading}
+            message={message}
+            setMessage={setMessage}
+          />
+        );
+      case "offers":
+        return (
+          <FarmerOffers
+            onCreateOffer={handleCreateOffer}
+            loading={loading}
+            message={message}
+            setMessage={setMessage}
+          />
+        );
+      default:
+        return <FarmerProfile />;
+    }
+  };
+
+  return (
+    <div className="farmer-dashboard">
+      <Sidebar
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
+        userType="farmer"
+      />
+      <div className="dashboard-content">
+        <div className="dashboard-header">
+          <h1>Farmer Dashboard</h1>
+          <div className="breadcrumb">
+            <span>Dashboard</span>
+            <span className="separator">›</span>
+            <span className="current">
+              {activeSection === "profile" && "Profile"}
+              {activeSection === "gallery" && "Gallery Items"}
+              {activeSection === "offers" && "Special Offers"}
+            </span>
+          </div>
+        </div>
+        <div className="content-area">{renderContent()}</div>
+      </div>
+    </div>
+  );
+};
+
+export default FarmerDashboard;
+```
+
 ## File: src/components/farmer/FarmerGallery/FarmerGallery.jsx
 ```javascript
 // src/components/farmer/FarmerGallery/FarmerGallery.jsx
@@ -11490,464 +11958,6 @@ const FarmerGallery = () => {
 };
 
 export default FarmerGallery;
-```
-
-## File: src/components/farmer/FarmerOffers/FarmerOffers.css
-```css
-/* src/components/farmer/FarmerOffers/FarmerOffers.css */
-.farmer-offers {
-  padding: 2rem;
-  background: #f8f9fa;
-  min-height: calc(100vh - 80px);
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
-
-.offers-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.header-content h2 {
-  font-size: 2rem;
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-}
-
-.header-content p {
-  color: #666;
-  margin: 0;
-}
-
-/* Offers Grid */
-.offers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.offer-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  border: 2px solid #e74c3c;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.offer-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(231, 76, 60, 0.2);
-}
-
-.offer-image {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-  width: 100%;
-}
-
-.offer-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.offer-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.offer-content {
-  padding: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.offer-content h3 {
-  font-size: 1.2rem;
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-}
-
-.offer-price {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #e74c3c;
-  margin: 0 0 1rem 0;
-}
-
-.offer-meta {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.offer-category,
-.offer-location {
-  background: #f8f9fa;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.offer-category {
-  background: #ffebee;
-  color: #e74c3c;
-}
-
-.offer-description {
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-.offer-conditions {
-  background: #fff3e0;
-  padding: 0.75rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  border-left: 3px solid #ff9800;
-}
-
-.offer-conditions strong {
-  color: #e65100;
-  font-size: 0.9rem;
-}
-
-.offer-conditions ul {
-  margin: 0.5rem 0 0 1rem;
-  padding: 0;
-}
-
-.offer-conditions li {
-  font-size: 0.8rem;
-  color: #666;
-  margin-bottom: 0.25rem;
-}
-
-.offer-date {
-  font-size: 0.9rem;
-  color: #888;
-  margin-bottom: 1rem;
-}
-
-.offer-actions {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0 1.5rem 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* No Offers */
-.no-offers {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: #666;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.no-offers h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-/* Enhanced Modal Styles for Offers - Smaller & Wider */
-.offer-modal .modal-header {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
-}
-
-.offer-preview {
-  border: 2px solid #e74c3c;
-}
-
-.offer-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.offer-badge-preview {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-  color: white;
-  padding: 0.2rem 0.4rem;
-  border-radius: 6px;
-  font-size: 0.65rem;
-  font-weight: bold;
-}
-
-.offer-upload {
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-}
-
-.offer-upload:hover {
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-}
-
-.offer-title {
-  color: #e74c3c;
-}
-
-.offer-form .form-group input:focus,
-.offer-form .form-group select:focus,
-.offer-form .form-group textarea:focus {
-  border-color: #e74c3c;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
-}
-
-.price-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.price-label {
-  position: absolute;
-  right: 0.8rem;
-  color: #6c757d;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-/* Conditions Input */
-.conditions-input-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.condition-input-wrapper {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.condition-input-wrapper input {
-  flex: 1;
-}
-
-.add-condition-btn {
-  background: linear-gradient(45deg, #17a2b8, #138496);
-  color: white;
-  border: none;
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.add-condition-btn:hover:not(:disabled) {
-  background: linear-gradient(45deg, #138496, #117a8b);
-  transform: translateY(-2px);
-}
-
-.add-condition-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.conditions-list h5 {
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-  font-size: 0.95rem;
-}
-
-.condition-tag {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #fff3e0;
-  border: 1px solid #ffcc02;
-  padding: 0.6rem;
-  border-radius: 8px;
-  margin-bottom: 0.4rem;
-}
-
-.remove-condition {
-  background: #e74c3c;
-  color: white;
-  border: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.remove-condition:hover {
-  background: #c0392b;
-  transform: scale(1.1);
-}
-
-/* Offer Highlights */
-.offer-highlights {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.75rem;
-}
-
-.highlight-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(45deg, #ffebee, #fce4ec);
-  color: #e74c3c;
-  padding: 0.8rem;
-  border-radius: 10px;
-  font-weight: 500;
-  border: 2px solid #f8bbd9;
-  font-size: 0.85rem;
-}
-
-/* Form Actions for Offers */
-.offer-actions .form-actions {
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
-  padding-top: 1.5rem;
-  border-top: 2px solid #f8f9fa;
-}
-
-.offer-submit {
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-}
-
-.offer-submit:hover:not(:disabled) {
-  background: linear-gradient(45deg, #c0392b, #a93226);
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-}
-
-/* View Modal for Offers */
-.modal-offer-badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-  color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.conditions-section {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-}
-
-.conditions-section h5 {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.conditions-view-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.conditions-view-list li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0;
-  color: #666;
-  border-bottom: 1px solid #eee;
-}
-
-.conditions-view-list li:last-child {
-  border-bottom: none;
-}
-
-.offer-id-section {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .farmer-offers {
-    padding: 1rem;
-  }
-
-  .offers-header {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-
-  .offers-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .offer-actions {
-    flex-direction: column;
-  }
-
-  .condition-input-wrapper {
-    flex-direction: column;
-  }
-
-  .offer-highlights {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .offer-highlights {
-    grid-template-columns: 1fr;
-  }
-}
 ```
 
 ## File: src/components/farmer/FarmerOffers/FarmerOffers.jsx
