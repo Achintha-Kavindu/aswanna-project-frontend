@@ -2685,575 +2685,6 @@ export default GalleryManagement;
 }
 ```
 
-## File: src/components/admin/UserManagement/UserManagement.css
-```css
-/* src/components/admin/UserManagement/UserManagement.css */
-.user-management {
-  padding: 2rem;
-  background: #f8f9fa;
-  min-height: 100vh;
-}
-
-.section-header {
-  margin-bottom: 2rem;
-}
-
-.section-header h2 {
-  font-size: 2rem;
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-}
-
-.section-header p {
-  color: #666;
-  margin: 0;
-}
-
-.controls {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-}
-
-.search-bar,
-.filter-bar {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-bar {
-  flex: 1;
-  min-width: 300px;
-}
-
-.search-icon,
-.filter-icon {
-  position: absolute;
-  left: 1rem;
-  color: #666;
-  z-index: 1;
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 0.75rem 1rem 0.75rem 3rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-}
-
-.filter-bar select {
-  padding: 0.75rem 1rem 0.75rem 3rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  background: white;
-  cursor: pointer;
-}
-
-.loading-container {
-  text-align: center;
-  padding: 4rem 0;
-}
-
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.users-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-}
-
-.user-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.user-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.user-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin: 0 auto 1rem;
-  border: 3px solid #3498db;
-}
-
-.user-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.user-info {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.user-info h3 {
-  font-size: 1.2rem;
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-}
-
-.user-email {
-  color: #666;
-  font-size: 0.9rem;
-  margin: 0 0 0.75rem 0;
-}
-
-.user-meta {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.user-type {
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.user-type.farmer {
-  background: #e8f5e8;
-  color: #4caf50;
-}
-
-.user-type.buyer {
-  background: #e3f2fd;
-  color: #2196f3;
-}
-
-.user-type.admin {
-  background: #fff3e0;
-  color: #ff9800;
-}
-
-.user-location {
-  background: #f8f9fa;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.user-phone {
-  color: #666;
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-.user-actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-.view-btn,
-.approve-btn,
-.delete-btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  transition: all 0.3s ease;
-}
-
-.view-btn {
-  background: #3498db;
-  color: white;
-}
-
-.view-btn:hover {
-  background: #2980b9;
-}
-
-.approve-btn {
-  background: #4caf50;
-  color: white;
-}
-
-.approve-btn:hover {
-  background: #45a049;
-}
-
-.delete-btn {
-  background: #e74c3c;
-  color: white;
-}
-
-.delete-btn:hover {
-  background: #c0392b;
-}
-
-.no-users {
-  text-align: center;
-  padding: 4rem 0;
-  color: #666;
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 12px;
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  background: #3498db;
-  color: white;
-  padding: 1.5rem;
-  border-radius: 12px 12px 0 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.3rem;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 2rem;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.close-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.modal-body {
-  padding: 2rem;
-}
-
-.user-detail-image {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin: 0 auto 2rem;
-  border: 4px solid #3498db;
-}
-
-.user-detail-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #eee;
-}
-
-.detail-label {
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.detail-value {
-  color: #666;
-}
-
-.detail-value.verified {
-  color: #4caf50;
-  font-weight: 600;
-}
-
-.detail-value.pending {
-  color: #ff9800;
-  font-weight: 600;
-}
-
-@media (max-width: 768px) {
-  .user-management {
-    padding: 1rem;
-  }
-
-  .controls {
-    flex-direction: column;
-  }
-
-  .search-bar {
-    min-width: auto;
-  }
-
-  .users-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .user-actions {
-    flex-direction: column;
-  }
-}
-```
-
-## File: src/components/admin/UserManagement/UserManagement.jsx
-```javascript
-// src/components/admin/UserManagement/UserManagement.jsx
-import React, { useState, useEffect } from "react";
-import api from "../../../utils/api";
-import { Eye, Check, Trash2 } from "lucide-react";
-import SearchFilterBar from "../../common/SearchFilterBar/SearchFilterBar";
-import "./UserManagement.css";
-
-const UserManagement = () => {
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState("all");
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    filterUsers();
-  }, [users, searchTerm, filterType]);
-
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get("/api/users");
-      setUsers(response.data.users);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterUsers = () => {
-    let filtered = users;
-
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (user) =>
-          user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (filterType !== "all") {
-      filtered = filtered.filter((user) => user.type === filterType);
-    }
-
-    setFilteredUsers(filtered);
-  };
-
-  // src/components/admin/UserManagement/UserManagement.jsx
-  // Update the approveUser function for better error handling
-
-  // FIXED: Updated approveUser function with proper error handling
-  const approveUser = async (userId) => {
-    try {
-      console.log("Approving user:", userId);
-
-      const response = await api.put(`/api/users/approve/${userId}`);
-
-      if (response.data.success) {
-        setMessage("User approved successfully!");
-        fetchUsers(); // Refresh the users list
-      } else {
-        setMessage("Failed to approve user");
-      }
-    } catch (error) {
-      console.error("Error approving user:", error);
-      setMessage(
-        `Failed to approve user: ${
-          error.response?.data?.message || error.message
-        }`
-      );
-    }
-  };
-
-  const deleteUser = async (userId) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      try {
-        await api.delete(`/api/users/${userId}`);
-        fetchUsers();
-      } catch (error) {
-        console.error("Error deleting user:", error);
-      }
-    }
-  };
-
-  const viewUser = (user) => {
-    setSelectedUser(user);
-    setShowModal(true);
-  };
-
-  const filterOptions = [
-    { value: "all", label: `All Users (${users.length})` },
-    {
-      value: "farmer",
-      label: `Farmers (${users.filter((u) => u.type === "farmer").length})`,
-    },
-    {
-      value: "buyer",
-      label: `Buyers (${users.filter((u) => u.type === "buyer").length})`,
-    },
-  ];
-
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <p>Loading users...</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="user-management">
-      <div className="section-header">
-        <h2>User Management</h2>
-        <p>Manage farmers and buyers registration</p>
-      </div>
-
-      {/* Enhanced Search & Filter */}
-      <SearchFilterBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        filterValue={filterType}
-        setFilterValue={setFilterType}
-        filterOptions={filterOptions}
-        onRefresh={fetchUsers}
-        placeholder="Search by name or email..."
-      />
-
-      <div className="users-grid">
-        {filteredUsers.map((user) => (
-          <div key={user._id} className="user-card">
-            <div className="user-avatar">
-              <img src={user.img} alt={user.firstName} />
-            </div>
-
-            <div className="user-info">
-              <h3>
-                {user.firstName} {user.lastName}
-              </h3>
-              <p className="user-email">{user.email}</p>
-              <div className="user-meta">
-                <span className={`user-type ${user.type}`}>
-                  {user.type.toUpperCase()}
-                </span>
-                <span className="user-location">{user.location}</span>
-              </div>
-              {user.phone && <p className="user-phone">{user.phone}</p>}
-            </div>
-
-            <div className="user-actions">
-              <button className="view-btn" onClick={() => viewUser(user)}>
-                <Eye size={16} />
-                View
-              </button>
-
-              {!user.emailVerified && (
-                <button
-                  className="approve-btn"
-                  onClick={() => approveUser(user._id)}
-                >
-                  <Check size={16} />
-                  Approve
-                </button>
-              )}
-
-              <button
-                className="delete-btn"
-                onClick={() => deleteUser(user._id)}
-              >
-                <Trash2 size={16} />
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {filteredUsers.length === 0 && (
-        <div className="no-users">
-          <h3>No users found</h3>
-          <p>No users match your search criteria</p>
-        </div>
-      )}
-
-      {/* Modal remains the same */}
-    </div>
-  );
-};
-
-export default UserManagement;
-```
-
 ## File: src/components/buyer/BuyerProfile/BuyerProfile.css
 ```css
 /* src/components/buyer/BuyerProfile/BuyerProfile.css */
@@ -8965,181 +8396,600 @@ export default defineConfig({
 })
 ```
 
-## File: src/components/admin/OfferManagement/OfferManagement.jsx
+## File: src/components/admin/UserManagement/UserManagement.css
+```css
+/* src/components/admin/UserManagement/UserManagement.css */
+.user-management {
+  padding: 2rem;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.section-header {
+  margin-bottom: 2rem;
+}
+
+.section-header h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.section-header p {
+  color: #666;
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.search-bar,
+.filter-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar {
+  flex: 1;
+  min-width: 300px;
+}
+
+.search-icon,
+.filter-icon {
+  position: absolute;
+  left: 1rem;
+  color: #666;
+  z-index: 1;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.filter-bar select {
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.user-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 1rem;
+  border: 3px solid #3498db;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-info {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.user-info h3 {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.user-email {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 0.75rem 0;
+}
+
+.user-meta {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.user-type {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.user-type.farmer {
+  background: #e8f5e8;
+  color: #4caf50;
+}
+
+.user-type.buyer {
+  background: #e3f2fd;
+  color: #2196f3;
+}
+
+.user-type.admin {
+  background: #fff3e0;
+  color: #ff9800;
+}
+
+.user-location {
+  background: #f8f9fa;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.user-phone {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.user-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.view-btn,
+.approve-btn,
+.delete-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.view-btn {
+  background: #3498db;
+  color: white;
+}
+
+.view-btn:hover {
+  background: #2980b9;
+}
+
+.approve-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.approve-btn:hover {
+  background: #45a049;
+}
+
+.delete-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+}
+
+.no-users {
+  text-align: center;
+  padding: 4rem 0;
+  color: #666;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  background: #3498db;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.user-detail-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 2rem;
+  border: 4px solid #3498db;
+}
+
+.user-detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.detail-value {
+  color: #666;
+}
+
+.detail-value.verified {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.detail-value.pending {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .user-management {
+    padding: 1rem;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .search-bar {
+    min-width: auto;
+  }
+
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-actions {
+    flex-direction: column;
+  }
+}
+/* Add to UserManagement.css */
+.message {
+  position: relative;
+  padding: 1rem 3rem 1rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.message-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-badge.approved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.user-detail-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 2rem;
+  border: 4px solid #3498db;
+}
+
+.user-detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-detail-info {
+  text-align: left;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.detail-value {
+  color: #666;
+}
+
+.detail-value.status-approved {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.detail-value.status-pending {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.approval-status {
+  margin-top: 0.5rem;
+  text-align: center;
+}
+```
+
+## File: src/components/admin/UserManagement/UserManagement.jsx
 ```javascript
-// src/components/admin/OfferManagement/OfferManagement.jsx
+// src/components/admin/UserManagement/UserManagement.jsx
 import React, { useState, useEffect } from "react";
 import api from "../../../utils/api";
 import { Eye, Check, Trash2 } from "lucide-react";
 import SearchFilterBar from "../../common/SearchFilterBar/SearchFilterBar";
-import "./OfferManagement.css";
+import "./UserManagement.css";
 
-const OfferManagement = () => {
-  const [offers, setOffers] = useState([]);
-  const [filteredOffers, setFilteredOffers] = useState([]);
+const UserManagement = () => {
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterType, setFilterType] = useState("all");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    fetchOffers();
+    fetchUsers();
   }, []);
 
   useEffect(() => {
-    filterOffers();
-  }, [offers, searchTerm, filterStatus]);
+    filterUsers();
+  }, [users, searchTerm, filterType]);
 
-  const fetchOffers = async () => {
+  const fetchUsers = async () => {
     try {
       setLoading(true);
-      console.log("Fetching offers from backend...");
-
-      const response = await api.get("/api/offers/admin/all");
-      let offersData = response.data || [];
-      console.log("Raw offers API response:", offersData);
-
-      if (!Array.isArray(offersData)) {
-        if (offersData && typeof offersData === "object") {
-          offersData =
-            offersData.offers || offersData.data || offersData.items || [];
-        } else {
-          offersData = [];
-        }
-      }
-
-      console.log("Processed offers data:", offersData);
-      setOffers(offersData);
-
-      if (offersData.length === 0) {
-        setMessage(
-          "No offers found. Make sure farmers have created offers and backend is running."
-        );
-      }
+      const response = await api.get("/api/users");
+      setUsers(response.data.users);
     } catch (error) {
-      console.error("Error fetching offers:", error);
-      setMessage(
-        `Failed to connect to backend server. Error: ${error.message}`
-      );
-      setOffers([]);
+      console.error("Error fetching users:", error);
+      setMessage("Failed to fetch users");
     } finally {
       setLoading(false);
     }
   };
 
-  const filterOffers = () => {
-    if (!Array.isArray(offers)) {
-      setFilteredOffers([]);
-      return;
-    }
-
-    let filtered = [...offers];
+  const filterUsers = () => {
+    let filtered = users;
 
     if (searchTerm) {
       filtered = filtered.filter(
-        (offer) =>
-          offer.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          offer.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          offer.location?.toLowerCase().includes(searchTerm.toLowerCase())
+        (user) =>
+          user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    if (filterStatus !== "all") {
-      filtered = filtered.filter((offer) => offer.status === filterStatus);
+    if (filterType !== "all") {
+      filtered = filtered.filter((user) => user.type === filterType);
     }
 
-    setFilteredOffers(filtered);
+    setFilteredUsers(filtered);
   };
 
-  const approveOffer = async (itemId) => {
+  const approveUser = async (userId) => {
     try {
-      console.log("Approving offer:", itemId);
-      await api.put(`/api/offers/approve/${itemId}`);
-      setMessage("Offer approved successfully!");
-      fetchOffers();
+      console.log("Approving user:", userId);
+
+      const response = await api.put(`/api/users/approve/${userId}`);
+
+      if (response.data.success) {
+        setMessage("User approved successfully!");
+        fetchUsers();
+      } else {
+        setMessage("Failed to approve user");
+      }
     } catch (error) {
-      console.error("Error approving offer:", error);
-      setMessage(`Failed to approve offer: ${error.message}`);
+      console.error("Error approving user:", error);
+      setMessage(
+        `Failed to approve user: ${
+          error.response?.data?.message || error.message
+        }`
+      );
     }
   };
 
-  // src/components/admin/OfferManagement/OfferManagement.jsx
-  // Update the deleteOffer function
-
-  const deleteOffer = async (itemId) => {
-    if (window.confirm("Are you sure you want to delete this offer?")) {
+  const deleteUser = async (userId) => {
+    if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        console.log("Deleting offer:", itemId);
-
-        // FIXED: Use the correct API endpoint
-        await api.delete(`/api/offers/delete/${itemId}`);
-
-        setMessage("Offer deleted successfully!");
-        fetchOffers();
+        await api.delete(`/api/users/${userId}`);
+        setMessage("User deleted successfully!");
+        fetchUsers();
       } catch (error) {
-        console.error("Error deleting offer:", error);
-        setMessage(
-          `Failed to delete offer: ${
-            error.response?.data?.message || error.message
-          }`
-        );
+        console.error("Error deleting user:", error);
+        setMessage("Failed to delete user");
       }
     }
   };
 
-  const viewOffer = async (offer) => {
-    try {
-      console.log("Viewing offer:", offer);
-
-      // You can either use the local offer data or fetch fresh data from backend
-      setSelectedOffer(offer);
-      setShowModal(true);
-
-      // Optional: Fetch fresh data from backend
-      // const response = await api.get(`/api/offers/${offer.itemId || offer._id}`);
-      // if (response.data.success) {
-      //   setSelectedOffer(response.data.offer);
-      // }
-    } catch (error) {
-      console.error("Error viewing offer:", error);
-      setMessage(`Failed to view offer: ${error.message}`);
-    }
+  const viewUser = (user) => {
+    setSelectedUser(user);
+    setShowModal(true);
   };
 
   const filterOptions = [
-    { value: "all", label: `All Offers (${offers.length})` },
+    { value: "all", label: `All Users (${users.length})` },
     {
-      value: "pending",
-      label: `Pending (${offers.filter((o) => o.status === "pending").length})`,
+      value: "farmer",
+      label: `Farmers (${users.filter((u) => u.type === "farmer").length})`,
     },
     {
-      value: "approved",
-      label: `Approved (${
-        offers.filter((o) => o.status === "approved").length
-      })`,
+      value: "buyer",
+      label: `Buyers (${users.filter((u) => u.type === "buyer").length})`,
     },
   ];
 
   if (loading) {
     return (
-      <div className="offer-management">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading offers from backend...</p>
-        </div>
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading users...</p>
       </div>
     );
   }
 
   return (
-    <div className="offer-management">
+    <div className="user-management">
       <div className="section-header">
-        <h2>Offer Management</h2>
-        <p>Manage farmer special offers ({offers.length} total offers)</p>
+        <h2>User Management</h2>
+        <p>Manage farmers and buyers registration</p>
       </div>
-      {/* Message */}
+
+      {/* FIXED: Add message display */}
       {message && (
         <div
           className={`message ${
@@ -9152,195 +9002,173 @@ const OfferManagement = () => {
           </button>
         </div>
       )}
-      // Make sure this part exists in your OfferManagement.jsx
-      {showModal && selectedOffer && (
+
+      {/* Enhanced Search & Filter */}
+      <SearchFilterBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filterValue={filterType}
+        setFilterValue={setFilterType}
+        filterOptions={filterOptions}
+        onRefresh={fetchUsers}
+        placeholder="Search by name or email..."
+      />
+
+      <div className="users-grid">
+        {filteredUsers.map((user) => (
+          <div key={user._id} className="user-card">
+            <div className="user-avatar">
+              <img
+                src={user.img || "https://via.placeholder.com/150"}
+                alt={user.firstName}
+                onError={(e) => {
+                  e.target.src = "https://via.placeholder.com/150";
+                }}
+              />
+            </div>
+
+            <div className="user-info">
+              <h3>
+                {user.firstName} {user.lastName}
+              </h3>
+              <p className="user-email">{user.email}</p>
+              <div className="user-meta">
+                <span className={`user-type ${user.type}`}>
+                  {user.type.toUpperCase()}
+                </span>
+                <span className="user-location">{user.location}</span>
+              </div>
+              {user.phone && <p className="user-phone">{user.phone}</p>}
+
+              {/* FIXED: Add approval status display */}
+              <div className="approval-status">
+                <span
+                  className={`status-badge ${
+                    user.approvalStatus ||
+                    (user.emailVerified ? "approved" : "pending")
+                  }`}
+                >
+                  {user.approvalStatus ||
+                    (user.emailVerified ? "Approved" : "Pending")}
+                </span>
+              </div>
+            </div>
+
+            <div className="user-actions">
+              <button className="view-btn" onClick={() => viewUser(user)}>
+                <Eye size={16} />
+                View
+              </button>
+
+              {/* FIXED: Better approval status check */}
+              {(!user.emailVerified || user.approvalStatus === "pending") && (
+                <button
+                  className="approve-btn"
+                  onClick={() => approveUser(user._id)}
+                  disabled={loading}
+                >
+                  <Check size={16} />
+                  Approve
+                </button>
+              )}
+
+              <button
+                className="delete-btn"
+                onClick={() => deleteUser(user._id)}
+                disabled={loading}
+              >
+                <Trash2 size={16} />
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredUsers.length === 0 && (
+        <div className="no-users">
+          <h3>No users found</h3>
+          <p>No users match your search criteria</p>
+        </div>
+      )}
+
+      {/* FIXED: Complete User Detail Modal */}
+      {showModal && selectedUser && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Special Offer Details</h3>
+              <h3>User Details</h3>
               <button className="close-btn" onClick={() => setShowModal(false)}>
                 ×
               </button>
             </div>
             <div className="modal-body">
-              <div className="offer-detail-image">
+              <div className="user-detail-image">
                 <img
-                  src={
-                    selectedOffer.image ||
-                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"
-                  }
-                  alt={selectedOffer.name}
+                  src={selectedUser.img || "https://via.placeholder.com/150"}
+                  alt={selectedUser.firstName}
                   onError={(e) => {
-                    e.target.src =
-                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+                    e.target.src = "https://via.placeholder.com/150";
                   }}
                 />
-                <div className="modal-offer-badge">SPECIAL OFFER</div>
               </div>
-              <div className="offer-details">
-                <h4>{selectedOffer.name}</h4>
+              <div className="user-detail-info">
                 <div className="detail-row">
-                  <span className="detail-label">Special Price:</span>
+                  <span className="detail-label">Name:</span>
                   <span className="detail-value">
-                    Rs. {selectedOffer.price}
+                    {selectedUser.firstName} {selectedUser.lastName}
                   </span>
                 </div>
                 <div className="detail-row">
-                  <span className="detail-label">Category:</span>
-                  <span className="detail-value">{selectedOffer.category}</span>
+                  <span className="detail-label">Email:</span>
+                  <span className="detail-value">{selectedUser.email}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Type:</span>
+                  <span className="detail-value">{selectedUser.type}</span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Location:</span>
-                  <span className="detail-value">{selectedOffer.location}</span>
+                  <span className="detail-value">{selectedUser.location}</span>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">Harvest Date:</span>
-                  <span className="detail-value">
-                    {selectedOffer.harvestDay
-                      ? new Date(selectedOffer.harvestDay).toLocaleDateString()
-                      : "N/A"}
-                  </span>
-                </div>
+                {selectedUser.phone && (
+                  <div className="detail-row">
+                    <span className="detail-label">Phone:</span>
+                    <span className="detail-value">{selectedUser.phone}</span>
+                  </div>
+                )}
                 <div className="detail-row">
                   <span className="detail-label">Status:</span>
                   <span
-                    className={`detail-value status-${selectedOffer.status}`}
+                    className={`detail-value status-${
+                      selectedUser.approvalStatus ||
+                      (selectedUser.emailVerified ? "approved" : "pending")
+                    }`}
                   >
-                    {selectedOffer.status?.toUpperCase()}
+                    {selectedUser.approvalStatus ||
+                      (selectedUser.emailVerified ? "Approved" : "Pending")}
                   </span>
                 </div>
-                <div className="description-section">
-                  <strong>Description:</strong>
-                  <p>{selectedOffer.description}</p>
+                <div className="detail-row">
+                  <span className="detail-label">Joined:</span>
+                  <span className="detail-value">
+                    {new Date(selectedUser.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
-                {selectedOffer.condition &&
-                  Array.isArray(selectedOffer.condition) &&
-                  selectedOffer.condition.length > 0 && (
-                    <div className="conditions-section">
-                      <strong>Offer Conditions:</strong>
-                      <ul>
-                        {selectedOffer.condition.map((condition, index) => (
-                          <li key={index}>{condition}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                <div className="offer-id-section">
-                  <strong>Offer ID:</strong>{" "}
-                  {selectedOffer.itemId || selectedOffer._id}
+                <div className="detail-row">
+                  <span className="detail-label">User ID:</span>
+                  <span className="detail-value">{selectedUser._id}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
       )}
-      {/* Enhanced Search & Filter */}
-      <SearchFilterBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        filterValue={filterStatus}
-        setFilterValue={setFilterStatus}
-        filterOptions={filterOptions}
-        onRefresh={fetchOffers}
-        placeholder="Search by offer name, category, or location..."
-      />
-      <div className="offers-grid">
-        {Array.isArray(filteredOffers) && filteredOffers.length > 0 ? (
-          filteredOffers.map((offer) => (
-            <div key={offer._id || offer.id} className="offer-card">
-              <div className="offer-image">
-                <img
-                  src={offer.image}
-                  alt={offer.name}
-                  onError={(e) => {
-                    e.target.src =
-                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
-                  }}
-                />
-                <div className={`status-badge ${offer.status}`}>
-                  {offer.status?.toUpperCase()}
-                </div>
-                <div className="offer-badge">SPECIAL OFFER</div>
-              </div>
-
-              <div className="offer-content">
-                <h3>{offer.name}</h3>
-                <p className="offer-price">Rs. {offer.price}</p>
-                <div className="offer-meta">
-                  <span className="offer-category">{offer.category}</span>
-                  <span className="offer-location">{offer.location}</span>
-                </div>
-                <p className="offer-description">
-                  {offer.description && offer.description.length > 80
-                    ? `${offer.description.substring(0, 80)}...`
-                    : offer.description}
-                </p>
-                {offer.condition &&
-                  Array.isArray(offer.condition) &&
-                  offer.condition.length > 0 && (
-                    <div className="offer-conditions">
-                      <strong>Conditions:</strong>
-                      <ul>
-                        {offer.condition.slice(0, 2).map((cond, index) => (
-                          <li key={index}>{cond}</li>
-                        ))}
-                        {offer.condition.length > 2 && (
-                          <li>+{offer.condition.length - 2} more...</li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                <div className="offer-date">
-                  <strong>Harvest:</strong>{" "}
-                  {offer.harvestDay
-                    ? new Date(offer.harvestDay).toLocaleDateString()
-                    : "N/A"}
-                </div>
-              </div>
-
-              <div className="offer-actions">
-                <button className="view-btn" onClick={() => viewOffer(offer)}>
-                  <Eye size={16} />
-                  View
-                </button>
-
-                {offer.status === "pending" && (
-                  <button
-                    className="approve-btn"
-                    onClick={() => approveOffer(offer.itemId || offer._id)}
-                  >
-                    <Check size={16} />
-                    Approve
-                  </button>
-                )}
-
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteOffer(offer.itemId || offer._id)}
-                >
-                  <Trash2 size={16} />
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="no-offers">
-            <h3>No offers found</h3>
-            <p>
-              {offers.length === 0
-                ? "No special offers available. Please ensure backend server is running on http://localhost:5000 and farmers have created offers."
-                : "No offers match your search criteria"}
-            </p>
-          </div>
-        )}
-      </div>
-      {/* Modal remains the same */}
     </div>
   );
 };
 
-export default OfferManagement;
+export default UserManagement;
 ```
 
 ## File: src/components/farmer/FarmerGallery/FarmerGallery.css
@@ -11061,6 +10889,384 @@ const FarmerDashboard = () => {
 export default FarmerDashboard;
 ```
 
+## File: src/components/admin/OfferManagement/OfferManagement.jsx
+```javascript
+// src/components/admin/OfferManagement/OfferManagement.jsx
+import React, { useState, useEffect } from "react";
+import api from "../../../utils/api";
+import { Eye, Check, Trash2 } from "lucide-react";
+import SearchFilterBar from "../../common/SearchFilterBar/SearchFilterBar";
+import "./OfferManagement.css";
+
+const OfferManagement = () => {
+  const [offers, setOffers] = useState([]);
+  const [filteredOffers, setFilteredOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    fetchOffers();
+  }, []);
+
+  useEffect(() => {
+    filterOffers();
+  }, [offers, searchTerm, filterStatus]);
+
+  const fetchOffers = async () => {
+    try {
+      setLoading(true);
+      console.log("Fetching offers from backend...");
+
+      const response = await api.get("/api/offers/admin/all");
+      let offersData = response.data || [];
+      console.log("Raw offers API response:", offersData);
+
+      if (!Array.isArray(offersData)) {
+        if (offersData && typeof offersData === "object") {
+          offersData =
+            offersData.offers || offersData.data || offersData.items || [];
+        } else {
+          offersData = [];
+        }
+      }
+
+      console.log("Processed offers data:", offersData);
+      setOffers(offersData);
+
+      if (offersData.length === 0) {
+        setMessage(
+          "No offers found. Make sure farmers have created offers and backend is running."
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+      setMessage(
+        `Failed to connect to backend server. Error: ${error.message}`
+      );
+      setOffers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterOffers = () => {
+    if (!Array.isArray(offers)) {
+      setFilteredOffers([]);
+      return;
+    }
+
+    let filtered = [...offers];
+
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (offer) =>
+          offer.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          offer.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          offer.location?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (filterStatus !== "all") {
+      filtered = filtered.filter((offer) => offer.status === filterStatus);
+    }
+
+    setFilteredOffers(filtered);
+  };
+
+  const approveOffer = async (itemId) => {
+    try {
+      console.log("Approving offer:", itemId);
+      await api.put(`/api/offers/approve/${itemId}`);
+      setMessage("Offer approved successfully!");
+      fetchOffers();
+    } catch (error) {
+      console.error("Error approving offer:", error);
+      setMessage(`Failed to approve offer: ${error.message}`);
+    }
+  };
+
+  // src/components/admin/OfferManagement/OfferManagement.jsx
+  // Update the deleteOffer function
+
+  const deleteOffer = async (itemId) => {
+    if (window.confirm("Are you sure you want to delete this offer?")) {
+      try {
+        console.log("Deleting offer:", itemId);
+
+        // FIXED: Use the correct API endpoint
+        await api.delete(`/api/offers/delete/${itemId}`);
+
+        setMessage("Offer deleted successfully!");
+        fetchOffers();
+      } catch (error) {
+        console.error("Error deleting offer:", error);
+        setMessage(
+          `Failed to delete offer: ${
+            error.response?.data?.message || error.message
+          }`
+        );
+      }
+    }
+  };
+
+  const viewOffer = async (offer) => {
+    try {
+      console.log("Viewing offer:", offer);
+
+      // You can either use the local offer data or fetch fresh data from backend
+      setSelectedOffer(offer);
+      setShowModal(true);
+
+      // Optional: Fetch fresh data from backend
+      // const response = await api.get(`/api/offers/${offer.itemId || offer._id}`);
+      // if (response.data.success) {
+      //   setSelectedOffer(response.data.offer);
+      // }
+    } catch (error) {
+      console.error("Error viewing offer:", error);
+      setMessage(`Failed to view offer: ${error.message}`);
+    }
+  };
+
+  const filterOptions = [
+    { value: "all", label: `All Offers (${offers.length})` },
+    {
+      value: "pending",
+      label: `Pending (${offers.filter((o) => o.status === "pending").length})`,
+    },
+    {
+      value: "approved",
+      label: `Approved (${
+        offers.filter((o) => o.status === "approved").length
+      })`,
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div className="offer-management">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading offers from backend...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="offer-management">
+      <div className="section-header">
+        <h2>Offer Management</h2>
+        <p>Manage farmer special offers ({offers.length} total offers)</p>
+      </div>
+      {/* Message */}
+      {message && (
+        <div
+          className={`message ${
+            message.includes("successfully") ? "success" : "error"
+          }`}
+        >
+          {message}
+          <button onClick={() => setMessage("")} className="message-close">
+            ×
+          </button>
+        </div>
+      )}
+
+      {showModal && selectedOffer && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Special Offer Details</h3>
+              <button className="close-btn" onClick={() => setShowModal(false)}>
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="offer-detail-image">
+                <img
+                  src={
+                    selectedOffer.image ||
+                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"
+                  }
+                  alt={selectedOffer.name}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+                  }}
+                />
+                <div className="modal-offer-badge">SPECIAL OFFER</div>
+              </div>
+              <div className="offer-details">
+                <h4>{selectedOffer.name}</h4>
+                <div className="detail-row">
+                  <span className="detail-label">Special Price:</span>
+                  <span className="detail-value">
+                    Rs. {selectedOffer.price}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Category:</span>
+                  <span className="detail-value">{selectedOffer.category}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Location:</span>
+                  <span className="detail-value">{selectedOffer.location}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Harvest Date:</span>
+                  <span className="detail-value">
+                    {selectedOffer.harvestDay
+                      ? new Date(selectedOffer.harvestDay).toLocaleDateString()
+                      : "N/A"}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Status:</span>
+                  <span
+                    className={`detail-value status-${selectedOffer.status}`}
+                  >
+                    {selectedOffer.status?.toUpperCase()}
+                  </span>
+                </div>
+                <div className="description-section">
+                  <strong>Description:</strong>
+                  <p>{selectedOffer.description}</p>
+                </div>
+                {selectedOffer.condition &&
+                  Array.isArray(selectedOffer.condition) &&
+                  selectedOffer.condition.length > 0 && (
+                    <div className="conditions-section">
+                      <strong>Offer Conditions:</strong>
+                      <ul>
+                        {selectedOffer.condition.map((condition, index) => (
+                          <li key={index}>{condition}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                <div className="offer-id-section">
+                  <strong>Offer ID:</strong>{" "}
+                  {selectedOffer.itemId || selectedOffer._id}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Enhanced Search & Filter */}
+      <SearchFilterBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filterValue={filterStatus}
+        setFilterValue={setFilterStatus}
+        filterOptions={filterOptions}
+        onRefresh={fetchOffers}
+        placeholder="Search by offer name, category, or location..."
+      />
+      <div className="offers-grid">
+        {Array.isArray(filteredOffers) && filteredOffers.length > 0 ? (
+          filteredOffers.map((offer) => (
+            <div key={offer._id || offer.id} className="offer-card">
+              <div className="offer-image">
+                <img
+                  src={offer.image}
+                  alt={offer.name}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+                  }}
+                />
+                <div className={`status-badge ${offer.status}`}>
+                  {offer.status?.toUpperCase()}
+                </div>
+                <div className="offer-badge">SPECIAL OFFER</div>
+              </div>
+
+              <div className="offer-content">
+                <h3>{offer.name}</h3>
+                <p className="offer-price">Rs. {offer.price}</p>
+                <div className="offer-meta">
+                  <span className="offer-category">{offer.category}</span>
+                  <span className="offer-location">{offer.location}</span>
+                </div>
+                <p className="offer-description">
+                  {offer.description && offer.description.length > 80
+                    ? `${offer.description.substring(0, 80)}...`
+                    : offer.description}
+                </p>
+                {offer.condition &&
+                  Array.isArray(offer.condition) &&
+                  offer.condition.length > 0 && (
+                    <div className="offer-conditions">
+                      <strong>Conditions:</strong>
+                      <ul>
+                        {offer.condition.slice(0, 2).map((cond, index) => (
+                          <li key={index}>{cond}</li>
+                        ))}
+                        {offer.condition.length > 2 && (
+                          <li>+{offer.condition.length - 2} more...</li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                <div className="offer-date">
+                  <strong>Harvest:</strong>{" "}
+                  {offer.harvestDay
+                    ? new Date(offer.harvestDay).toLocaleDateString()
+                    : "N/A"}
+                </div>
+              </div>
+
+              <div className="offer-actions">
+                <button className="view-btn" onClick={() => viewOffer(offer)}>
+                  <Eye size={16} />
+                  View
+                </button>
+
+                {offer.status === "pending" && (
+                  <button
+                    className="approve-btn"
+                    onClick={() => approveOffer(offer.itemId || offer._id)}
+                  >
+                    <Check size={16} />
+                    Approve
+                  </button>
+                )}
+
+                <button
+                  className="delete-btn"
+                  onClick={() => deleteOffer(offer.itemId || offer._id)}
+                >
+                  <Trash2 size={16} />
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="no-offers">
+            <h3>No offers found</h3>
+            <p>
+              {offers.length === 0
+                ? "No special offers available. Please ensure backend server is running on http://localhost:5000 and farmers have created offers."
+                : "No offers match your search criteria"}
+            </p>
+          </div>
+        )}
+      </div>
+      {/* Modal remains the same */}
+    </div>
+  );
+};
+
+export default OfferManagement;
+```
+
 ## File: src/components/farmer/FarmerGallery/FarmerGallery.jsx
 ```javascript
 // src/components/farmer/FarmerGallery/FarmerGallery.jsx
@@ -12304,6 +12510,7 @@ const FarmerOffers = () => {
     }
   };
 
+  // FarmerOffers.jsx එකේ handleEdit function
   const handleEdit = async (e) => {
     e.preventDefault();
 
@@ -12339,14 +12546,25 @@ const FarmerOffers = () => {
         ...(formData.image && { image: formData.image }),
       };
 
-      await api.put(`/api/offers/update/${selectedOffer.itemId}`, submitData);
-      setMessage("Offer updated successfully! Waiting for admin approval.");
-      setShowEditModal(false);
-      resetForm();
-      fetchMyOffers();
+      console.log("Updating offer:", selectedOffer.itemId, submitData);
+
+      // Make sure using correct API endpoint with itemId
+      const response = await api.put(
+        `/api/offers/update/${selectedOffer.itemId}`,
+        submitData
+      );
+
+      if (response.data.success) {
+        setMessage("Offer updated successfully! Waiting for admin approval.");
+        setShowEditModal(false);
+        resetForm();
+        fetchMyOffers();
+      } else {
+        setMessage("Failed to update offer");
+      }
     } catch (error) {
-      setMessage("Failed to update offer. Please try again.");
       console.error("Update error:", error);
+      setMessage(error.response?.data?.message || "Failed to update offer");
     } finally {
       setLoading(false);
     }

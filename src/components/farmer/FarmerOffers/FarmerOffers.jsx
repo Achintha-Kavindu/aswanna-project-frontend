@@ -230,6 +230,7 @@ const FarmerOffers = () => {
     }
   };
 
+  // FarmerOffers.jsx එකේ handleEdit function
   const handleEdit = async (e) => {
     e.preventDefault();
 
@@ -265,14 +266,25 @@ const FarmerOffers = () => {
         ...(formData.image && { image: formData.image }),
       };
 
-      await api.put(`/api/offers/update/${selectedOffer.itemId}`, submitData);
-      setMessage("Offer updated successfully! Waiting for admin approval.");
-      setShowEditModal(false);
-      resetForm();
-      fetchMyOffers();
+      console.log("Updating offer:", selectedOffer.itemId, submitData);
+
+      // Make sure using correct API endpoint with itemId
+      const response = await api.put(
+        `/api/offers/update/${selectedOffer.itemId}`,
+        submitData
+      );
+
+      if (response.data.success) {
+        setMessage("Offer updated successfully! Waiting for admin approval.");
+        setShowEditModal(false);
+        resetForm();
+        fetchMyOffers();
+      } else {
+        setMessage("Failed to update offer");
+      }
     } catch (error) {
-      setMessage("Failed to update offer. Please try again.");
       console.error("Update error:", error);
+      setMessage(error.response?.data?.message || "Failed to update offer");
     } finally {
       setLoading(false);
     }
