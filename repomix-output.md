@@ -96,59 +96,18 @@ vite.config.js
 
 # Files
 
+## File: .gitignore
+```
+node_modules
+package-lock.json
+```
+
 ## File: .repomixignore
 ```
 # Add patterns to ignore here, one per line
 # Example:
 # *.log
 # tmp/
-```
-
-## File: repomix.config.json
-```json
-{
-  "$schema": "https://repomix.com/schemas/latest/schema.json",
-  "input": {
-    "maxFileSize": 52428800
-  },
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown",
-    "parsableStyle": false,
-    "fileSummary": true,
-    "directoryStructure": true,
-    "files": true,
-    "removeComments": false,
-    "removeEmptyLines": false,
-    "compress": false,
-    "topFilesLength": 5,
-    "showLineNumbers": false,
-    "copyToClipboard": false,
-    "git": {
-      "sortByChanges": true,
-      "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
-    }
-  },
-  "include": [],
-  "ignore": {
-    "useGitignore": true,
-    "useDefaultPatterns": true,
-    "customPatterns": []
-  },
-  "security": {
-    "enableSecurityCheck": true
-  },
-  "tokenCount": {
-    "encoding": "o200k_base"
-  }
-}
-```
-
-## File: .gitignore
-```
-node_modules
-package-lock.json
 ```
 
 ## File: eslint.config.js
@@ -261,6 +220,47 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+
+## File: repomix.config.json
+```json
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "input": {
+    "maxFileSize": 52428800
+  },
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown",
+    "parsableStyle": false,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "compress": false,
+    "topFilesLength": 5,
+    "showLineNumbers": false,
+    "copyToClipboard": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100,
+      "includeDiffs": false
+    }
+  },
+  "include": [],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": []
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
+}
 ```
 
 ## File: src/App.css
@@ -6237,3550 +6237,6 @@ const Sidebar = ({ activeSection, setActiveSection, userType }) => {
 export default Sidebar;
 ```
 
-## File: src/components/farmer/FarmerGallery/FarmerGallery.css
-```css
-/* src/components/farmer/FarmerGallery/FarmerGallery.css */
-.farmer-gallery {
-  padding: 2rem;
-  background: #f8f9fa;
-  min-height: calc(100vh - 80px);
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
-
-.gallery-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.header-content h2 {
-  font-size: 2rem;
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-}
-
-.header-content p {
-  color: #666;
-  margin: 0;
-}
-
-.create-btn {
-  background: linear-gradient(45deg, #27ae60, #2ecc71);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.create-btn:hover {
-  background: linear-gradient(45deg, #2ecc71, #58d68d);
-  transform: translateY(-2px);
-}
-
-/* Message */
-.message {
-  position: relative;
-  padding: 1rem 3rem 1rem 1rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  font-weight: 500;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.message.success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.message.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.message-close {
-  position: absolute;
-  top: 0.5rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: inherit;
-}
-
-/* Enhanced Search & Filter Bar */
-.search-filter-bar {
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e8ecef;
-}
-
-.search-filter-container {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.enhanced-search-bar {
-  flex: 1;
-  min-width: 300px;
-}
-
-.search-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.search-input-wrapper:hover {
-  border-color: #dee2e6;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.search-input-wrapper:focus-within {
-  border-color: #4caf50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-  background: white;
-}
-
-.search-icon {
-  position: absolute;
-  left: 1rem;
-  color: #6c757d;
-  z-index: 1;
-  transition: color 0.3s ease;
-}
-
-.search-input-wrapper:focus-within .search-icon {
-  color: #4caf50;
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.875rem 1rem 0.875rem 3rem;
-  border: none;
-  background: transparent;
-  font-size: 1rem;
-  color: #495057;
-  outline: none;
-  font-weight: 500;
-}
-
-.search-input::placeholder {
-  color: #adb5bd;
-  font-weight: 400;
-}
-
-.clear-search-btn {
-  position: absolute;
-  right: 0.75rem;
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  opacity: 0.7;
-}
-
-.clear-search-btn:hover {
-  background: #495057;
-  opacity: 1;
-  transform: scale(1.1);
-}
-
-.enhanced-filter-bar {
-  min-width: 200px;
-}
-
-.filter-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.filter-wrapper:hover {
-  border-color: #dee2e6;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.filter-wrapper:focus-within {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-  background: white;
-}
-
-.filter-icon {
-  position: absolute;
-  left: 1rem;
-  color: #6c757d;
-  z-index: 1;
-  transition: color 0.3s ease;
-}
-
-.filter-wrapper:focus-within .filter-icon {
-  color: #007bff;
-}
-
-.filter-select {
-  width: 100%;
-  padding: 0.875rem 1rem 0.875rem 3rem;
-  border: none;
-  background: transparent;
-  font-size: 1rem;
-  color: #495057;
-  cursor: pointer;
-  outline: none;
-  font-weight: 500;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 1rem center;
-  background-repeat: no-repeat;
-  background-size: 1rem;
-  padding-right: 3rem;
-}
-
-.clear-filter-btn {
-  position: absolute;
-  right: 2.5rem;
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  opacity: 0.7;
-}
-
-.clear-filter-btn:hover {
-  background: #495057;
-  opacity: 1;
-  transform: scale(1.1);
-}
-
-.refresh-btn {
-  background: linear-gradient(135deg, #17a2b8, #138496);
-  color: white;
-  border: none;
-  padding: 0.875rem 1.25rem;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(23, 162, 184, 0.2);
-}
-
-.refresh-btn:hover {
-  background: linear-gradient(135deg, #138496, #117a8b);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
-}
-
-.active-filters {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e9ecef;
-  flex-wrap: wrap;
-}
-
-.active-filters-label {
-  font-size: 0.875rem;
-  color: #6c757d;
-  font-weight: 600;
-}
-
-.filter-tag {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, #4caf50, #45a049);
-  color: white;
-  padding: 0.375rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
-}
-
-.filter-tag button {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: white;
-  transition: all 0.2s ease;
-}
-
-.filter-tag button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-/* Items Grid */
-.items-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.item-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.item-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.item-image {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-  width: 100%;
-}
-
-.item-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.status-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: white;
-}
-
-.status-badge.pending {
-  background: #ff9800;
-}
-
-.status-badge.approved {
-  background: #4caf50;
-}
-
-.item-content {
-  padding: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.item-content h3 {
-  font-size: 1.2rem;
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-}
-
-.item-price {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #27ae60;
-  margin: 0 0 1rem 0;
-}
-
-.item-meta {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.item-category,
-.item-location {
-  background: #f8f9fa;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.item-category {
-  background: #e8f5e8;
-  color: #27ae60;
-}
-
-.item-description {
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-.item-date {
-  font-size: 0.9rem;
-  color: #888;
-  margin-bottom: 1rem;
-}
-
-.item-actions {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0 1.5rem 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.view-btn,
-.edit-btn,
-.delete-btn {
-  flex: 1;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  transition: all 0.3s ease;
-}
-
-.view-btn {
-  background: #3498db;
-  color: white;
-}
-
-.view-btn:hover {
-  background: #2980b9;
-}
-
-.edit-btn {
-  background: #f39c12;
-  color: white;
-}
-
-.edit-btn:hover {
-  background: #e67e22;
-}
-
-.delete-btn {
-  background: #e74c3c;
-  color: white;
-}
-
-.delete-btn:hover {
-  background: #c0392b;
-}
-
-/* No Items */
-.no-items {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: #666;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.no-items h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.create-first-btn {
-  background: linear-gradient(45deg, #27ae60, #2ecc71);
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  transition: all 0.3s ease;
-}
-
-.create-first-btn:hover {
-  background: linear-gradient(45deg, #2ecc71, #58d68d);
-  transform: translateY(-2px);
-}
-
-/* Loading */
-.loading-container {
-  text-align: center;
-  padding: 4rem 0;
-  width: 100%;
-}
-
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #27ae60;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Enhanced Modal Styles - Smaller & Wider */
-.create-modal {
-  max-width: 900px;
-  width: 90%;
-  max-height: 85vh;
-  overflow-y: auto;
-  border-radius: 15px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
-.modal-header {
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
-  color: white;
-  padding: 1.5rem 2rem;
-  border-radius: 15px 15px 0 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.header-icon {
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.header-content h3 {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: bold;
-}
-
-.header-content p {
-  margin: 0;
-  opacity: 0.9;
-  font-size: 0.85rem;
-}
-
-.close-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.close-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-/* Enhanced Form Styles */
-.enhanced-modal-form {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* Image Upload Section */
-.image-upload-section {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 2px dashed #dee2e6;
-}
-
-.image-preview {
-  position: relative;
-  width: 150px;
-  height: 120px;
-  border-radius: 10px;
-  overflow: hidden;
-  background: white;
-  border: 2px solid #e9ecef;
-  flex-shrink: 0;
-}
-
-.image-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.image-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #6c757d;
-  text-align: center;
-}
-
-.image-placeholder p {
-  margin: 0.5rem 0 0 0;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.upload-controls {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.upload-btn {
-  background: linear-gradient(45deg, #27ae60, #2ecc71);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-  transition: all 0.3s ease;
-  text-decoration: none;
-}
-
-.upload-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
-}
-
-.upload-controls small {
-  color: #6c757d;
-  font-size: 0.8rem;
-  text-align: center;
-}
-
-/* Form Sections */
-.form-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-section {
-  background: white;
-  border: 1px solid #e9ecef;
-  border-radius: 12px;
-  padding: 1.5rem;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0 0 1rem 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #f8f9fa;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.form-group.full-width {
-  grid-column: 1 / -1;
-}
-
-.form-group label {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-weight: 600;
-  color: #2c3e50;
-  font-size: 0.85rem;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  padding: 0.7rem;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  background: #f8f9fa;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #27ae60;
-  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
-  background: white;
-}
-
-.char-count {
-  text-align: right;
-  font-size: 0.75rem;
-  color: #6c757d;
-  margin-top: 0.2rem;
-}
-
-/* Quality Badges */
-.quality-badges {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.quality-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: linear-gradient(45deg, #e8f5e8, #d4edda);
-  color: #27ae60;
-  padding: 0.6rem 0.8rem;
-  border-radius: 20px;
-  font-weight: 500;
-  border: 2px solid #c3e6cb;
-  font-size: 0.85rem;
-}
-
-/* Form Actions */
-.form-actions {
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
-  padding-top: 1.5rem;
-  border-top: 2px solid #f8f9fa;
-}
-
-.submit-btn {
-  background: linear-gradient(45deg, #27ae60, #2ecc71);
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  transition: all 0.3s ease;
-  min-width: 150px;
-  justify-content: center;
-}
-
-.submit-btn:hover:not(:disabled) {
-  background: linear-gradient(45deg, #2ecc71, #58d68d);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
-}
-
-.submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.cancel-btn {
-  background: #6c757d;
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  transition: all 0.3s ease;
-}
-
-.cancel-btn:hover {
-  background: #5a6268;
-  transform: translateY(-2px);
-}
-
-.loading-spinner-small {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-/* View Modal */
-.view-modal {
-  max-width: 700px;
-}
-
-.view-content {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.view-image {
-  position: relative;
-  width: 100%;
-  height: 250px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.view-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.view-details h4 {
-  font-size: 1.4rem;
-  color: #2c3e50;
-  margin: 0 0 1rem 0;
-  text-align: center;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.detail-label {
-  font-weight: 600;
-  color: #2c3e50;
-  font-size: 0.85rem;
-}
-
-.detail-value {
-  color: #666;
-  padding: 0.5rem;
-  background: #f8f9fa;
-  border-radius: 6px;
-  border-left: 3px solid #27ae60;
-}
-
-.description-section {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-}
-
-.description-section h5 {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.description-section p {
-  color: #666;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.item-id-section {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .farmer-gallery {
-    padding: 1rem;
-  }
-
-  .gallery-header {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-
-  .search-filter-container {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .enhanced-search-bar,
-  .enhanced-filter-bar {
-    min-width: auto;
-  }
-
-  .items-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .item-actions {
-    flex-direction: column;
-  }
-
-  .create-modal {
-    width: 95%;
-    max-height: 90vh;
-  }
-
-  .enhanced-modal-form {
-    padding: 1rem;
-  }
-
-  .image-upload-section {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .image-preview {
-    width: 100%;
-    max-width: 250px;
-    margin: 0 auto;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .active-filters {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 480px) {
-  .modal-header {
-    padding: 1rem;
-  }
-
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.3rem;
-  }
-
-  .header-icon {
-    width: 35px;
-    height: 35px;
-  }
-
-  .close-btn {
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 30px;
-    height: 30px;
-  }
-}
-```
-
-## File: src/components/farmer/FarmerGallery/FarmerGallery.jsx
-```javascript
-// src/components/farmer/FarmerGallery/FarmerGallery.jsx
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../../../context/AuthContext";
-import api from "../../../utils/api";
-import {
-  Plus,
-  Eye,
-  Edit,
-  Trash2,
-  Search,
-  Filter,
-  X,
-  RefreshCw,
-  Save,
-  Camera,
-  Package,
-  Tag,
-  DollarSign,
-  Grid,
-  MapPin,
-  Calendar,
-  FileText,
-  Award,
-  Leaf,
-  Droplets,
-  Shield,
-  Sun,
-} from "lucide-react";
-import "./FarmerGallery.css";
-
-const FarmerGallery = () => {
-  const { user } = useAuth();
-  const [items, setItems] = useState([]);
-  const [filteredItems, setFilteredItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [message, setMessage] = useState("");
-
-  const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    price: "",
-    category: "",
-    location: "",
-    description: "",
-    harvestDay: "",
-  });
-
-  const categories = [
-    "vegetables",
-    "fruits",
-    "grains",
-    "herbs",
-    "dairy",
-    "seeds",
-  ];
-
-  useEffect(() => {
-    fetchMyItems();
-  }, []);
-
-  useEffect(() => {
-    filterItems();
-  }, [items, searchTerm, filterStatus]);
-
-  const fetchMyItems = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get("/api/gallery/my-items");
-      setItems(response.data.galleryItems || []);
-    } catch (error) {
-      console.error("Error fetching gallery items:", error);
-      setMessage("Failed to fetch gallery items");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterItems = () => {
-    let filtered = items;
-
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.location.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (filterStatus !== "all") {
-      filtered = filtered.filter((item) => item.status === filterStatus);
-    }
-
-    setFilteredItems(filtered);
-  };
-
-  const clearSearch = () => {
-    setSearchTerm("");
-  };
-
-  const clearFilter = () => {
-    setFilterStatus("all");
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          image: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      image: "",
-      price: "",
-      category: "",
-      location: "",
-      description: "",
-      harvestDay: "",
-    });
-  };
-
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      await api.post("/api/gallery/create", formData);
-      setMessage(
-        "Gallery item created successfully! Waiting for admin approval."
-      );
-      setShowCreateModal(false);
-      resetForm();
-      fetchMyItems();
-    } catch (error) {
-      setMessage("Failed to create gallery item. Please try again.");
-      console.error("Create error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEdit = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      await api.put(`/api/gallery/update/${selectedItem.itemId}`, formData);
-      setMessage(
-        "Gallery item updated successfully! Waiting for admin approval."
-      );
-      setShowEditModal(false);
-      resetForm();
-      fetchMyItems();
-    } catch (error) {
-      setMessage("Failed to update gallery item. Please try again.");
-      console.error("Update error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (itemId) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
-      try {
-        await api.delete(`/api/gallery/my-items/${itemId}`);
-        setMessage("Gallery item deleted successfully!");
-        fetchMyItems();
-      } catch (error) {
-        setMessage("Failed to delete gallery item. Please try again.");
-        console.error("Delete error:", error);
-      }
-    }
-  };
-
-  const openEditModal = (item) => {
-    setSelectedItem(item);
-    setFormData({
-      name: item.name,
-      image: item.image,
-      price: item.price,
-      category: item.category,
-      location: item.location,
-      description: item.description,
-      harvestDay: item.harvestDay ? item.harvestDay.split("T")[0] : "",
-    });
-    setShowEditModal(true);
-  };
-
-  const openViewModal = (item) => {
-    setSelectedItem(item);
-    setShowViewModal(true);
-  };
-
-  if (loading && items.length === 0) {
-    return (
-      <div className="farmer-gallery">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading gallery items...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="farmer-gallery">
-      <div className="gallery-header">
-        <div className="header-content">
-          <h2>My Gallery Items</h2>
-          <p>Manage your agricultural products</p>
-        </div>
-        <button className="create-btn" onClick={() => setShowCreateModal(true)}>
-          <Plus size={20} />
-          Add New Item
-        </button>
-      </div>
-
-      {/* Message */}
-      {message && (
-        <div
-          className={`message ${
-            message.includes("successfully") ? "success" : "error"
-          }`}
-        >
-          {message}
-          <button onClick={() => setMessage("")} className="message-close">
-            ×
-          </button>
-        </div>
-      )}
-
-      {/* Enhanced Search & Filter */}
-      <div className="search-filter-bar">
-        <div className="search-filter-container">
-          {/* Enhanced Search Bar */}
-          <div className="enhanced-search-bar">
-            <div className="search-input-wrapper">
-              <Search className="search-icon" size={20} />
-              <input
-                type="text"
-                placeholder="Search by name, category, or location..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-              {searchTerm && (
-                <button
-                  className="clear-search-btn"
-                  onClick={clearSearch}
-                  aria-label="Clear search"
-                >
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Enhanced Filter Bar */}
-          <div className="enhanced-filter-bar">
-            <div className="filter-wrapper">
-              <Filter className="filter-icon" size={20} />
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="filter-select"
-              >
-                <option value="all">All Items ({items.length})</option>
-                <option value="pending">
-                  Pending ({items.filter((i) => i.status === "pending").length})
-                </option>
-                <option value="approved">
-                  Approved (
-                  {items.filter((i) => i.status === "approved").length})
-                </option>
-              </select>
-              {filterStatus !== "all" && (
-                <button
-                  className="clear-filter-btn"
-                  onClick={clearFilter}
-                  aria-label="Clear filter"
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Refresh Button */}
-          <button
-            className="refresh-btn"
-            onClick={fetchMyItems}
-            aria-label="Refresh data"
-          >
-            <RefreshCw size={18} />
-            <span>Refresh</span>
-          </button>
-        </div>
-
-        {/* Active Filters Display */}
-        {(searchTerm || filterStatus !== "all") && (
-          <div className="active-filters">
-            <span className="active-filters-label">Active filters:</span>
-            {searchTerm && (
-              <div className="filter-tag">
-                <span>Search: "{searchTerm}"</span>
-                <button onClick={clearSearch}>
-                  <X size={12} />
-                </button>
-              </div>
-            )}
-            {filterStatus !== "all" && (
-              <div className="filter-tag">
-                <span>Status: {filterStatus}</span>
-                <button onClick={clearFilter}>
-                  <X size={12} />
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Items Grid */}
-      <div className="items-grid">
-        {filteredItems.map((item) => (
-          <div key={item._id} className="item-card">
-            <div className="item-image">
-              <img src={item.image} alt={item.name} />
-              <div className={`status-badge ${item.status}`}>
-                {item.status.toUpperCase()}
-              </div>
-            </div>
-
-            <div className="item-content">
-              <h3>{item.name}</h3>
-              <p className="item-price">Rs. {item.price}</p>
-              <div className="item-meta">
-                <span className="item-category">{item.category}</span>
-                <span className="item-location">{item.location}</span>
-              </div>
-              <p className="item-description">
-                {item.description.length > 80
-                  ? `${item.description.substring(0, 80)}...`
-                  : item.description}
-              </p>
-              <div className="item-date">
-                <strong>Harvest:</strong>{" "}
-                {new Date(item.harvestDay).toLocaleDateString()}
-              </div>
-            </div>
-
-            <div className="item-actions">
-              <button className="view-btn" onClick={() => openViewModal(item)}>
-                <Eye size={16} />
-                View
-              </button>
-
-              <button className="edit-btn" onClick={() => openEditModal(item)}>
-                <Edit size={16} />
-                Edit
-              </button>
-
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(item.itemId)}
-              >
-                <Trash2 size={16} />
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {filteredItems.length === 0 && (
-        <div className="no-items">
-          <h3>No gallery items found</h3>
-          <p>
-            {items.length === 0
-              ? "Create your first gallery item to get started!"
-              : "No gallery items match your search criteria"}
-          </p>
-          {items.length === 0 && (
-            <button
-              className="create-first-btn"
-              onClick={() => setShowCreateModal(true)}
-            >
-              <Plus size={20} />
-              Create First Item
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Create Modal */}
-      {showCreateModal && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowCreateModal(false)}
-        >
-          <div
-            className="modal-content create-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header">
-              <div className="header-content">
-                <div className="header-icon">
-                  <Plus size={24} />
-                </div>
-                <div>
-                  <h3>Create Gallery Item</h3>
-                  <p>Add your fresh produce to the gallery</p>
-                </div>
-              </div>
-              <button
-                className="close-btn"
-                onClick={() => setShowCreateModal(false)}
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreate} className="enhanced-modal-form">
-              {/* Image Upload Section */}
-              <div className="image-upload-section">
-                <div className="image-preview">
-                  {formData.image ? (
-                    <img src={formData.image} alt="Preview" />
-                  ) : (
-                    <div className="image-placeholder">
-                      <Camera size={48} />
-                      <p>Upload Product Image</p>
-                    </div>
-                  )}
-                </div>
-                <div className="upload-controls">
-                  <label htmlFor="image-upload" className="upload-btn">
-                    <Camera size={20} />
-                    Choose Image
-                  </label>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    required
-                    style={{ display: "none" }}
-                  />
-                  <small>Recommended: 800x600px, Max 5MB</small>
-                </div>
-              </div>
-
-              {/* Form Fields */}
-              <div className="form-sections">
-                {/* Basic Information */}
-                <div className="form-section">
-                  <h4 className="section-title">
-                    <Package size={20} />
-                    Basic Information
-                  </h4>
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label>
-                        <Tag size={16} />
-                        Product Name
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="e.g., Fresh Organic Tomatoes"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <DollarSign size={16} />
-                        Price per KG (Rs.)
-                      </label>
-                      <input
-                        type="number"
-                        name="price"
-                        value={formData.price}
-                        onChange={handleInputChange}
-                        placeholder="250"
-                        min="1"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <Grid size={16} />
-                        Category
-                      </label>
-                      <select
-                        name="category"
-                        value={formData.category}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="">Select Category</option>
-                        {categories.map((category) => (
-                          <option key={category} value={category}>
-                            {category.charAt(0).toUpperCase() +
-                              category.slice(1)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <MapPin size={16} />
-                        Farm Location
-                      </label>
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        placeholder="e.g., Kandy, Sri Lanka"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <Calendar size={16} />
-                        Harvest Date
-                      </label>
-                      <input
-                        type="date"
-                        name="harvestDay"
-                        value={formData.harvestDay}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Product Description */}
-                <div className="form-section">
-                  <h4 className="section-title">
-                    <FileText size={20} />
-                    Product Description
-                  </h4>
-                  <div className="form-group full-width">
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      rows="5"
-                      placeholder="Describe your product quality, farming methods, freshness, etc..."
-                      required
-                    />
-                    <div className="char-count">
-                      {formData.description.length}/500 characters
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quality Indicators */}
-                <div className="form-section">
-                  <h4 className="section-title">
-                    <Award size={20} />
-                    Quality Assurance
-                  </h4>
-                  <div className="quality-badges">
-                    <div className="quality-badge">
-                      <Leaf size={16} />
-                      <span>Organic</span>
-                    </div>
-                    <div className="quality-badge">
-                      <Droplets size={16} />
-                      <span>Fresh</span>
-                    </div>
-                    <div className="quality-badge">
-                      <Shield size={16} />
-                      <span>Pesticide Free</span>
-                    </div>
-                    <div className="quality-badge">
-                      <Sun size={16} />
-                      <span>Farm Fresh</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Form Actions */}
-              <div className="form-actions">
-                <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <div className="loading-spinner-small"></div>
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      <Save size={16} />
-                      Create Gallery Item
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  <X size={16} />
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
-          <div
-            className="modal-content create-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header">
-              <div className="header-content">
-                <div className="header-icon">
-                  <Edit size={24} />
-                </div>
-                <div>
-                  <h3>Edit Gallery Item</h3>
-                  <p>Update your product information</p>
-                </div>
-              </div>
-              <button
-                className="close-btn"
-                onClick={() => setShowEditModal(false)}
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <form onSubmit={handleEdit} className="enhanced-modal-form">
-              {/* Image Upload Section */}
-              <div className="image-upload-section">
-                <div className="image-preview">
-                  {formData.image ? (
-                    <img src={formData.image} alt="Preview" />
-                  ) : (
-                    <div className="image-placeholder">
-                      <Camera size={48} />
-                      <p>Upload Product Image</p>
-                    </div>
-                  )}
-                </div>
-                <div className="upload-controls">
-                  <label htmlFor="edit-image-upload" className="upload-btn">
-                    <Camera size={20} />
-                    Change Image
-                  </label>
-                  <input
-                    id="edit-image-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    style={{ display: "none" }}
-                  />
-                  <small>Leave empty to keep current image</small>
-                </div>
-              </div>
-
-              {/* Form Fields - Same as create modal */}
-              <div className="form-sections">
-                <div className="form-section">
-                  <h4 className="section-title">
-                    <Package size={20} />
-                    Basic Information
-                  </h4>
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label>
-                        <Tag size={16} />
-                        Product Name
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <DollarSign size={16} />
-                        Price per KG (Rs.)
-                      </label>
-                      <input
-                        type="number"
-                        name="price"
-                        value={formData.price}
-                        onChange={handleInputChange}
-                        min="1"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <Grid size={16} />
-                        Category
-                      </label>
-                      <select
-                        name="category"
-                        value={formData.category}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="">Select Category</option>
-                        {categories.map((category) => (
-                          <option key={category} value={category}>
-                            {category.charAt(0).toUpperCase() +
-                              category.slice(1)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <MapPin size={16} />
-                        Farm Location
-                      </label>
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <Calendar size={16} />
-                        Harvest Date
-                      </label>
-                      <input
-                        type="date"
-                        name="harvestDay"
-                        value={formData.harvestDay}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-section">
-                  <h4 className="section-title">
-                    <FileText size={20} />
-                    Product Description
-                  </h4>
-                  <div className="form-group full-width">
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      rows="5"
-                      required
-                    />
-                    <div className="char-count">
-                      {formData.description.length}/500 characters
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-actions">
-                <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <div className="loading-spinner-small"></div>
-                      Updating...
-                    </>
-                  ) : (
-                    <>
-                      <Save size={16} />
-                      Update Gallery Item
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowEditModal(false)}
-                >
-                  <X size={16} />
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* View Modal */}
-      {showViewModal && selectedItem && (
-        <div className="modal-overlay" onClick={() => setShowViewModal(false)}>
-          <div
-            className="modal-content view-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header">
-              <h3>Gallery Item Details</h3>
-              <button
-                className="close-btn"
-                onClick={() => setShowViewModal(false)}
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="view-content">
-              <div className="view-image">
-                <img src={selectedItem.image} alt={selectedItem.name} />
-                <div className={`status-badge ${selectedItem.status}`}>
-                  {selectedItem.status.toUpperCase()}
-                </div>
-              </div>
-
-              <div className="view-details">
-                <h4>{selectedItem.name}</h4>
-
-                <div className="detail-grid">
-                  <div className="detail-item">
-                    <span className="detail-label">Price</span>
-                    <span className="detail-value">
-                      Rs. {selectedItem.price}
-                    </span>
-                  </div>
-
-                  <div className="detail-item">
-                    <span className="detail-label">Category</span>
-                    <span className="detail-value">
-                      {selectedItem.category}
-                    </span>
-                  </div>
-
-                  <div className="detail-item">
-                    <span className="detail-label">Location</span>
-                    <span className="detail-value">
-                      {selectedItem.location}
-                    </span>
-                  </div>
-
-                  <div className="detail-item">
-                    <span className="detail-label">Harvest Date</span>
-                    <span className="detail-value">
-                      {new Date(selectedItem.harvestDay).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="description-section">
-                  <h5>Description</h5>
-                  <p>{selectedItem.description}</p>
-                </div>
-
-                <div className="item-id-section">
-                  <strong>Item ID:</strong> {selectedItem.itemId}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default FarmerGallery;
-```
-
-## File: src/components/farmer/FarmerOffers/FarmerOffers.css
-```css
-/* src/components/farmer/FarmerOffers/FarmerOffers.css */
-.farmer-offers {
-  padding: 2rem;
-  background: #f8f9fa;
-  min-height: calc(100vh - 80px);
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
-
-.offers-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.header-content h2 {
-  font-size: 2rem;
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-}
-
-.header-content p {
-  color: #666;
-  margin: 0;
-}
-
-/* Offers Grid */
-.offers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.offer-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  border: 2px solid #e74c3c;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.offer-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(231, 76, 60, 0.2);
-}
-
-.offer-image {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-  width: 100%;
-}
-
-.offer-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.offer-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.offer-content {
-  padding: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.offer-content h3 {
-  font-size: 1.2rem;
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-}
-
-.offer-price {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #e74c3c;
-  margin: 0 0 1rem 0;
-}
-
-.offer-meta {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.offer-category,
-.offer-location {
-  background: #f8f9fa;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.offer-category {
-  background: #ffebee;
-  color: #e74c3c;
-}
-
-.offer-description {
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-.offer-conditions {
-  background: #fff3e0;
-  padding: 0.75rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  border-left: 3px solid #ff9800;
-}
-
-.offer-conditions strong {
-  color: #e65100;
-  font-size: 0.9rem;
-}
-
-.offer-conditions ul {
-  margin: 0.5rem 0 0 1rem;
-  padding: 0;
-}
-
-.offer-conditions li {
-  font-size: 0.8rem;
-  color: #666;
-  margin-bottom: 0.25rem;
-}
-
-.offer-date {
-  font-size: 0.9rem;
-  color: #888;
-  margin-bottom: 1rem;
-}
-
-.offer-actions {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0 1.5rem 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* No Offers */
-.no-offers {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: #666;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.no-offers h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-/* Enhanced Modal Styles for Offers - Smaller & Wider */
-.offer-modal .modal-header {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
-}
-
-.offer-preview {
-  border: 2px solid #e74c3c;
-}
-
-.offer-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.offer-badge-preview {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-  color: white;
-  padding: 0.2rem 0.4rem;
-  border-radius: 6px;
-  font-size: 0.65rem;
-  font-weight: bold;
-}
-
-.offer-upload {
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-}
-
-.offer-upload:hover {
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-}
-
-.offer-title {
-  color: #e74c3c;
-}
-
-.offer-form .form-group input:focus,
-.offer-form .form-group select:focus,
-.offer-form .form-group textarea:focus {
-  border-color: #e74c3c;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
-}
-
-.price-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.price-label {
-  position: absolute;
-  right: 0.8rem;
-  color: #6c757d;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-/* Conditions Input */
-.conditions-input-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.condition-input-wrapper {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.condition-input-wrapper input {
-  flex: 1;
-}
-
-.add-condition-btn {
-  background: linear-gradient(45deg, #17a2b8, #138496);
-  color: white;
-  border: none;
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.add-condition-btn:hover:not(:disabled) {
-  background: linear-gradient(45deg, #138496, #117a8b);
-  transform: translateY(-2px);
-}
-
-.add-condition-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.conditions-list h5 {
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-  font-size: 0.95rem;
-}
-
-.condition-tag {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #fff3e0;
-  border: 1px solid #ffcc02;
-  padding: 0.6rem;
-  border-radius: 8px;
-  margin-bottom: 0.4rem;
-}
-
-.remove-condition {
-  background: #e74c3c;
-  color: white;
-  border: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.remove-condition:hover {
-  background: #c0392b;
-  transform: scale(1.1);
-}
-
-/* Offer Highlights */
-.offer-highlights {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.75rem;
-}
-
-.highlight-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(45deg, #ffebee, #fce4ec);
-  color: #e74c3c;
-  padding: 0.8rem;
-  border-radius: 10px;
-  font-weight: 500;
-  border: 2px solid #f8bbd9;
-  font-size: 0.85rem;
-}
-
-/* Form Actions for Offers */
-.offer-actions .form-actions {
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
-  padding-top: 1.5rem;
-  border-top: 2px solid #f8f9fa;
-}
-
-.offer-submit {
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-}
-
-.offer-submit:hover:not(:disabled) {
-  background: linear-gradient(45deg, #c0392b, #a93226);
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-}
-
-/* View Modal for Offers */
-.modal-offer-badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-  color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.conditions-section {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-}
-
-.conditions-section h5 {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.conditions-view-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.conditions-view-list li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0;
-  color: #666;
-  border-bottom: 1px solid #eee;
-}
-
-.conditions-view-list li:last-child {
-  border-bottom: none;
-}
-
-.offer-id-section {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .farmer-offers {
-    padding: 1rem;
-  }
-
-  .offers-header {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-
-  .offers-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .offer-actions {
-    flex-direction: column;
-  }
-
-  .condition-input-wrapper {
-    flex-direction: column;
-  }
-
-  .offer-highlights {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .offer-highlights {
-    grid-template-columns: 1fr;
-  }
-}
-```
-
-## File: src/components/farmer/FarmerOffers/FarmerOffers.jsx
-```javascript
-// src/components/farmer/FarmerOffers/FarmerOffers.jsx
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../../../context/AuthContext";
-import api from "../../../utils/api";
-import {
-  Plus,
-  Eye,
-  Edit,
-  Trash2,
-  Search,
-  Filter,
-  X,
-  RefreshCw,
-  AlertCircle,
-  Save,
-  Camera,
-  Gift,
-  Percent,
-  Tag,
-  DollarSign,
-  Grid,
-  MapPin,
-  Calendar,
-  FileText,
-  Star,
-  Clock,
-  Truck,
-  Award,
-} from "lucide-react";
-import "./FarmerOffers.css";
-
-const FarmerOffers = () => {
-  const { user } = useAuth();
-  const [offers, setOffers] = useState([]);
-  const [filteredOffers, setFilteredOffers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [selectedOffer, setSelectedOffer] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [message, setMessage] = useState("");
-
-  const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    price: "",
-    category: "",
-    location: "",
-    description: "",
-    harvestDay: "",
-    condition: [],
-  });
-
-  const [newCondition, setNewCondition] = useState("");
-
-  const categories = [
-    "vegetables",
-    "fruits",
-    "grains",
-    "herbs",
-    "dairy",
-    "seeds",
-  ];
-
-  useEffect(() => {
-    fetchMyOffers();
-  }, []);
-
-  useEffect(() => {
-    filterOffers();
-  }, [offers, searchTerm, filterStatus]);
-
-  const fetchMyOffers = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get("/api/offers/my-offers");
-      setOffers(response.data.offers || []);
-    } catch (error) {
-      console.error("Error fetching offers:", error);
-      setMessage("Failed to fetch offers");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterOffers = () => {
-    let filtered = offers;
-
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (offer) =>
-          offer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          offer.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          offer.location.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (filterStatus !== "all") {
-      filtered = filtered.filter((offer) => offer.status === filterStatus);
-    }
-
-    setFilteredOffers(filtered);
-  };
-
-  const clearSearch = () => {
-    setSearchTerm("");
-  };
-
-  const clearFilter = () => {
-    setFilterStatus("all");
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          image: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const addCondition = () => {
-    if (newCondition.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        condition: [...prev.condition, newCondition.trim()],
-      }));
-      setNewCondition("");
-    }
-  };
-
-  const removeCondition = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      condition: prev.condition.filter((_, i) => i !== index),
-    }));
-  };
-
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      image: "",
-      price: "",
-      category: "",
-      location: "",
-      description: "",
-      harvestDay: "",
-      condition: [],
-    });
-    setNewCondition("");
-  };
-
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      await api.post("/api/offers", formData);
-      setMessage(
-        "Special offer created successfully! Waiting for admin approval."
-      );
-      setShowCreateModal(false);
-      resetForm();
-      fetchMyOffers();
-    } catch (error) {
-      setMessage("Failed to create offer. Please try again.");
-      console.error("Create error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEdit = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      await api.put(`/api/offers/update/${selectedOffer.itemId}`, formData);
-      setMessage("Offer updated successfully! Waiting for admin approval.");
-      setShowEditModal(false);
-      resetForm();
-      fetchMyOffers();
-    } catch (error) {
-      setMessage("Failed to update offer. Please try again.");
-      console.error("Update error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (itemId) => {
-    if (window.confirm("Are you sure you want to delete this offer?")) {
-      try {
-        await api.delete(`/api/offers/my-offers/${itemId}`);
-        setMessage("Offer deleted successfully!");
-        fetchMyOffers();
-      } catch (error) {
-        setMessage("Failed to delete offer. Please try again.");
-        console.error("Delete error:", error);
-      }
-    }
-  };
-
-  const openEditModal = (offer) => {
-    setSelectedOffer(offer);
-    setFormData({
-      name: offer.name,
-      image: offer.image,
-      price: offer.price,
-      category: offer.category,
-      location: offer.location,
-      description: offer.description,
-      harvestDay: offer.harvestDay ? offer.harvestDay.split("T")[0] : "",
-      condition: offer.condition || [],
-    });
-    setShowEditModal(true);
-  };
-
-  const openViewModal = (offer) => {
-    setSelectedOffer(offer);
-    setShowViewModal(true);
-  };
-
-  if (loading && offers.length === 0) {
-    return (
-      <div className="farmer-offers">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading offers...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="farmer-offers">
-      <div className="offers-header">
-        <div className="header-content">
-          <h2>My Special Offers</h2>
-          <p>Manage your special promotional offers</p>
-        </div>
-        <button className="create-btn" onClick={() => setShowCreateModal(true)}>
-          <Plus size={20} />
-          Create New Offer
-        </button>
-      </div>
-
-      {/* Message */}
-      {message && (
-        <div
-          className={`message ${
-            message.includes("successfully") ? "success" : "error"
-          }`}
-        >
-          {message}
-          <button onClick={() => setMessage("")} className="message-close">
-            ×
-          </button>
-        </div>
-      )}
-
-      {/* Enhanced Search & Filter */}
-      <div className="search-filter-bar">
-        <div className="search-filter-container">
-          {/* Enhanced Search Bar */}
-          <div className="enhanced-search-bar">
-            <div className="search-input-wrapper">
-              <Search className="search-icon" size={20} />
-              <input
-                type="text"
-                placeholder="Search by offer name, category, or location..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-              {searchTerm && (
-                <button
-                  className="clear-search-btn"
-                  onClick={clearSearch}
-                  aria-label="Clear search"
-                >
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Enhanced Filter Bar */}
-          <div className="enhanced-filter-bar">
-            <div className="filter-wrapper">
-              <Filter className="filter-icon" size={20} />
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="filter-select"
-              >
-                <option value="all">All Offers ({offers.length})</option>
-                <option value="pending">
-                  Pending ({offers.filter((o) => o.status === "pending").length}
-                  )
-                </option>
-                <option value="approved">
-                  Approved (
-                  {offers.filter((o) => o.status === "approved").length})
-                </option>
-              </select>
-              {filterStatus !== "all" && (
-                <button
-                  className="clear-filter-btn"
-                  onClick={clearFilter}
-                  aria-label="Clear filter"
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Refresh Button */}
-          <button
-            className="refresh-btn"
-            onClick={fetchMyOffers}
-            aria-label="Refresh data"
-          >
-            <RefreshCw size={18} />
-            <span>Refresh</span>
-          </button>
-        </div>
-
-        {/* Active Filters Display */}
-        {(searchTerm || filterStatus !== "all") && (
-          <div className="active-filters">
-            <span className="active-filters-label">Active filters:</span>
-            {searchTerm && (
-              <div className="filter-tag">
-                <span>Search: "{searchTerm}"</span>
-                <button onClick={clearSearch}>
-                  <X size={12} />
-                </button>
-              </div>
-            )}
-            {filterStatus !== "all" && (
-              <div className="filter-tag">
-                <span>Status: {filterStatus}</span>
-                <button onClick={clearFilter}>
-                  <X size={12} />
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Offers Grid */}
-      <div className="offers-grid">
-        {filteredOffers.map((offer) => (
-          <div key={offer._id} className="offer-card">
-            <div className="offer-image">
-              <img src={offer.image} alt={offer.name} />
-              <div className={`status-badge ${offer.status}`}>
-                {offer.status.toUpperCase()}
-              </div>
-              <div className="offer-badge">SPECIAL OFFER</div>
-            </div>
-
-            <div className="offer-content">
-              <h3>{offer.name}</h3>
-              <p className="offer-price">Rs. {offer.price}</p>
-              <div className="offer-meta">
-                <span className="offer-category">{offer.category}</span>
-                <span className="offer-location">{offer.location}</span>
-              </div>
-              <p className="offer-description">
-                {offer.description.length > 80
-                  ? `${offer.description.substring(0, 80)}...`
-                  : offer.description}
-              </p>
-              {offer.condition && offer.condition.length > 0 && (
-                <div className="offer-conditions">
-                  <strong>Conditions:</strong>
-                  <ul>
-                    {offer.condition.slice(0, 2).map((cond, index) => (
-                      <li key={index}>{cond}</li>
-                    ))}
-                    {offer.condition.length > 2 && (
-                      <li>+{offer.condition.length - 2} more...</li>
-                    )}
-                  </ul>
-                </div>
-              )}
-              <div className="offer-date">
-                <strong>Harvest:</strong>{" "}
-                {new Date(offer.harvestDay).toLocaleDateString()}
-              </div>
-            </div>
-
-            <div className="offer-actions">
-              <button className="view-btn" onClick={() => openViewModal(offer)}>
-                <Eye size={16} />
-                View
-              </button>
-
-              <button className="edit-btn" onClick={() => openEditModal(offer)}>
-                <Edit size={16} />
-                Edit
-              </button>
-
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(offer.itemId)}
-              >
-                <Trash2 size={16} />
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {filteredOffers.length === 0 && (
-        <div className="no-offers">
-          <h3>No special offers found</h3>
-          <p>
-            {offers.length === 0
-              ? "Create your first special offer to attract more customers!"
-              : "No offers match your search criteria"}
-          </p>
-          {offers.length === 0 && (
-            <button
-              className="create-first-btn"
-              onClick={() => setShowCreateModal(true)}
-            >
-              <Plus size={20} />
-              Create First Offer
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Create Modal */}
-      {showCreateModal && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowCreateModal(false)}
-        >
-          <div
-            className="modal-content create-modal offer-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header offer-header">
-              <div className="header-content">
-                <div className="header-icon offer-icon">
-                  <Gift size={24} />
-                </div>
-                <div>
-                  <h3>Create Special Offer</h3>
-                  <p>Create an attractive offer for your products</p>
-                </div>
-              </div>
-              <button
-                className="close-btn"
-                onClick={() => setShowCreateModal(false)}
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <form
-              onSubmit={handleCreate}
-              className="enhanced-modal-form offer-form"
-            >
-              {/* Image Upload Section */}
-              <div className="image-upload-section">
-                <div className="image-preview offer-preview">
-                  {formData.image ? (
-                    <>
-                      <img src={formData.image} alt="Preview" />
-                      <div className="offer-overlay">
-                        <div className="offer-badge-preview">SPECIAL OFFER</div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="image-placeholder">
-                      <Camera size={48} />
-                      <p>Upload Offer Image</p>
-                      <span>Make it attractive!</span>
-                    </div>
-                  )}
-                </div>
-                <div className="upload-controls">
-                  <label
-                    htmlFor="offer-image-upload"
-                    className="upload-btn offer-upload"
-                  >
-                    <Camera size={20} />
-                    Choose Image
-                  </label>
-                  <input
-                    id="offer-image-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    required
-                    style={{ display: "none" }}
-                  />
-                  <small>High-quality images get more attention!</small>
-                </div>
-              </div>
-
-              {/* Form Fields */}
-              <div className="form-sections">
-                {/* Offer Details */}
-                <div className="form-section">
-                  <h4 className="section-title offer-title">
-                    <Percent size={20} />
-                    Offer Details
-                  </h4>
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label>
-                        <Tag size={16} />
-                        Offer Name
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="e.g., Weekend Special - Fresh Mangoes"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <DollarSign size={16} />
-                        Special Price (Rs.)
-                      </label>
-                      <div className="price-input-wrapper">
-                        <input
-                          type="number"
-                          name="price"
-                          value={formData.price}
-                          onChange={handleInputChange}
-                          placeholder="200"
-                          min="1"
-                          required
-                        />
-                        <span className="price-label">per KG</span>
-                      </div>
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <Grid size={16} />
-                        Category
-                      </label>
-                      <select
-                        name="category"
-                        value={formData.category}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="">Select Category</option>
-                        {categories.map((category) => (
-                          <option key={category} value={category}>
-                            {category.charAt(0).toUpperCase() +
-                              category.slice(1)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <MapPin size={16} />
-                        Location
-                      </label>
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        placeholder="e.g., Galle, Sri Lanka"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <Calendar size={16} />
-                        Harvest Date
-                      </label>
-                      <input
-                        type="date"
-                        name="harvestDay"
-                        value={formData.harvestDay}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Offer Description */}
-                <div className="form-section">
-                  <h4 className="section-title">
-                    <FileText size={20} />
-                    Offer Description
-                  </h4>
-                  <div className="form-group full-width">
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      rows="4"
-                      placeholder="Describe what makes this offer special, discount details, quality, etc..."
-                      required
-                    />
-                    <div className="char-count">
-                      {formData.description.length}/500 characters
-                    </div>
-                  </div>
-                </div>
-
-                {/* Special Conditions */}
-                <div className="form-section">
-                  <h4 className="section-title">
-                    <AlertCircle size={20} />
-                    Terms & Conditions
-                  </h4>
-
-                  <div className="conditions-input-section">
-                    <div className="condition-input-wrapper">
-                      <input
-                        type="text"
-                        value={newCondition}
-                        onChange={(e) => setNewCondition(e.target.value)}
-                        placeholder="e.g., Minimum 5kg order, Valid for 7 days"
-                        onKeyPress={(e) =>
-                          e.key === "Enter" &&
-                          (e.preventDefault(), addCondition())
-                        }
-                      />
-                      <button
-                        type="button"
-                        onClick={addCondition}
-                        className="add-condition-btn"
-                        disabled={!newCondition.trim()}
-                      >
-                        <Plus size={16} />
-                        Add
-                      </button>
-                    </div>
-
-                    {formData.condition.length > 0 && (
-                      <div className="conditions-list">
-                        <h5>Added Conditions:</h5>
-                        {formData.condition.map((cond, index) => (
-                          <div key={index} className="condition-tag">
-                            <span>{cond}</span>
-                            <button
-                              type="button"
-                              onClick={() => removeCondition(index)}
-                              className="remove-condition"
-                            >
-                              <X size={14} />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Offer Highlights */}
-                <div className="form-section">
-                  <h4 className="section-title">
-                    <Star size={20} />
-                    Offer Highlights
-                  </h4>
-                  <div className="offer-highlights">
-                    <div className="highlight-item">
-                      <Percent size={16} />
-                      <span>Special Discount</span>
-                    </div>
-                    <div className="highlight-item">
-                      <Clock size={16} />
-                      <span>Limited Time</span>
-                    </div>
-                    <div className="highlight-item">
-                      <Truck size={16} />
-                      <span>Fresh Delivery</span>
-                    </div>
-                    <div className="highlight-item">
-                      <Award size={16} />
-                      <span>Premium Quality</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Form Actions */}
-              <div className="form-actions offer-actions">
-                <button
-                  type="submit"
-                  className="submit-btn offer-submit"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <div className="loading-spinner-small"></div>
-                      Creating Offer...
-                    </>
-                  ) : (
-                    <>
-                      <Gift size={16} />
-                      Create Special Offer
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  <X size={16} />
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
-          <div
-            className="modal-content create-modal offer-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header offer-header">
-              <div className="header-content">
-                <div className="header-icon offer-icon">
-                  <Edit size={24} />
-                </div>
-                <div>
-                  <h3>Edit Special Offer</h3>
-                  <p>Update your offer details</p>
-                </div>
-              </div>
-              <button
-                className="close-btn"
-                onClick={() => setShowEditModal(false)}
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <form
-              onSubmit={handleEdit}
-              className="enhanced-modal-form offer-form"
-            >
-              {/* Same form structure as create modal but with edit functionality */}
-              <div className="image-upload-section">
-                <div className="image-preview offer-preview">
-                  {formData.image ? (
-                    <>
-                      <img src={formData.image} alt="Preview" />
-                      <div className="offer-overlay">
-                        <div className="offer-badge-preview">SPECIAL OFFER</div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="image-placeholder">
-                      <Camera size={48} />
-                      <p>Upload Offer Image</p>
-                      <span>Make it attractive!</span>
-                    </div>
-                  )}
-                </div>
-                <div className="upload-controls">
-                  <label
-                    htmlFor="edit-offer-image-upload"
-                    className="upload-btn offer-upload"
-                  >
-                    <Camera size={20} />
-                    Change Image
-                  </label>
-                  <input
-                    id="edit-offer-image-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    style={{ display: "none" }}
-                  />
-                  <small>Leave empty to keep current image</small>
-                </div>
-              </div>
-
-              {/* Same form sections as create modal */}
-              <div className="form-sections">
-                <div className="form-section">
-                  <h4 className="section-title offer-title">
-                    <Percent size={20} />
-                    Offer Details
-                  </h4>
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label>
-                        <Tag size={16} />
-                        Offer Name
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <DollarSign size={16} />
-                        Special Price (Rs.)
-                      </label>
-                      <div className="price-input-wrapper">
-                        <input
-                          type="number"
-                          name="price"
-                          value={formData.price}
-                          onChange={handleInputChange}
-                          min="1"
-                          required
-                        />
-                        <span className="price-label">per KG</span>
-                      </div>
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <Grid size={16} />
-                        Category
-                      </label>
-                      <select
-                        name="category"
-                        value={formData.category}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="">Select Category</option>
-                        {categories.map((category) => (
-                          <option key={category} value={category}>
-                            {category.charAt(0).toUpperCase() +
-                              category.slice(1)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <MapPin size={16} />
-                        Location
-                      </label>
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>
-                        <Calendar size={16} />
-                        Harvest Date
-                      </label>
-                      <input
-                        type="date"
-                        name="harvestDay"
-                        value={formData.harvestDay}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-section">
-                  <h4 className="section-title">
-                    <FileText size={20} />
-                    Offer Description
-                  </h4>
-                  <div className="form-group full-width">
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      rows="4"
-                      required
-                    />
-                    <div className="char-count">
-                      {formData.description.length}/500 characters
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-section">
-                  <h4 className="section-title">
-                    <AlertCircle size={20} />
-                    Terms & Conditions
-                  </h4>
-
-                  <div className="conditions-input-section">
-                    <div className="condition-input-wrapper">
-                      <input
-                        type="text"
-                        value={newCondition}
-                        onChange={(e) => setNewCondition(e.target.value)}
-                        placeholder="e.g., Minimum 5kg order, Valid for 7 days"
-                        onKeyPress={(e) =>
-                          e.key === "Enter" &&
-                          (e.preventDefault(), addCondition())
-                        }
-                      />
-                      <button
-                        type="button"
-                        onClick={addCondition}
-                        className="add-condition-btn"
-                        disabled={!newCondition.trim()}
-                      >
-                        <Plus size={16} />
-                        Add
-                      </button>
-                    </div>
-
-                    {formData.condition.length > 0 && (
-                      <div className="conditions-list">
-                        <h5>Added Conditions:</h5>
-                        {formData.condition.map((cond, index) => (
-                          <div key={index} className="condition-tag">
-                            <span>{cond}</span>
-                            <button
-                              type="button"
-                              onClick={() => removeCondition(index)}
-                              className="remove-condition"
-                            >
-                              <X size={14} />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-actions offer-actions">
-                <button
-                  type="submit"
-                  className="submit-btn offer-submit"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <div className="loading-spinner-small"></div>
-                      Updating Offer...
-                    </>
-                  ) : (
-                    <>
-                      <Save size={16} />
-                      Update Special Offer
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowEditModal(false)}
-                >
-                  <X size={16} />
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* View Modal */}
-      {showViewModal && selectedOffer && (
-        <div className="modal-overlay" onClick={() => setShowViewModal(false)}>
-          <div
-            className="modal-content view-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header">
-              <h3>Special Offer Details</h3>
-              <button
-                className="close-btn"
-                onClick={() => setShowViewModal(false)}
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="view-content">
-              <div className="view-image">
-                <img src={selectedOffer.image} alt={selectedOffer.name} />
-                <div className={`status-badge ${selectedOffer.status}`}>
-                  {selectedOffer.status.toUpperCase()}
-                </div>
-                <div className="offer-badge">SPECIAL OFFER</div>
-              </div>
-
-              <div className="view-details">
-                <h4>{selectedOffer.name}</h4>
-
-                <div className="detail-grid">
-                  <div className="detail-item">
-                    <span className="detail-label">Price</span>
-                    <span className="detail-value">
-                      Rs. {selectedOffer.price}
-                    </span>
-                  </div>
-
-                  <div className="detail-item">
-                    <span className="detail-label">Category</span>
-                    <span className="detail-value">
-                      {selectedOffer.category}
-                    </span>
-                  </div>
-
-                  <div className="detail-item">
-                    <span className="detail-label">Location</span>
-                    <span className="detail-value">
-                      {selectedOffer.location}
-                    </span>
-                  </div>
-
-                  <div className="detail-item">
-                    <span className="detail-label">Harvest Date</span>
-                    <span className="detail-value">
-                      {new Date(selectedOffer.harvestDay).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="description-section">
-                  <h5>Description</h5>
-                  <p>{selectedOffer.description}</p>
-                </div>
-
-                {selectedOffer.condition &&
-                  selectedOffer.condition.length > 0 && (
-                    <div className="conditions-section">
-                      <h5>Special Conditions</h5>
-                      <ul className="conditions-view-list">
-                        {selectedOffer.condition.map((cond, index) => (
-                          <li key={index}>
-                            <AlertCircle size={14} />
-                            {cond}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                <div className="offer-id-section">
-                  <strong>Offer ID:</strong> {selectedOffer.itemId}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default FarmerOffers;
-```
-
 ## File: src/components/farmer/FarmerProfile/FarmerProfile.css
 ```css
 /* src/components/farmer/FarmerProfile/FarmerProfile.css */
@@ -12652,11 +9108,14 @@ import Sidebar from "../components/common/Sidebar/Sidebar";
 import FarmerProfile from "../components/farmer/FarmerProfile/FarmerProfile";
 import FarmerGallery from "../components/farmer/FarmerGallery/FarmerGallery";
 import FarmerOffers from "../components/farmer/FarmerOffers/FarmerOffers";
+import api from "../utils/api";
 import "./FarmerDashboard.css";
 
 const FarmerDashboard = () => {
   const { user } = useAuth();
   const [activeSection, setActiveSection] = useState("profile");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   // Redirect if not farmer
   if (!user || user.type !== "farmer") {
@@ -12697,14 +9156,103 @@ const FarmerDashboard = () => {
     );
   }
 
+  // Gallery item create function
+  const handleCreateGalleryItem = async (formData) => {
+    try {
+      setLoading(true);
+      setMessage("");
+
+      // Image field optional කරන්න
+      const galleryData = {
+        name: formData.name,
+        price: formData.price,
+        category: formData.category,
+        location: formData.location,
+        description: formData.description,
+        harvestDay: formData.harvestDay,
+        // Image optional - only include if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      console.log("Creating gallery item:", galleryData);
+
+      const response = await api.post("/api/gallery/create", galleryData);
+
+      setMessage("Gallery item created successfully!");
+
+      // Refresh gallery items if needed
+      if (window.refreshGalleryItems) {
+        window.refreshGalleryItems();
+      }
+    } catch (error) {
+      console.error("Error creating gallery item:", error);
+      setMessage(
+        error.response?.data?.message || "Failed to create gallery item"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Offer create function
+  const handleCreateOffer = async (formData) => {
+    try {
+      setLoading(true);
+      setMessage("");
+
+      // Image field optional කරන්න
+      const offerData = {
+        name: formData.name,
+        price: formData.price,
+        category: formData.category,
+        location: formData.location,
+        description: formData.description,
+        harvestDay: formData.harvestDay,
+        condition: formData.conditions || [], // if applicable
+        // Image optional - only include if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      console.log("Creating offer:", offerData);
+
+      const response = await api.post("/api/offers", offerData);
+
+      setMessage("Offer created successfully!");
+
+      // Refresh offers if needed
+      if (window.refreshOffers) {
+        window.refreshOffers();
+      }
+    } catch (error) {
+      console.error("Error creating offer:", error);
+      setMessage(error.response?.data?.message || "Failed to create offer");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderContent = () => {
     switch (activeSection) {
       case "profile":
         return <FarmerProfile />;
       case "gallery":
-        return <FarmerGallery />;
+        return (
+          <FarmerGallery
+            onCreateItem={handleCreateGalleryItem}
+            loading={loading}
+            message={message}
+            setMessage={setMessage}
+          />
+        );
       case "offers":
-        return <FarmerOffers />;
+        return (
+          <FarmerOffers
+            onCreateOffer={handleCreateOffer}
+            loading={loading}
+            message={message}
+            setMessage={setMessage}
+          />
+        );
       default:
         return <FarmerProfile />;
     }
@@ -12861,4 +9409,3736 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
 })
+```
+
+## File: src/components/farmer/FarmerGallery/FarmerGallery.css
+```css
+/* src/components/farmer/FarmerGallery/FarmerGallery.css */
+.farmer-gallery {
+  padding: 2rem;
+  background: #f8f9fa;
+  min-height: calc(100vh - 80px);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header-content h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.header-content p {
+  color: #666;
+  margin: 0;
+}
+
+.create-btn {
+  background: linear-gradient(45deg, #27ae60, #2ecc71);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.create-btn:hover {
+  background: linear-gradient(45deg, #2ecc71, #58d68d);
+  transform: translateY(-2px);
+}
+
+/* Message */
+.message {
+  position: relative;
+  padding: 1rem 3rem 1rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.message-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* Enhanced Search & Filter Bar */
+.search-filter-bar {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8ecef;
+}
+
+.search-filter-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.enhanced-search-bar {
+  flex: 1;
+  min-width: 300px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.search-input-wrapper:hover {
+  border-color: #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-input-wrapper:focus-within {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  background: white;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  color: #6c757d;
+  z-index: 1;
+  transition: color 0.3s ease;
+}
+
+.search-input-wrapper:focus-within .search-icon {
+  color: #4caf50;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #495057;
+  outline: none;
+  font-weight: 500;
+}
+
+.search-input::placeholder {
+  color: #adb5bd;
+  font-weight: 400;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.clear-search-btn:hover {
+  background: #495057;
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.enhanced-filter-bar {
+  min-width: 200px;
+}
+
+.filter-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.filter-wrapper:hover {
+  border-color: #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.filter-wrapper:focus-within {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  background: white;
+}
+
+.filter-icon {
+  position: absolute;
+  left: 1rem;
+  color: #6c757d;
+  z-index: 1;
+  transition: color 0.3s ease;
+}
+
+.filter-wrapper:focus-within .filter-icon {
+  color: #007bff;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #495057;
+  cursor: pointer;
+  outline: none;
+  font-weight: 500;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 1rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  padding-right: 3rem;
+}
+
+.clear-filter-btn {
+  position: absolute;
+  right: 2.5rem;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.clear-filter-btn:hover {
+  background: #495057;
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.refresh-btn {
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  color: white;
+  border: none;
+  padding: 0.875rem 1.25rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(23, 162, 184, 0.2);
+}
+
+.refresh-btn:hover {
+  background: linear-gradient(135deg, #138496, #117a8b);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+}
+
+.active-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+  flex-wrap: wrap;
+}
+
+.active-filters-label {
+  font-size: 0.875rem;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.filter-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: white;
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+}
+
+.filter-tag button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.filter-tag button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Items Grid */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.item-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.item-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.status-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.status-badge.pending {
+  background: #ff9800;
+}
+
+.status-badge.approved {
+  background: #4caf50;
+}
+
+.item-content {
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.item-content h3 {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.item-price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #27ae60;
+  margin: 0 0 1rem 0;
+}
+
+.item-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.item-category,
+.item-location {
+  background: #f8f9fa;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.item-category {
+  background: #e8f5e8;
+  color: #27ae60;
+}
+
+.item-description {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.item-date {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.item-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1.5rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.view-btn,
+.edit-btn,
+.delete-btn {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.view-btn {
+  background: #3498db;
+  color: white;
+}
+
+.view-btn:hover {
+  background: #2980b9;
+}
+
+.edit-btn {
+  background: #f39c12;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #e67e22;
+}
+
+.delete-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+}
+
+/* No Items */
+.no-items {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #666;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.no-items h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.create-first-btn {
+  background: linear-gradient(45deg, #27ae60, #2ecc71);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.create-first-btn:hover {
+  background: linear-gradient(45deg, #2ecc71, #58d68d);
+  transform: translateY(-2px);
+}
+
+/* Loading */
+.loading-container {
+  text-align: center;
+  padding: 4rem 0;
+  width: 100%;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #27ae60;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Enhanced Modal Styles - Smaller & Wider */
+.create-modal {
+  max-width: 900px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: white;
+  padding: 1.5rem 2rem;
+  border-radius: 15px 15px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-content h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.header-content p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.85rem;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Enhanced Form Styles */
+.enhanced-modal-form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Image Upload Section */
+.image-upload-section {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 2px dashed #dee2e6;
+}
+
+.image-preview {
+  position: relative;
+  width: 150px;
+  height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  border: 2px solid #e9ecef;
+  flex-shrink: 0;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  text-align: center;
+}
+
+.image-placeholder p {
+  margin: 0.5rem 0 0 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.upload-controls {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.upload-btn {
+  background: linear-gradient(45deg, #27ae60, #2ecc71);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.upload-controls small {
+  color: #6c757d;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* Form Sections */
+.form-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-section {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.85rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.7rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+  background: white;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 0.2rem;
+}
+
+/* Quality Badges */
+.quality-badges {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.quality-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: linear-gradient(45deg, #e8f5e8, #d4edda);
+  color: #27ae60;
+  padding: 0.6rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 500;
+  border: 2px solid #c3e6cb;
+  font-size: 0.85rem;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f8f9fa;
+}
+
+.submit-btn {
+  background: linear-gradient(45deg, #27ae60, #2ecc71);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+  min-width: 150px;
+  justify-content: center;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: linear-gradient(45deg, #2ecc71, #58d68d);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cancel-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+.loading-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* View Modal */
+.view-modal {
+  max-width: 700px;
+}
+
+.view-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.view-image {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.view-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.view-details h4 {
+  font-size: 1.4rem;
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.85rem;
+}
+
+.detail-value {
+  color: #666;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #27ae60;
+}
+
+.description-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.description-section h5 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.description-section p {
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.item-id-section {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .farmer-gallery {
+    padding: 1rem;
+  }
+
+  .gallery-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .search-filter-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .enhanced-search-bar,
+  .enhanced-filter-bar {
+    min-width: auto;
+  }
+
+  .items-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .item-actions {
+    flex-direction: column;
+  }
+
+  .create-modal {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .enhanced-modal-form {
+    padding: 1rem;
+  }
+
+  .image-upload-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .image-preview {
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .active-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.3rem;
+  }
+
+  .header-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .close-btn {
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 30px;
+    height: 30px;
+  }
+}
+```
+
+## File: src/components/farmer/FarmerGallery/FarmerGallery.jsx
+```javascript
+// src/components/farmer/FarmerGallery/FarmerGallery.jsx
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../../context/AuthContext";
+import api from "../../../utils/api";
+import {
+  Plus,
+  Eye,
+  Edit,
+  Trash2,
+  Search,
+  Filter,
+  X,
+  RefreshCw,
+  Save,
+  Camera,
+  Package,
+  Tag,
+  DollarSign,
+  Grid,
+  MapPin,
+  Calendar,
+  FileText,
+  Award,
+  Leaf,
+  Droplets,
+  Shield,
+  Sun,
+} from "lucide-react";
+import "./FarmerGallery.css";
+
+const FarmerGallery = () => {
+  const { user } = useAuth();
+  const [items, setItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [message, setMessage] = useState("");
+
+  const [formData, setFormData] = useState({
+    name: "",
+    image: "",
+    price: "",
+    category: "",
+    location: "",
+    description: "",
+    harvestDay: "",
+  });
+
+  const categories = [
+    "vegetables",
+    "fruits",
+    "grains",
+    "herbs",
+    "dairy",
+    "seeds",
+  ];
+
+  const defaultImage =
+    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+
+  useEffect(() => {
+    fetchMyItems();
+  }, []);
+
+  useEffect(() => {
+    filterItems();
+  }, [items, searchTerm, filterStatus]);
+
+  const fetchMyItems = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("/api/gallery/my-items");
+      setItems(response.data.galleryItems || []);
+    } catch (error) {
+      console.error("Error fetching gallery items:", error);
+      setMessage("Failed to fetch gallery items");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterItems = () => {
+    let filtered = items;
+
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (filterStatus !== "all") {
+      filtered = filtered.filter((item) => item.status === filterStatus);
+    }
+
+    setFilteredItems(filtered);
+  };
+
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
+
+  const clearFilter = () => {
+    setFilterStatus("all");
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage("Image size should be less than 5MB");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({
+          ...prev,
+          image: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // Clear image if no file selected
+      setFormData((prev) => ({
+        ...prev,
+        image: "",
+      }));
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      image: "",
+      price: "",
+      category: "",
+      location: "",
+      description: "",
+      harvestDay: "",
+    });
+  };
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+
+    // Required fields validation (image නැතිව)
+    const { name, price, category, location, description, harvestDay } =
+      formData;
+
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !location ||
+      !description ||
+      !harvestDay
+    ) {
+      setMessage("Please fill in all required fields (image is optional)");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Create form data object - image is optional
+      const submitData = {
+        name,
+        price,
+        category,
+        location,
+        description,
+        harvestDay,
+        // Only include image if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      await api.post("/api/gallery/create", submitData);
+      setMessage(
+        "Gallery item created successfully! Waiting for admin approval."
+      );
+      setShowCreateModal(false);
+      resetForm();
+      fetchMyItems();
+    } catch (error) {
+      console.error("Error creating gallery item:", error);
+
+      // ADDED: Better error message for duplicate itemId
+      if (error.response?.data?.error === "Duplicate itemId generated") {
+        setMessage("Please try again. System is generating a new ID.");
+      } else {
+        setMessage(
+          error.response?.data?.message || "Failed to create gallery item"
+        );
+      }
+    }
+  };
+
+  const handleEdit = async (e) => {
+    e.preventDefault();
+
+    // Required fields validation (image නැතිව)
+    const { name, price, category, location, description, harvestDay } =
+      formData;
+
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !location ||
+      !description ||
+      !harvestDay
+    ) {
+      setMessage("Please fill in all required fields (image is optional)");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Create form data object - image is optional
+      const submitData = {
+        name,
+        price,
+        category,
+        location,
+        description,
+        harvestDay,
+        // Only include image if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      await api.put(`/api/gallery/update/${selectedItem.itemId}`, submitData);
+      setMessage(
+        "Gallery item updated successfully! Waiting for admin approval."
+      );
+      setShowEditModal(false);
+      resetForm();
+      fetchMyItems();
+    } catch (error) {
+      setMessage("Failed to update gallery item. Please try again.");
+      console.error("Update error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (itemId) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      try {
+        await api.delete(`/api/gallery/my-items/${itemId}`);
+        setMessage("Gallery item deleted successfully!");
+        fetchMyItems();
+      } catch (error) {
+        setMessage("Failed to delete gallery item. Please try again.");
+        console.error("Delete error:", error);
+      }
+    }
+  };
+
+  const openEditModal = (item) => {
+    setSelectedItem(item);
+    setFormData({
+      name: item.name,
+      image: item.image,
+      price: item.price,
+      category: item.category,
+      location: item.location,
+      description: item.description,
+      harvestDay: item.harvestDay ? item.harvestDay.split("T")[0] : "",
+    });
+    setShowEditModal(true);
+  };
+
+  const openViewModal = (item) => {
+    setSelectedItem(item);
+    setShowViewModal(true);
+  };
+
+  if (loading && items.length === 0) {
+    return (
+      <div className="farmer-gallery">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading gallery items...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="farmer-gallery">
+      <div className="gallery-header">
+        <div className="header-content">
+          <h2>My Gallery Items</h2>
+          <p>Manage your agricultural products</p>
+        </div>
+        <button className="create-btn" onClick={() => setShowCreateModal(true)}>
+          <Plus size={20} />
+          Add New Item
+        </button>
+      </div>
+
+      {/* Message */}
+      {message && (
+        <div
+          className={`message ${
+            message.includes("successfully") ? "success" : "error"
+          }`}
+        >
+          {message}
+          <button onClick={() => setMessage("")} className="message-close">
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Enhanced Search & Filter */}
+      <div className="search-filter-bar">
+        <div className="search-filter-container">
+          {/* Enhanced Search Bar */}
+          <div className="enhanced-search-bar">
+            <div className="search-input-wrapper">
+              <Search className="search-icon" size={20} />
+              <input
+                type="text"
+                placeholder="Search by name, category, or location..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+              {searchTerm && (
+                <button
+                  className="clear-search-btn"
+                  onClick={clearSearch}
+                  aria-label="Clear search"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Enhanced Filter Bar */}
+          <div className="enhanced-filter-bar">
+            <div className="filter-wrapper">
+              <Filter className="filter-icon" size={20} />
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">All Items ({items.length})</option>
+                <option value="pending">
+                  Pending ({items.filter((i) => i.status === "pending").length})
+                </option>
+                <option value="approved">
+                  Approved (
+                  {items.filter((i) => i.status === "approved").length})
+                </option>
+              </select>
+              {filterStatus !== "all" && (
+                <button
+                  className="clear-filter-btn"
+                  onClick={clearFilter}
+                  aria-label="Clear filter"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Refresh Button */}
+          <button
+            className="refresh-btn"
+            onClick={fetchMyItems}
+            aria-label="Refresh data"
+          >
+            <RefreshCw size={18} />
+            <span>Refresh</span>
+          </button>
+        </div>
+
+        {/* Active Filters Display */}
+        {(searchTerm || filterStatus !== "all") && (
+          <div className="active-filters">
+            <span className="active-filters-label">Active filters:</span>
+            {searchTerm && (
+              <div className="filter-tag">
+                <span>Search: "{searchTerm}"</span>
+                <button onClick={clearSearch}>
+                  <X size={12} />
+                </button>
+              </div>
+            )}
+            {filterStatus !== "all" && (
+              <div className="filter-tag">
+                <span>Status: {filterStatus}</span>
+                <button onClick={clearFilter}>
+                  <X size={12} />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Items Grid */}
+      <div className="items-grid">
+        {filteredItems.map((item) => (
+          <div key={item._id} className="item-card">
+            <div className="item-image">
+              <img
+                src={item.image || defaultImage}
+                alt={item.name}
+                onError={(e) => {
+                  e.target.src = defaultImage;
+                }}
+              />
+              <div className={`status-badge ${item.status}`}>
+                {item.status.toUpperCase()}
+              </div>
+            </div>
+
+            <div className="item-content">
+              <h3>{item.name}</h3>
+              <p className="item-price">Rs. {item.price}</p>
+              <div className="item-meta">
+                <span className="item-category">{item.category}</span>
+                <span className="item-location">{item.location}</span>
+              </div>
+              <p className="item-description">
+                {item.description.length > 80
+                  ? `${item.description.substring(0, 80)}...`
+                  : item.description}
+              </p>
+              <div className="item-date">
+                <strong>Harvest:</strong>{" "}
+                {new Date(item.harvestDay).toLocaleDateString()}
+              </div>
+            </div>
+
+            <div className="item-actions">
+              <button className="view-btn" onClick={() => openViewModal(item)}>
+                <Eye size={16} />
+                View
+              </button>
+
+              <button className="edit-btn" onClick={() => openEditModal(item)}>
+                <Edit size={16} />
+                Edit
+              </button>
+
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(item.itemId)}
+              >
+                <Trash2 size={16} />
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredItems.length === 0 && (
+        <div className="no-items">
+          <h3>No gallery items found</h3>
+          <p>
+            {items.length === 0
+              ? "Create your first gallery item to get started!"
+              : "No gallery items match your search criteria"}
+          </p>
+          {items.length === 0 && (
+            <button
+              className="create-first-btn"
+              onClick={() => setShowCreateModal(true)}
+            >
+              <Plus size={20} />
+              Create First Item
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Create Modal */}
+      {showCreateModal && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowCreateModal(false)}
+        >
+          <div
+            className="modal-content create-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <div className="header-content">
+                <div className="header-icon">
+                  <Plus size={24} />
+                </div>
+                <div>
+                  <h3>Create Gallery Item</h3>
+                  <p>Add your fresh produce to the gallery</p>
+                </div>
+              </div>
+              <button
+                className="close-btn"
+                onClick={() => setShowCreateModal(false)}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreate} className="enhanced-modal-form">
+              {/* Image Upload Section */}
+              <div className="image-upload-section">
+                <div className="image-preview">
+                  {formData.image ? (
+                    <img src={formData.image} alt="Preview" />
+                  ) : (
+                    <div className="image-placeholder">
+                      <Camera size={48} />
+                      <p>Upload Product Image (Optional)</p>
+                      <small>You can add an image later if needed</small>
+                    </div>
+                  )}
+                </div>
+                <div className="upload-controls">
+                  <label htmlFor="image-upload" className="upload-btn">
+                    <Camera size={20} />
+                    Choose Image
+                  </label>
+                  <input
+                    type="file"
+                    id="image"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    // Remove required attribute
+                    style={{ display: "none" }}
+                  />
+                  <small className="form-help">
+                    You can add an image later if needed. Max size: 5MB
+                  </small>
+                </div>
+              </div>
+
+              {/* Form Fields */}
+              <div className="form-sections">
+                {/* Basic Information */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <Package size={20} />
+                    Basic Information
+                  </h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>
+                        <Tag size={16} />
+                        Product Name *
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="e.g., Fresh Organic Tomatoes"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <DollarSign size={16} />
+                        Price per KG (Rs.) *
+                      </label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleInputChange}
+                        placeholder="250"
+                        min="1"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Grid size={16} />
+                        Category *
+                      </label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category.charAt(0).toUpperCase() +
+                              category.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <MapPin size={16} />
+                        Farm Location *
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        placeholder="e.g., Kandy, Sri Lanka"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Calendar size={16} />
+                        Harvest Date *
+                      </label>
+                      <input
+                        type="date"
+                        name="harvestDay"
+                        value={formData.harvestDay}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Product Description */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <FileText size={20} />
+                    Product Description
+                  </h4>
+                  <div className="form-group full-width">
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      rows="5"
+                      placeholder="Describe your product quality, farming methods, freshness, etc..."
+                      required
+                    />
+                    <div className="char-count">
+                      {formData.description.length}/500 characters
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quality Indicators */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <Award size={20} />
+                    Quality Assurance
+                  </h4>
+                  <div className="quality-badges">
+                    <div className="quality-badge">
+                      <Leaf size={16} />
+                      <span>Organic</span>
+                    </div>
+                    <div className="quality-badge">
+                      <Droplets size={16} />
+                      <span>Fresh</span>
+                    </div>
+                    <div className="quality-badge">
+                      <Shield size={16} />
+                      <span>Pesticide Free</span>
+                    </div>
+                    <div className="quality-badge">
+                      <Sun size={16} />
+                      <span>Farm Fresh</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form Actions */}
+              <div className="form-actions">
+                <button type="submit" className="submit-btn" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={16} />
+                      Create Gallery Item
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setShowCreateModal(false)}
+                >
+                  <X size={16} />
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+          <div
+            className="modal-content create-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <div className="header-content">
+                <div className="header-icon">
+                  <Edit size={24} />
+                </div>
+                <div>
+                  <h3>Edit Gallery Item</h3>
+                  <p>Update your product information</p>
+                </div>
+              </div>
+              <button
+                className="close-btn"
+                onClick={() => setShowEditModal(false)}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <form onSubmit={handleEdit} className="enhanced-modal-form">
+              {/* Image Upload Section */}
+              <div className="image-upload-section">
+                <div className="image-preview">
+                  {formData.image ? (
+                    <img src={formData.image} alt="Preview" />
+                  ) : (
+                    <div className="image-placeholder">
+                      <Camera size={48} />
+                      <p>Upload Product Image (Optional)</p>
+                      <small>Leave empty to keep current image</small>
+                    </div>
+                  )}
+                </div>
+                <div className="upload-controls">
+                  <label htmlFor="edit-image-upload" className="upload-btn">
+                    <Camera size={20} />
+                    Change Image
+                  </label>
+                  <input
+                    id="edit-image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: "none" }}
+                  />
+                  <small>Optional: Leave empty to keep current image</small>
+                </div>
+              </div>
+
+              {/* Form Fields - Same as create modal */}
+              <div className="form-sections">
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <Package size={20} />
+                    Basic Information
+                  </h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>
+                        <Tag size={16} />
+                        Product Name *
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <DollarSign size={16} />
+                        Price per KG (Rs.) *
+                      </label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleInputChange}
+                        min="1"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Grid size={16} />
+                        Category *
+                      </label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category.charAt(0).toUpperCase() +
+                              category.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <MapPin size={16} />
+                        Farm Location *
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Calendar size={16} />
+                        Harvest Date *
+                      </label>
+                      <input
+                        type="date"
+                        name="harvestDay"
+                        value={formData.harvestDay}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <FileText size={20} />
+                    Product Description
+                  </h4>
+                  <div className="form-group full-width">
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      rows="5"
+                      required
+                    />
+                    <div className="char-count">
+                      {formData.description.length}/500 characters
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-actions">
+                <button type="submit" className="submit-btn" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={16} />
+                      Update Gallery Item
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setShowEditModal(false)}
+                >
+                  <X size={16} />
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* View Modal */}
+      {showViewModal && selectedItem && (
+        <div className="modal-overlay" onClick={() => setShowViewModal(false)}>
+          <div
+            className="modal-content view-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h3>Gallery Item Details</h3>
+              <button
+                className="close-btn"
+                onClick={() => setShowViewModal(false)}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="view-content">
+              <div className="view-image">
+                <img
+                  src={selectedItem.image || defaultImage}
+                  alt={selectedItem.name}
+                  onError={(e) => {
+                    e.target.src = defaultImage;
+                  }}
+                />
+                <div className={`status-badge ${selectedItem.status}`}>
+                  {selectedItem.status.toUpperCase()}
+                </div>
+              </div>
+
+              <div className="view-details">
+                <h4>{selectedItem.name}</h4>
+
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span className="detail-label">Price</span>
+                    <span className="detail-value">
+                      Rs. {selectedItem.price}
+                    </span>
+                  </div>
+
+                  <div className="detail-item">
+                    <span className="detail-label">Category</span>
+                    <span className="detail-value">
+                      {selectedItem.category}
+                    </span>
+                  </div>
+
+                  <div className="detail-item">
+                    <span className="detail-label">Location</span>
+                    <span className="detail-value">
+                      {selectedItem.location}
+                    </span>
+                  </div>
+
+                  <div className="detail-item">
+                    <span className="detail-label">Harvest Date</span>
+                    <span className="detail-value">
+                      {new Date(selectedItem.harvestDay).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="description-section">
+                  <h5>Description</h5>
+                  <p>{selectedItem.description}</p>
+                </div>
+
+                <div className="item-id-section">
+                  <strong>Item ID:</strong> {selectedItem.itemId}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default FarmerGallery;
+```
+
+## File: src/components/farmer/FarmerOffers/FarmerOffers.css
+```css
+/* src/components/farmer/FarmerOffers/FarmerOffers.css */
+.farmer-offers {
+  padding: 2rem;
+  background: #f8f9fa;
+  min-height: calc(100vh - 80px);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.offers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header-content h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.header-content p {
+  color: #666;
+  margin: 0;
+}
+
+/* Offers Grid */
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.offer-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid #e74c3c;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.offer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(231, 76, 60, 0.2);
+}
+
+.offer-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.offer-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offer-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.offer-content {
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.offer-content h3 {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.offer-price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #e74c3c;
+  margin: 0 0 1rem 0;
+}
+
+.offer-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.offer-category,
+.offer-location {
+  background: #f8f9fa;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.offer-category {
+  background: #ffebee;
+  color: #e74c3c;
+}
+
+.offer-description {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.offer-conditions {
+  background: #fff3e0;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 3px solid #ff9800;
+}
+
+.offer-conditions strong {
+  color: #e65100;
+  font-size: 0.9rem;
+}
+
+.offer-conditions ul {
+  margin: 0.5rem 0 0 1rem;
+  padding: 0;
+}
+
+.offer-conditions li {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.offer-date {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.offer-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1.5rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* No Offers */
+.no-offers {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #666;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.no-offers h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* Enhanced Modal Styles for Offers - Smaller & Wider */
+.offer-modal .modal-header {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.offer-preview {
+  border: 2px solid #e74c3c;
+}
+
+.offer-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.offer-badge-preview {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: bold;
+}
+
+.offer-upload {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+}
+
+.offer-upload:hover {
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.offer-title {
+  color: #e74c3c;
+}
+
+.offer-form .form-group input:focus,
+.offer-form .form-group select:focus,
+.offer-form .form-group textarea:focus {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.price-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.price-label {
+  position: absolute;
+  right: 0.8rem;
+  color: #6c757d;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Conditions Input */
+.conditions-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.condition-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.condition-input-wrapper input {
+  flex: 1;
+}
+
+.add-condition-btn {
+  background: linear-gradient(45deg, #17a2b8, #138496);
+  color: white;
+  border: none;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.add-condition-btn:hover:not(:disabled) {
+  background: linear-gradient(45deg, #138496, #117a8b);
+  transform: translateY(-2px);
+}
+
+.add-condition-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.conditions-list h5 {
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.condition-tag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff3e0;
+  border: 1px solid #ffcc02;
+  padding: 0.6rem;
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+}
+
+.remove-condition {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.remove-condition:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+/* Offer Highlights */
+.offer-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(45deg, #ffebee, #fce4ec);
+  color: #e74c3c;
+  padding: 0.8rem;
+  border-radius: 10px;
+  font-weight: 500;
+  border: 2px solid #f8bbd9;
+  font-size: 0.85rem;
+}
+
+/* Form Actions for Offers */
+.offer-actions .form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f8f9fa;
+}
+
+.offer-submit {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+}
+
+.offer-submit:hover:not(:disabled) {
+  background: linear-gradient(45deg, #c0392b, #a93226);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+/* View Modal for Offers */
+.modal-offer-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.conditions-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.conditions-section h5 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.conditions-view-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.conditions-view-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  color: #666;
+  border-bottom: 1px solid #eee;
+}
+
+.conditions-view-list li:last-child {
+  border-bottom: none;
+}
+
+.offer-id-section {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .farmer-offers {
+    padding: 1rem;
+  }
+
+  .offers-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .offers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .offer-actions {
+    flex-direction: column;
+  }
+
+  .condition-input-wrapper {
+    flex-direction: column;
+  }
+
+  .offer-highlights {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .offer-highlights {
+    grid-template-columns: 1fr;
+  }
+}
+```
+
+## File: src/components/farmer/FarmerOffers/FarmerOffers.jsx
+```javascript
+// src/components/farmer/FarmerOffers/FarmerOffers.jsx
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../../context/AuthContext";
+import api from "../../../utils/api";
+import {
+  Plus,
+  Eye,
+  Edit,
+  Trash2,
+  Search,
+  Filter,
+  X,
+  RefreshCw,
+  AlertCircle,
+  Save,
+  Camera,
+  Gift,
+  Percent,
+  Tag,
+  DollarSign,
+  Grid,
+  MapPin,
+  Calendar,
+  FileText,
+  Star,
+  Clock,
+  Truck,
+  Award,
+} from "lucide-react";
+import "./FarmerOffers.css";
+
+const FarmerOffers = () => {
+  const { user } = useAuth();
+  const [offers, setOffers] = useState([]);
+  const [filteredOffers, setFilteredOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [message, setMessage] = useState("");
+
+  const [formData, setFormData] = useState({
+    name: "",
+    image: "",
+    price: "",
+    category: "",
+    location: "",
+    description: "",
+    harvestDay: "",
+    condition: [],
+  });
+
+  const [newCondition, setNewCondition] = useState("");
+
+  const categories = [
+    "vegetables",
+    "fruits",
+    "grains",
+    "herbs",
+    "dairy",
+    "seeds",
+  ];
+
+  const defaultImage =
+    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+
+  useEffect(() => {
+    fetchMyOffers();
+  }, []);
+
+  useEffect(() => {
+    filterOffers();
+  }, [offers, searchTerm, filterStatus]);
+
+  const fetchMyOffers = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("/api/offers/my-offers");
+      setOffers(response.data.offers || []);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+      setMessage("Failed to fetch offers");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterOffers = () => {
+    let filtered = offers;
+
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (offer) =>
+          offer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          offer.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          offer.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (filterStatus !== "all") {
+      filtered = filtered.filter((offer) => offer.status === filterStatus);
+    }
+
+    setFilteredOffers(filtered);
+  };
+
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
+
+  const clearFilter = () => {
+    setFilterStatus("all");
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage("Image size should be less than 5MB");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({
+          ...prev,
+          image: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // Clear image if no file selected
+      setFormData((prev) => ({
+        ...prev,
+        image: "",
+      }));
+    }
+  };
+
+  const addCondition = () => {
+    if (newCondition.trim()) {
+      setFormData((prev) => ({
+        ...prev,
+        condition: [...prev.condition, newCondition.trim()],
+      }));
+      setNewCondition("");
+    }
+  };
+
+  const removeCondition = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      condition: prev.condition.filter((_, i) => i !== index),
+    }));
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      image: "",
+      price: "",
+      category: "",
+      location: "",
+      description: "",
+      harvestDay: "",
+      condition: [],
+    });
+    setNewCondition("");
+  };
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+
+    // Required fields validation (image නැතිව)
+    const { name, price, category, location, description, harvestDay } =
+      formData;
+
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !location ||
+      !description ||
+      !harvestDay
+    ) {
+      setMessage("Please fill in all required fields (image is optional)");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Create form data object - image is optional
+      const submitData = {
+        name,
+        price,
+        category,
+        location,
+        description,
+        harvestDay,
+        condition: formData.condition,
+        // Only include image if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      await api.post("/api/offers", submitData);
+      setMessage(
+        "Special offer created successfully! Waiting for admin approval."
+      );
+      setShowCreateModal(false);
+      resetForm();
+      fetchMyOffers();
+    } catch (error) {
+      setMessage("Failed to create offer. Please try again.");
+      console.error("Create error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = async (e) => {
+    e.preventDefault();
+
+    // Required fields validation (image නැතිව)
+    const { name, price, category, location, description, harvestDay } =
+      formData;
+
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !location ||
+      !description ||
+      !harvestDay
+    ) {
+      setMessage("Please fill in all required fields (image is optional)");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Create form data object - image is optional
+      const submitData = {
+        name,
+        price,
+        category,
+        location,
+        description,
+        harvestDay,
+        condition: formData.condition,
+        // Only include image if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      await api.put(`/api/offers/update/${selectedOffer.itemId}`, submitData);
+      setMessage("Offer updated successfully! Waiting for admin approval.");
+      setShowEditModal(false);
+      resetForm();
+      fetchMyOffers();
+    } catch (error) {
+      setMessage("Failed to update offer. Please try again.");
+      console.error("Update error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (itemId) => {
+    if (window.confirm("Are you sure you want to delete this offer?")) {
+      try {
+        await api.delete(`/api/offers/my-offers/${itemId}`);
+        setMessage("Offer deleted successfully!");
+        fetchMyOffers();
+      } catch (error) {
+        setMessage("Failed to delete offer. Please try again.");
+        console.error("Delete error:", error);
+      }
+    }
+  };
+
+  const openEditModal = (offer) => {
+    setSelectedOffer(offer);
+    setFormData({
+      name: offer.name,
+      image: offer.image,
+      price: offer.price,
+      category: offer.category,
+      location: offer.location,
+      description: offer.description,
+      harvestDay: offer.harvestDay ? offer.harvestDay.split("T")[0] : "",
+      condition: offer.condition || [],
+    });
+    setShowEditModal(true);
+  };
+
+  const openViewModal = (offer) => {
+    setSelectedOffer(offer);
+    setShowViewModal(true);
+  };
+
+  if (loading && offers.length === 0) {
+    return (
+      <div className="farmer-offers">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading offers...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="farmer-offers">
+      <div className="offers-header">
+        <div className="header-content">
+          <h2>My Special Offers</h2>
+          <p>Manage your special promotional offers</p>
+        </div>
+        <button className="create-btn" onClick={() => setShowCreateModal(true)}>
+          <Plus size={20} />
+          Create New Offer
+        </button>
+      </div>
+
+      {/* Message */}
+      {message && (
+        <div
+          className={`message ${
+            message.includes("successfully") ? "success" : "error"
+          }`}
+        >
+          {message}
+          <button onClick={() => setMessage("")} className="message-close">
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Enhanced Search & Filter */}
+      <div className="search-filter-bar">
+        <div className="search-filter-container">
+          {/* Enhanced Search Bar */}
+          <div className="enhanced-search-bar">
+            <div className="search-input-wrapper">
+              <Search className="search-icon" size={20} />
+              <input
+                type="text"
+                placeholder="Search by offer name, category, or location..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+              {searchTerm && (
+                <button
+                  className="clear-search-btn"
+                  onClick={clearSearch}
+                  aria-label="Clear search"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Enhanced Filter Bar */}
+          <div className="enhanced-filter-bar">
+            <div className="filter-wrapper">
+              <Filter className="filter-icon" size={20} />
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">All Offers ({offers.length})</option>
+                <option value="pending">
+                  Pending ({offers.filter((o) => o.status === "pending").length}
+                  )
+                </option>
+                <option value="approved">
+                  Approved (
+                  {offers.filter((o) => o.status === "approved").length})
+                </option>
+              </select>
+              {filterStatus !== "all" && (
+                <button
+                  className="clear-filter-btn"
+                  onClick={clearFilter}
+                  aria-label="Clear filter"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Refresh Button */}
+          <button
+            className="refresh-btn"
+            onClick={fetchMyOffers}
+            aria-label="Refresh data"
+          >
+            <RefreshCw size={18} />
+            <span>Refresh</span>
+          </button>
+        </div>
+
+        {/* Active Filters Display */}
+        {(searchTerm || filterStatus !== "all") && (
+          <div className="active-filters">
+            <span className="active-filters-label">Active filters:</span>
+            {searchTerm && (
+              <div className="filter-tag">
+                <span>Search: "{searchTerm}"</span>
+                <button onClick={clearSearch}>
+                  <X size={12} />
+                </button>
+              </div>
+            )}
+            {filterStatus !== "all" && (
+              <div className="filter-tag">
+                <span>Status: {filterStatus}</span>
+                <button onClick={clearFilter}>
+                  <X size={12} />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Offers Grid */}
+      <div className="offers-grid">
+        {filteredOffers.map((offer) => (
+          <div key={offer._id} className="offer-card">
+            <div className="offer-image">
+              <img
+                src={offer.image || defaultImage}
+                alt={offer.name}
+                onError={(e) => {
+                  e.target.src = defaultImage;
+                }}
+              />
+              <div className={`status-badge ${offer.status}`}>
+                {offer.status.toUpperCase()}
+              </div>
+              <div className="offer-badge">SPECIAL OFFER</div>
+            </div>
+
+            <div className="offer-content">
+              <h3>{offer.name}</h3>
+              <p className="offer-price">Rs. {offer.price}</p>
+              <div className="offer-meta">
+                <span className="offer-category">{offer.category}</span>
+                <span className="offer-location">{offer.location}</span>
+              </div>
+              <p className="offer-description">
+                {offer.description.length > 80
+                  ? `${offer.description.substring(0, 80)}...`
+                  : offer.description}
+              </p>
+              {offer.condition && offer.condition.length > 0 && (
+                <div className="offer-conditions">
+                  <strong>Conditions:</strong>
+                  <ul>
+                    {offer.condition.slice(0, 2).map((cond, index) => (
+                      <li key={index}>{cond}</li>
+                    ))}
+                    {offer.condition.length > 2 && (
+                      <li>+{offer.condition.length - 2} more...</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+              <div className="offer-date">
+                <strong>Harvest:</strong>{" "}
+                {new Date(offer.harvestDay).toLocaleDateString()}
+              </div>
+            </div>
+
+            <div className="offer-actions">
+              <button className="view-btn" onClick={() => openViewModal(offer)}>
+                <Eye size={16} />
+                View
+              </button>
+
+              <button className="edit-btn" onClick={() => openEditModal(offer)}>
+                <Edit size={16} />
+                Edit
+              </button>
+
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(offer.itemId)}
+              >
+                <Trash2 size={16} />
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredOffers.length === 0 && (
+        <div className="no-offers">
+          <h3>No special offers found</h3>
+          <p>
+            {offers.length === 0
+              ? "Create your first special offer to attract more customers!"
+              : "No offers match your search criteria"}
+          </p>
+          {offers.length === 0 && (
+            <button
+              className="create-first-btn"
+              onClick={() => setShowCreateModal(true)}
+            >
+              <Plus size={20} />
+              Create First Offer
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Create Modal */}
+      {showCreateModal && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowCreateModal(false)}
+        >
+          <div
+            className="modal-content create-modal offer-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header offer-header">
+              <div className="header-content">
+                <div className="header-icon offer-icon">
+                  <Gift size={24} />
+                </div>
+                <div>
+                  <h3>Create Special Offer</h3>
+                  <p>Create an attractive offer for your products</p>
+                </div>
+              </div>
+              <button
+                className="close-btn"
+                onClick={() => setShowCreateModal(false)}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <form
+              onSubmit={handleCreate}
+              className="enhanced-modal-form offer-form"
+            >
+              {/* Image Upload Section */}
+              <div className="image-upload-section">
+                <div className="image-preview offer-preview">
+                  {formData.image ? (
+                    <>
+                      <img src={formData.image} alt="Preview" />
+                      <div className="offer-overlay">
+                        <div className="offer-badge-preview">SPECIAL OFFER</div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="image-placeholder">
+                      <Camera size={48} />
+                      <p>Upload Offer Image (Optional)</p>
+                      <span>Make it attractive!</span>
+                    </div>
+                  )}
+                </div>
+                <div className="upload-controls">
+                  <label
+                    htmlFor="offer-image-upload"
+                    className="upload-btn offer-upload"
+                  >
+                    <Camera size={20} />
+                    Choose Image
+                  </label>
+                  <input
+                    type="file"
+                    id="image"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    // Remove required attribute
+                    style={{ display: "none" }}
+                  />
+                  <small className="form-help">
+                    Optional: High-quality images get more attention!
+                  </small>
+                </div>
+              </div>
+
+              {/* Form Fields */}
+              <div className="form-sections">
+                {/* Offer Details */}
+                <div className="form-section">
+                  <h4 className="section-title offer-title">
+                    <Percent size={20} />
+                    Offer Details
+                  </h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>
+                        <Tag size={16} />
+                        Offer Name *
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="e.g., Weekend Special - Fresh Mangoes"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <DollarSign size={16} />
+                        Special Price (Rs.) *
+                      </label>
+                      <div className="price-input-wrapper">
+                        <input
+                          type="number"
+                          name="price"
+                          value={formData.price}
+                          onChange={handleInputChange}
+                          placeholder="200"
+                          min="1"
+                          required
+                        />
+                        <span className="price-label">per KG</span>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Grid size={16} />
+                        Category *
+                      </label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category.charAt(0).toUpperCase() +
+                              category.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <MapPin size={16} />
+                        Location *
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        placeholder="e.g., Galle, Sri Lanka"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Calendar size={16} />
+                        Harvest Date *
+                      </label>
+                      <input
+                        type="date"
+                        name="harvestDay"
+                        value={formData.harvestDay}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Offer Description */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <FileText size={20} />
+                    Offer Description
+                  </h4>
+                  <div className="form-group full-width">
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      rows="4"
+                      placeholder="Describe what makes this offer special, discount details, quality, etc..."
+                      required
+                    />
+                    <div className="char-count">
+                      {formData.description.length}/500 characters
+                    </div>
+                  </div>
+                </div>
+
+                {/* Special Conditions */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <AlertCircle size={20} />
+                    Terms & Conditions (Optional)
+                  </h4>
+
+                  <div className="conditions-input-section">
+                    <div className="condition-input-wrapper">
+                      <input
+                        type="text"
+                        value={newCondition}
+                        onChange={(e) => setNewCondition(e.target.value)}
+                        placeholder="e.g., Minimum 5kg order, Valid for 7 days"
+                        onKeyPress={(e) =>
+                          e.key === "Enter" &&
+                          (e.preventDefault(), addCondition())
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={addCondition}
+                        className="add-condition-btn"
+                        disabled={!newCondition.trim()}
+                      >
+                        <Plus size={16} />
+                        Add
+                      </button>
+                    </div>
+
+                    {formData.condition.length > 0 && (
+                      <div className="conditions-list">
+                        <h5>Added Conditions:</h5>
+                        {formData.condition.map((cond, index) => (
+                          <div key={index} className="condition-tag">
+                            <span>{cond}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeCondition(index)}
+                              className="remove-condition"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Offer Highlights */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <Star size={20} />
+                    Offer Highlights
+                  </h4>
+                  <div className="offer-highlights">
+                    <div className="highlight-item">
+                      <Percent size={16} />
+                      <span>Special Discount</span>
+                    </div>
+                    <div className="highlight-item">
+                      <Clock size={16} />
+                      <span>Limited Time</span>
+                    </div>
+                    <div className="highlight-item">
+                      <Truck size={16} />
+                      <span>Fresh Delivery</span>
+                    </div>
+                    <div className="highlight-item">
+                      <Award size={16} />
+                      <span>Premium Quality</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form Actions */}
+              <div className="form-actions offer-actions">
+                <button
+                  type="submit"
+                  className="submit-btn offer-submit"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Creating Offer...
+                    </>
+                  ) : (
+                    <>
+                      <Gift size={16} />
+                      Create Special Offer
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setShowCreateModal(false)}
+                >
+                  <X size={16} />
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+          <div
+            className="modal-content create-modal offer-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header offer-header">
+              <div className="header-content">
+                <div className="header-icon offer-icon">
+                  <Edit size={24} />
+                </div>
+                <div>
+                  <h3>Edit Special Offer</h3>
+                  <p>Update your offer details</p>
+                </div>
+              </div>
+              <button
+                className="close-btn"
+                onClick={() => setShowEditModal(false)}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <form
+              onSubmit={handleEdit}
+              className="enhanced-modal-form offer-form"
+            >
+              {/* Image Upload Section */}
+              <div className="image-upload-section">
+                <div className="image-preview offer-preview">
+                  {formData.image ? (
+                    <>
+                      <img src={formData.image} alt="Preview" />
+                      <div className="offer-overlay">
+                        <div className="offer-badge-preview">SPECIAL OFFER</div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="image-placeholder">
+                      <Camera size={48} />
+                      <p>Upload Offer Image (Optional)</p>
+                      <span>Leave empty to keep current image</span>
+                    </div>
+                  )}
+                </div>
+                <div className="upload-controls">
+                  <label
+                    htmlFor="edit-offer-image-upload"
+                    className="upload-btn offer-upload"
+                  >
+                    <Camera size={20} />
+                    Change Image
+                  </label>
+                  <input
+                    id="edit-offer-image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: "none" }}
+                  />
+                  <small>Optional: Leave empty to keep current image</small>
+                </div>
+              </div>
+
+              {/* Same form sections as create modal */}
+              <div className="form-sections">
+                <div className="form-section">
+                  <h4 className="section-title offer-title">
+                    <Percent size={20} />
+                    Offer Details
+                  </h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>
+                        <Tag size={16} />
+                        Offer Name *
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <DollarSign size={16} />
+                        Special Price (Rs.) *
+                      </label>
+                      <div className="price-input-wrapper">
+                        <input
+                          type="number"
+                          name="price"
+                          value={formData.price}
+                          onChange={handleInputChange}
+                          min="1"
+                          required
+                        />
+                        <span className="price-label">per KG</span>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Grid size={16} />
+                        Category *
+                      </label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category.charAt(0).toUpperCase() +
+                              category.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <MapPin size={16} />
+                        Location *
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Calendar size={16} />
+                        Harvest Date *
+                      </label>
+                      <input
+                        type="date"
+                        name="harvestDay"
+                        value={formData.harvestDay}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <FileText size={20} />
+                    Offer Description
+                  </h4>
+                  <div className="form-group full-width">
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      rows="4"
+                      required
+                    />
+                    <div className="char-count">
+                      {formData.description.length}/500 characters
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <AlertCircle size={20} />
+                    Terms & Conditions (Optional)
+                  </h4>
+
+                  <div className="conditions-input-section">
+                    <div className="condition-input-wrapper">
+                      <input
+                        type="text"
+                        value={newCondition}
+                        onChange={(e) => setNewCondition(e.target.value)}
+                        placeholder="e.g., Minimum 5kg order, Valid for 7 days"
+                        onKeyPress={(e) =>
+                          e.key === "Enter" &&
+                          (e.preventDefault(), addCondition())
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={addCondition}
+                        className="add-condition-btn"
+                        disabled={!newCondition.trim()}
+                      >
+                        <Plus size={16} />
+                        Add
+                      </button>
+                    </div>
+
+                    {formData.condition.length > 0 && (
+                      <div className="conditions-list">
+                        <h5>Added Conditions:</h5>
+                        {formData.condition.map((cond, index) => (
+                          <div key={index} className="condition-tag">
+                            <span>{cond}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeCondition(index)}
+                              className="remove-condition"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-actions offer-actions">
+                <button
+                  type="submit"
+                  className="submit-btn offer-submit"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Updating Offer...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={16} />
+                      Update Special Offer
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setShowEditModal(false)}
+                >
+                  <X size={16} />
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* View Modal */}
+      {showViewModal && selectedOffer && (
+        <div className="modal-overlay" onClick={() => setShowViewModal(false)}>
+          <div
+            className="modal-content view-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h3>Special Offer Details</h3>
+              <button
+                className="close-btn"
+                onClick={() => setShowViewModal(false)}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="view-content">
+              <div className="view-image">
+                <img
+                  src={selectedOffer.image || defaultImage}
+                  alt={selectedOffer.name}
+                  onError={(e) => {
+                    e.target.src = defaultImage;
+                  }}
+                />
+                <div className={`status-badge ${selectedOffer.status}`}>
+                  {selectedOffer.status.toUpperCase()}
+                </div>
+                <div className="offer-badge">SPECIAL OFFER</div>
+              </div>
+
+              <div className="view-details">
+                <h4>{selectedOffer.name}</h4>
+
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span className="detail-label">Price</span>
+                    <span className="detail-value">
+                      Rs. {selectedOffer.price}
+                    </span>
+                  </div>
+
+                  <div className="detail-item">
+                    <span className="detail-label">Category</span>
+                    <span className="detail-value">
+                      {selectedOffer.category}
+                    </span>
+                  </div>
+
+                  <div className="detail-item">
+                    <span className="detail-label">Location</span>
+                    <span className="detail-value">
+                      {selectedOffer.location}
+                    </span>
+                  </div>
+
+                  <div className="detail-item">
+                    <span className="detail-label">Harvest Date</span>
+                    <span className="detail-value">
+                      {new Date(selectedOffer.harvestDay).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="description-section">
+                  <h5>Description</h5>
+                  <p>{selectedOffer.description}</p>
+                </div>
+
+                {selectedOffer.condition &&
+                  selectedOffer.condition.length > 0 && (
+                    <div className="conditions-section">
+                      <h5>Special Conditions</h5>
+                      <ul className="conditions-view-list">
+                        {selectedOffer.condition.map((cond, index) => (
+                          <li key={index}>
+                            <AlertCircle size={14} />
+                            {cond}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                <div className="offer-id-section">
+                  <strong>Offer ID:</strong> {selectedOffer.itemId}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default FarmerOffers;
 ```

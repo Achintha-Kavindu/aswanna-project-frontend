@@ -60,6 +60,9 @@ const FarmerGallery = () => {
     "seeds",
   ];
 
+  const defaultImage =
+    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+
   useEffect(() => {
     fetchMyItems();
   }, []);
@@ -119,6 +122,12 @@ const FarmerGallery = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage("Image size should be less than 5MB");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData((prev) => ({
@@ -127,6 +136,12 @@ const FarmerGallery = () => {
         }));
       };
       reader.readAsDataURL(file);
+    } else {
+      // Clear image if no file selected
+      setFormData((prev) => ({
+        ...prev,
+        image: "",
+      }));
     }
   };
 
@@ -144,9 +159,39 @@ const FarmerGallery = () => {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+
+    // Required fields validation (image නැතිව)
+    const { name, price, category, location, description, harvestDay } =
+      formData;
+
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !location ||
+      !description ||
+      !harvestDay
+    ) {
+      setMessage("Please fill in all required fields (image is optional)");
+      return;
+    }
+
     try {
       setLoading(true);
-      await api.post("/api/gallery/create", formData);
+
+      // Create form data object - image is optional
+      const submitData = {
+        name,
+        price,
+        category,
+        location,
+        description,
+        harvestDay,
+        // Only include image if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      await api.post("/api/gallery/create", submitData);
       setMessage(
         "Gallery item created successfully! Waiting for admin approval."
       );
@@ -154,18 +199,54 @@ const FarmerGallery = () => {
       resetForm();
       fetchMyItems();
     } catch (error) {
-      setMessage("Failed to create gallery item. Please try again.");
-      console.error("Create error:", error);
-    } finally {
-      setLoading(false);
+      console.error("Error creating gallery item:", error);
+
+      // ADDED: Better error message for duplicate itemId
+      if (error.response?.data?.error === "Duplicate itemId generated") {
+        setMessage("Please try again. System is generating a new ID.");
+      } else {
+        setMessage(
+          error.response?.data?.message || "Failed to create gallery item"
+        );
+      }
     }
   };
 
   const handleEdit = async (e) => {
     e.preventDefault();
+
+    // Required fields validation (image නැතිව)
+    const { name, price, category, location, description, harvestDay } =
+      formData;
+
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !location ||
+      !description ||
+      !harvestDay
+    ) {
+      setMessage("Please fill in all required fields (image is optional)");
+      return;
+    }
+
     try {
       setLoading(true);
-      await api.put(`/api/gallery/update/${selectedItem.itemId}`, formData);
+
+      // Create form data object - image is optional
+      const submitData = {
+        name,
+        price,
+        category,
+        location,
+        description,
+        harvestDay,
+        // Only include image if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      await api.put(`/api/gallery/update/${selectedItem.itemId}`, submitData);
       setMessage(
         "Gallery item updated successfully! Waiting for admin approval."
       );
@@ -346,7 +427,13 @@ const FarmerGallery = () => {
         {filteredItems.map((item) => (
           <div key={item._id} className="item-card">
             <div className="item-image">
-              <img src={item.image} alt={item.name} />
+              <img
+                src={item.image || defaultImage}
+                alt={item.name}
+                onError={(e) => {
+                  e.target.src = defaultImage;
+                }}
+              />
               <div className={`status-badge ${item.status}`}>
                 {item.status.toUpperCase()}
               </div>
@@ -450,7 +537,8 @@ const FarmerGallery = () => {
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
-                      <p>Upload Product Image</p>
+                      <p>Upload Product Image (Optional)</p>
+                      <small>You can add an image later if needed</small>
                     </div>
                   )}
                 </div>
@@ -460,14 +548,16 @@ const FarmerGallery = () => {
                     Choose Image
                   </label>
                   <input
-                    id="image-upload"
                     type="file"
+                    id="image"
                     accept="image/*"
                     onChange={handleImageChange}
-                    required
+                    // Remove required attribute
                     style={{ display: "none" }}
                   />
-                  <small>Recommended: 800x600px, Max 5MB</small>
+                  <small className="form-help">
+                    You can add an image later if needed. Max size: 5MB
+                  </small>
                 </div>
               </div>
 
@@ -483,7 +573,7 @@ const FarmerGallery = () => {
                     <div className="form-group">
                       <label>
                         <Tag size={16} />
-                        Product Name
+                        Product Name *
                       </label>
                       <input
                         type="text"
@@ -498,7 +588,7 @@ const FarmerGallery = () => {
                     <div className="form-group">
                       <label>
                         <DollarSign size={16} />
-                        Price per KG (Rs.)
+                        Price per KG (Rs.) *
                       </label>
                       <input
                         type="number"
@@ -514,7 +604,7 @@ const FarmerGallery = () => {
                     <div className="form-group">
                       <label>
                         <Grid size={16} />
-                        Category
+                        Category *
                       </label>
                       <select
                         name="category"
@@ -535,7 +625,7 @@ const FarmerGallery = () => {
                     <div className="form-group">
                       <label>
                         <MapPin size={16} />
-                        Farm Location
+                        Farm Location *
                       </label>
                       <input
                         type="text"
@@ -550,7 +640,7 @@ const FarmerGallery = () => {
                     <div className="form-group">
                       <label>
                         <Calendar size={16} />
-                        Harvest Date
+                        Harvest Date *
                       </label>
                       <input
                         type="date"
@@ -674,7 +764,8 @@ const FarmerGallery = () => {
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
-                      <p>Upload Product Image</p>
+                      <p>Upload Product Image (Optional)</p>
+                      <small>Leave empty to keep current image</small>
                     </div>
                   )}
                 </div>
@@ -690,7 +781,7 @@ const FarmerGallery = () => {
                     onChange={handleImageChange}
                     style={{ display: "none" }}
                   />
-                  <small>Leave empty to keep current image</small>
+                  <small>Optional: Leave empty to keep current image</small>
                 </div>
               </div>
 
@@ -705,7 +796,7 @@ const FarmerGallery = () => {
                     <div className="form-group">
                       <label>
                         <Tag size={16} />
-                        Product Name
+                        Product Name *
                       </label>
                       <input
                         type="text"
@@ -719,7 +810,7 @@ const FarmerGallery = () => {
                     <div className="form-group">
                       <label>
                         <DollarSign size={16} />
-                        Price per KG (Rs.)
+                        Price per KG (Rs.) *
                       </label>
                       <input
                         type="number"
@@ -734,7 +825,7 @@ const FarmerGallery = () => {
                     <div className="form-group">
                       <label>
                         <Grid size={16} />
-                        Category
+                        Category *
                       </label>
                       <select
                         name="category"
@@ -755,7 +846,7 @@ const FarmerGallery = () => {
                     <div className="form-group">
                       <label>
                         <MapPin size={16} />
-                        Farm Location
+                        Farm Location *
                       </label>
                       <input
                         type="text"
@@ -769,7 +860,7 @@ const FarmerGallery = () => {
                     <div className="form-group">
                       <label>
                         <Calendar size={16} />
-                        Harvest Date
+                        Harvest Date *
                       </label>
                       <input
                         type="date"
@@ -849,7 +940,13 @@ const FarmerGallery = () => {
 
             <div className="view-content">
               <div className="view-image">
-                <img src={selectedItem.image} alt={selectedItem.name} />
+                <img
+                  src={selectedItem.image || defaultImage}
+                  alt={selectedItem.name}
+                  onError={(e) => {
+                    e.target.src = defaultImage;
+                  }}
+                />
                 <div className={`status-badge ${selectedItem.status}`}>
                   {selectedItem.status.toUpperCase()}
                 </div>

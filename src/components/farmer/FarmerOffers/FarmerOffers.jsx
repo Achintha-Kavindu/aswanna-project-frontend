@@ -64,6 +64,9 @@ const FarmerOffers = () => {
     "seeds",
   ];
 
+  const defaultImage =
+    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+
   useEffect(() => {
     fetchMyOffers();
   }, []);
@@ -123,6 +126,12 @@ const FarmerOffers = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage("Image size should be less than 5MB");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData((prev) => ({
@@ -131,6 +140,12 @@ const FarmerOffers = () => {
         }));
       };
       reader.readAsDataURL(file);
+    } else {
+      // Clear image if no file selected
+      setFormData((prev) => ({
+        ...prev,
+        image: "",
+      }));
     }
   };
 
@@ -167,9 +182,40 @@ const FarmerOffers = () => {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+
+    // Required fields validation (image නැතිව)
+    const { name, price, category, location, description, harvestDay } =
+      formData;
+
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !location ||
+      !description ||
+      !harvestDay
+    ) {
+      setMessage("Please fill in all required fields (image is optional)");
+      return;
+    }
+
     try {
       setLoading(true);
-      await api.post("/api/offers", formData);
+
+      // Create form data object - image is optional
+      const submitData = {
+        name,
+        price,
+        category,
+        location,
+        description,
+        harvestDay,
+        condition: formData.condition,
+        // Only include image if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      await api.post("/api/offers", submitData);
       setMessage(
         "Special offer created successfully! Waiting for admin approval."
       );
@@ -186,9 +232,40 @@ const FarmerOffers = () => {
 
   const handleEdit = async (e) => {
     e.preventDefault();
+
+    // Required fields validation (image නැතිව)
+    const { name, price, category, location, description, harvestDay } =
+      formData;
+
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !location ||
+      !description ||
+      !harvestDay
+    ) {
+      setMessage("Please fill in all required fields (image is optional)");
+      return;
+    }
+
     try {
       setLoading(true);
-      await api.put(`/api/offers/update/${selectedOffer.itemId}`, formData);
+
+      // Create form data object - image is optional
+      const submitData = {
+        name,
+        price,
+        category,
+        location,
+        description,
+        harvestDay,
+        condition: formData.condition,
+        // Only include image if provided
+        ...(formData.image && { image: formData.image }),
+      };
+
+      await api.put(`/api/offers/update/${selectedOffer.itemId}`, submitData);
       setMessage("Offer updated successfully! Waiting for admin approval.");
       setShowEditModal(false);
       resetForm();
@@ -369,7 +446,13 @@ const FarmerOffers = () => {
         {filteredOffers.map((offer) => (
           <div key={offer._id} className="offer-card">
             <div className="offer-image">
-              <img src={offer.image} alt={offer.name} />
+              <img
+                src={offer.image || defaultImage}
+                alt={offer.name}
+                onError={(e) => {
+                  e.target.src = defaultImage;
+                }}
+              />
               <div className={`status-badge ${offer.status}`}>
                 {offer.status.toUpperCase()}
               </div>
@@ -495,7 +578,7 @@ const FarmerOffers = () => {
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
-                      <p>Upload Offer Image</p>
+                      <p>Upload Offer Image (Optional)</p>
                       <span>Make it attractive!</span>
                     </div>
                   )}
@@ -509,14 +592,16 @@ const FarmerOffers = () => {
                     Choose Image
                   </label>
                   <input
-                    id="offer-image-upload"
                     type="file"
+                    id="image"
                     accept="image/*"
                     onChange={handleImageChange}
-                    required
+                    // Remove required attribute
                     style={{ display: "none" }}
                   />
-                  <small>High-quality images get more attention!</small>
+                  <small className="form-help">
+                    Optional: High-quality images get more attention!
+                  </small>
                 </div>
               </div>
 
@@ -532,7 +617,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <Tag size={16} />
-                        Offer Name
+                        Offer Name *
                       </label>
                       <input
                         type="text"
@@ -547,7 +632,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <DollarSign size={16} />
-                        Special Price (Rs.)
+                        Special Price (Rs.) *
                       </label>
                       <div className="price-input-wrapper">
                         <input
@@ -566,7 +651,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <Grid size={16} />
-                        Category
+                        Category *
                       </label>
                       <select
                         name="category"
@@ -587,7 +672,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <MapPin size={16} />
-                        Location
+                        Location *
                       </label>
                       <input
                         type="text"
@@ -602,7 +687,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <Calendar size={16} />
-                        Harvest Date
+                        Harvest Date *
                       </label>
                       <input
                         type="date"
@@ -640,7 +725,7 @@ const FarmerOffers = () => {
                 <div className="form-section">
                   <h4 className="section-title">
                     <AlertCircle size={20} />
-                    Terms & Conditions
+                    Terms & Conditions (Optional)
                   </h4>
 
                   <div className="conditions-input-section">
@@ -775,7 +860,7 @@ const FarmerOffers = () => {
               onSubmit={handleEdit}
               className="enhanced-modal-form offer-form"
             >
-              {/* Same form structure as create modal but with edit functionality */}
+              {/* Image Upload Section */}
               <div className="image-upload-section">
                 <div className="image-preview offer-preview">
                   {formData.image ? (
@@ -788,8 +873,8 @@ const FarmerOffers = () => {
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
-                      <p>Upload Offer Image</p>
-                      <span>Make it attractive!</span>
+                      <p>Upload Offer Image (Optional)</p>
+                      <span>Leave empty to keep current image</span>
                     </div>
                   )}
                 </div>
@@ -808,7 +893,7 @@ const FarmerOffers = () => {
                     onChange={handleImageChange}
                     style={{ display: "none" }}
                   />
-                  <small>Leave empty to keep current image</small>
+                  <small>Optional: Leave empty to keep current image</small>
                 </div>
               </div>
 
@@ -823,7 +908,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <Tag size={16} />
-                        Offer Name
+                        Offer Name *
                       </label>
                       <input
                         type="text"
@@ -837,7 +922,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <DollarSign size={16} />
-                        Special Price (Rs.)
+                        Special Price (Rs.) *
                       </label>
                       <div className="price-input-wrapper">
                         <input
@@ -855,7 +940,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <Grid size={16} />
-                        Category
+                        Category *
                       </label>
                       <select
                         name="category"
@@ -876,7 +961,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <MapPin size={16} />
-                        Location
+                        Location *
                       </label>
                       <input
                         type="text"
@@ -890,7 +975,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <Calendar size={16} />
-                        Harvest Date
+                        Harvest Date *
                       </label>
                       <input
                         type="date"
@@ -925,7 +1010,7 @@ const FarmerOffers = () => {
                 <div className="form-section">
                   <h4 className="section-title">
                     <AlertCircle size={20} />
-                    Terms & Conditions
+                    Terms & Conditions (Optional)
                   </h4>
 
                   <div className="conditions-input-section">
@@ -1023,7 +1108,13 @@ const FarmerOffers = () => {
 
             <div className="view-content">
               <div className="view-image">
-                <img src={selectedOffer.image} alt={selectedOffer.name} />
+                <img
+                  src={selectedOffer.image || defaultImage}
+                  alt={selectedOffer.name}
+                  onError={(e) => {
+                    e.target.src = defaultImage;
+                  }}
+                />
                 <div className={`status-badge ${selectedOffer.status}`}>
                   {selectedOffer.status.toUpperCase()}
                 </div>
