@@ -12,6 +12,20 @@ import {
   X,
   RefreshCw,
   AlertCircle,
+  Save,
+  Camera,
+  Gift,
+  Percent,
+  Tag,
+  DollarSign,
+  Grid,
+  MapPin,
+  Calendar,
+  FileText,
+  Star,
+  Clock,
+  Truck,
+  Award,
 } from "lucide-react";
 import "./FarmerOffers.css";
 
@@ -442,9 +456,20 @@ const FarmerOffers = () => {
           className="modal-overlay"
           onClick={() => setShowCreateModal(false)}
         >
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Create Special Offer</h3>
+          <div
+            className="modal-content create-modal offer-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header offer-header">
+              <div className="header-content">
+                <div className="header-icon offer-icon">
+                  <Gift size={24} />
+                </div>
+                <div>
+                  <h3>Create Special Offer</h3>
+                  <p>Create an attractive offer for your products</p>
+                </div>
+              </div>
               <button
                 className="close-btn"
                 onClick={() => setShowCreateModal(false)}
@@ -453,138 +478,266 @@ const FarmerOffers = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreate} className="modal-form">
-              <div className="form-grid">
-                <div className="form-group">
-                  <label>Offer Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                  />
+            <form
+              onSubmit={handleCreate}
+              className="enhanced-modal-form offer-form"
+            >
+              {/* Image Upload Section */}
+              <div className="image-upload-section">
+                <div className="image-preview offer-preview">
+                  {formData.image ? (
+                    <>
+                      <img src={formData.image} alt="Preview" />
+                      <div className="offer-overlay">
+                        <div className="offer-badge-preview">SPECIAL OFFER</div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="image-placeholder">
+                      <Camera size={48} />
+                      <p>Upload Offer Image</p>
+                      <span>Make it attractive!</span>
+                    </div>
+                  )}
                 </div>
-
-                <div className="form-group">
-                  <label>Price (Rs.)</label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Category</label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
+                <div className="upload-controls">
+                  <label
+                    htmlFor="offer-image-upload"
+                    className="upload-btn offer-upload"
                   >
-                    <option value="">Select Category</option>
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Location</label>
+                    <Camera size={20} />
+                    Choose Image
+                  </label>
                   <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Harvest Date</label>
-                  <input
-                    type="date"
-                    name="harvestDay"
-                    value={formData.harvestDay}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Image</label>
-                  <input
+                    id="offer-image-upload"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
                     required
+                    style={{ display: "none" }}
                   />
+                  <small>High-quality images get more attention!</small>
                 </div>
               </div>
 
-              <div className="form-group full-width">
-                <label>Description</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows="4"
-                  required
-                />
-              </div>
+              {/* Form Fields */}
+              <div className="form-sections">
+                {/* Offer Details */}
+                <div className="form-section">
+                  <h4 className="section-title offer-title">
+                    <Percent size={20} />
+                    Offer Details
+                  </h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>
+                        <Tag size={16} />
+                        Offer Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="e.g., Weekend Special - Fresh Mangoes"
+                        required
+                      />
+                    </div>
 
-              {/* Conditions Section */}
-              <div className="form-group full-width">
-                <label>Special Conditions</label>
-                <div className="conditions-input">
-                  <input
-                    type="text"
-                    value={newCondition}
-                    onChange={(e) => setNewCondition(e.target.value)}
-                    placeholder="Add a condition..."
-                  />
-                  <button
-                    type="button"
-                    onClick={addCondition}
-                    className="add-condition-btn"
-                  >
-                    <Plus size={16} />
-                    Add
-                  </button>
-                </div>
-
-                {formData.condition.length > 0 && (
-                  <div className="conditions-list">
-                    {formData.condition.map((cond, index) => (
-                      <div key={index} className="condition-item">
-                        <span>{cond}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeCondition(index)}
-                          className="remove-condition-btn"
-                        >
-                          <X size={14} />
-                        </button>
+                    <div className="form-group">
+                      <label>
+                        <DollarSign size={16} />
+                        Special Price (Rs.)
+                      </label>
+                      <div className="price-input-wrapper">
+                        <input
+                          type="number"
+                          name="price"
+                          value={formData.price}
+                          onChange={handleInputChange}
+                          placeholder="200"
+                          min="1"
+                          required
+                        />
+                        <span className="price-label">per KG</span>
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Grid size={16} />
+                        Category
+                      </label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category.charAt(0).toUpperCase() +
+                              category.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <MapPin size={16} />
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        placeholder="e.g., Galle, Sri Lanka"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Calendar size={16} />
+                        Harvest Date
+                      </label>
+                      <input
+                        type="date"
+                        name="harvestDay"
+                        value={formData.harvestDay}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
-                )}
+                </div>
+
+                {/* Offer Description */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <FileText size={20} />
+                    Offer Description
+                  </h4>
+                  <div className="form-group full-width">
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      rows="4"
+                      placeholder="Describe what makes this offer special, discount details, quality, etc..."
+                      required
+                    />
+                    <div className="char-count">
+                      {formData.description.length}/500 characters
+                    </div>
+                  </div>
+                </div>
+
+                {/* Special Conditions */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <AlertCircle size={20} />
+                    Terms & Conditions
+                  </h4>
+
+                  <div className="conditions-input-section">
+                    <div className="condition-input-wrapper">
+                      <input
+                        type="text"
+                        value={newCondition}
+                        onChange={(e) => setNewCondition(e.target.value)}
+                        placeholder="e.g., Minimum 5kg order, Valid for 7 days"
+                        onKeyPress={(e) =>
+                          e.key === "Enter" &&
+                          (e.preventDefault(), addCondition())
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={addCondition}
+                        className="add-condition-btn"
+                        disabled={!newCondition.trim()}
+                      >
+                        <Plus size={16} />
+                        Add
+                      </button>
+                    </div>
+
+                    {formData.condition.length > 0 && (
+                      <div className="conditions-list">
+                        <h5>Added Conditions:</h5>
+                        {formData.condition.map((cond, index) => (
+                          <div key={index} className="condition-tag">
+                            <span>{cond}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeCondition(index)}
+                              className="remove-condition"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Offer Highlights */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <Star size={20} />
+                    Offer Highlights
+                  </h4>
+                  <div className="offer-highlights">
+                    <div className="highlight-item">
+                      <Percent size={16} />
+                      <span>Special Discount</span>
+                    </div>
+                    <div className="highlight-item">
+                      <Clock size={16} />
+                      <span>Limited Time</span>
+                    </div>
+                    <div className="highlight-item">
+                      <Truck size={16} />
+                      <span>Fresh Delivery</span>
+                    </div>
+                    <div className="highlight-item">
+                      <Award size={16} />
+                      <span>Premium Quality</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="modal-actions">
-                <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? "Creating..." : "Create Offer"}
+              {/* Form Actions */}
+              <div className="form-actions offer-actions">
+                <button
+                  type="submit"
+                  className="submit-btn offer-submit"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Creating Offer...
+                    </>
+                  ) : (
+                    <>
+                      <Gift size={16} />
+                      Create Special Offer
+                    </>
+                  )}
                 </button>
                 <button
                   type="button"
                   className="cancel-btn"
                   onClick={() => setShowCreateModal(false)}
                 >
+                  <X size={16} />
                   Cancel
                 </button>
               </div>
@@ -596,9 +749,20 @@ const FarmerOffers = () => {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Edit Special Offer</h3>
+          <div
+            className="modal-content create-modal offer-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header offer-header">
+              <div className="header-content">
+                <div className="header-icon offer-icon">
+                  <Edit size={24} />
+                </div>
+                <div>
+                  <h3>Edit Special Offer</h3>
+                  <p>Update your offer details</p>
+                </div>
+              </div>
               <button
                 className="close-btn"
                 onClick={() => setShowEditModal(false)}
@@ -607,138 +771,231 @@ const FarmerOffers = () => {
               </button>
             </div>
 
-            <form onSubmit={handleEdit} className="modal-form">
-              <div className="form-grid">
-                <div className="form-group">
-                  <label>Offer Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                  />
+            <form
+              onSubmit={handleEdit}
+              className="enhanced-modal-form offer-form"
+            >
+              {/* Same form structure as create modal but with edit functionality */}
+              <div className="image-upload-section">
+                <div className="image-preview offer-preview">
+                  {formData.image ? (
+                    <>
+                      <img src={formData.image} alt="Preview" />
+                      <div className="offer-overlay">
+                        <div className="offer-badge-preview">SPECIAL OFFER</div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="image-placeholder">
+                      <Camera size={48} />
+                      <p>Upload Offer Image</p>
+                      <span>Make it attractive!</span>
+                    </div>
+                  )}
                 </div>
-
-                <div className="form-group">
-                  <label>Price (Rs.)</label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Category</label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
+                <div className="upload-controls">
+                  <label
+                    htmlFor="edit-offer-image-upload"
+                    className="upload-btn offer-upload"
                   >
-                    <option value="">Select Category</option>
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Location</label>
+                    <Camera size={20} />
+                    Change Image
+                  </label>
                   <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Harvest Date</label>
-                  <input
-                    type="date"
-                    name="harvestDay"
-                    value={formData.harvestDay}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Image</label>
-                  <input
+                    id="edit-offer-image-upload"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
+                    style={{ display: "none" }}
                   />
                   <small>Leave empty to keep current image</small>
                 </div>
               </div>
 
-              <div className="form-group full-width">
-                <label>Description</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows="4"
-                  required
-                />
-              </div>
+              {/* Same form sections as create modal */}
+              <div className="form-sections">
+                <div className="form-section">
+                  <h4 className="section-title offer-title">
+                    <Percent size={20} />
+                    Offer Details
+                  </h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>
+                        <Tag size={16} />
+                        Offer Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
 
-              {/* Conditions Section */}
-              <div className="form-group full-width">
-                <label>Special Conditions</label>
-                <div className="conditions-input">
-                  <input
-                    type="text"
-                    value={newCondition}
-                    onChange={(e) => setNewCondition(e.target.value)}
-                    placeholder="Add a condition..."
-                  />
-                  <button
-                    type="button"
-                    onClick={addCondition}
-                    className="add-condition-btn"
-                  >
-                    <Plus size={16} />
-                    Add
-                  </button>
+                    <div className="form-group">
+                      <label>
+                        <DollarSign size={16} />
+                        Special Price (Rs.)
+                      </label>
+                      <div className="price-input-wrapper">
+                        <input
+                          type="number"
+                          name="price"
+                          value={formData.price}
+                          onChange={handleInputChange}
+                          min="1"
+                          required
+                        />
+                        <span className="price-label">per KG</span>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Grid size={16} />
+                        Category
+                      </label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category.charAt(0).toUpperCase() +
+                              category.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <MapPin size={16} />
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Calendar size={16} />
+                        Harvest Date
+                      </label>
+                      <input
+                        type="date"
+                        name="harvestDay"
+                        value={formData.harvestDay}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                {formData.condition.length > 0 && (
-                  <div className="conditions-list">
-                    {formData.condition.map((cond, index) => (
-                      <div key={index} className="condition-item">
-                        <span>{cond}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeCondition(index)}
-                          className="remove-condition-btn"
-                        >
-                          <X size={14} />
-                        </button>
-                      </div>
-                    ))}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <FileText size={20} />
+                    Offer Description
+                  </h4>
+                  <div className="form-group full-width">
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      rows="4"
+                      required
+                    />
+                    <div className="char-count">
+                      {formData.description.length}/500 characters
+                    </div>
                   </div>
-                )}
+                </div>
+
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <AlertCircle size={20} />
+                    Terms & Conditions
+                  </h4>
+
+                  <div className="conditions-input-section">
+                    <div className="condition-input-wrapper">
+                      <input
+                        type="text"
+                        value={newCondition}
+                        onChange={(e) => setNewCondition(e.target.value)}
+                        placeholder="e.g., Minimum 5kg order, Valid for 7 days"
+                        onKeyPress={(e) =>
+                          e.key === "Enter" &&
+                          (e.preventDefault(), addCondition())
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={addCondition}
+                        className="add-condition-btn"
+                        disabled={!newCondition.trim()}
+                      >
+                        <Plus size={16} />
+                        Add
+                      </button>
+                    </div>
+
+                    {formData.condition.length > 0 && (
+                      <div className="conditions-list">
+                        <h5>Added Conditions:</h5>
+                        {formData.condition.map((cond, index) => (
+                          <div key={index} className="condition-tag">
+                            <span>{cond}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeCondition(index)}
+                              className="remove-condition"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              <div className="modal-actions">
-                <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? "Updating..." : "Update Offer"}
+              <div className="form-actions offer-actions">
+                <button
+                  type="submit"
+                  className="submit-btn offer-submit"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Updating Offer...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={16} />
+                      Update Special Offer
+                    </>
+                  )}
                 </button>
                 <button
                   type="button"
                   className="cancel-btn"
                   onClick={() => setShowEditModal(false)}
                 >
+                  <X size={16} />
                   Cancel
                 </button>
               </div>

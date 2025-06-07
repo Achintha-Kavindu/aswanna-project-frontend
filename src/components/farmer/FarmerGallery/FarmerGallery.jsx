@@ -11,6 +11,20 @@ import {
   Filter,
   X,
   RefreshCw,
+  Save,
+  Camera,
+  Package,
+  Tag,
+  DollarSign,
+  Grid,
+  MapPin,
+  Calendar,
+  FileText,
+  Award,
+  Leaf,
+  Droplets,
+  Shield,
+  Sun,
 } from "lucide-react";
 import "./FarmerGallery.css";
 
@@ -405,9 +419,20 @@ const FarmerGallery = () => {
           className="modal-overlay"
           onClick={() => setShowCreateModal(false)}
         >
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-content create-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
-              <h3>Create Gallery Item</h3>
+              <div className="header-content">
+                <div className="header-icon">
+                  <Plus size={24} />
+                </div>
+                <div>
+                  <h3>Create Gallery Item</h3>
+                  <p>Add your fresh produce to the gallery</p>
+                </div>
+              </div>
               <button
                 className="close-btn"
                 onClick={() => setShowCreateModal(false)}
@@ -416,100 +441,197 @@ const FarmerGallery = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreate} className="modal-form">
-              <div className="form-grid">
-                <div className="form-group">
-                  <label>Item Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                  />
+            <form onSubmit={handleCreate} className="enhanced-modal-form">
+              {/* Image Upload Section */}
+              <div className="image-upload-section">
+                <div className="image-preview">
+                  {formData.image ? (
+                    <img src={formData.image} alt="Preview" />
+                  ) : (
+                    <div className="image-placeholder">
+                      <Camera size={48} />
+                      <p>Upload Product Image</p>
+                    </div>
+                  )}
                 </div>
-
-                <div className="form-group">
-                  <label>Price (Rs.)</label>
+                <div className="upload-controls">
+                  <label htmlFor="image-upload" className="upload-btn">
+                    <Camera size={20} />
+                    Choose Image
+                  </label>
                   <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Category</label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Location</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Harvest Date</label>
-                  <input
-                    type="date"
-                    name="harvestDay"
-                    value={formData.harvestDay}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Image</label>
-                  <input
+                    id="image-upload"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
                     required
+                    style={{ display: "none" }}
                   />
+                  <small>Recommended: 800x600px, Max 5MB</small>
                 </div>
               </div>
 
-              <div className="form-group full-width">
-                <label>Description</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows="4"
-                  required
-                />
+              {/* Form Fields */}
+              <div className="form-sections">
+                {/* Basic Information */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <Package size={20} />
+                    Basic Information
+                  </h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>
+                        <Tag size={16} />
+                        Product Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="e.g., Fresh Organic Tomatoes"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <DollarSign size={16} />
+                        Price per KG (Rs.)
+                      </label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleInputChange}
+                        placeholder="250"
+                        min="1"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Grid size={16} />
+                        Category
+                      </label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category.charAt(0).toUpperCase() +
+                              category.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <MapPin size={16} />
+                        Farm Location
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        placeholder="e.g., Kandy, Sri Lanka"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Calendar size={16} />
+                        Harvest Date
+                      </label>
+                      <input
+                        type="date"
+                        name="harvestDay"
+                        value={formData.harvestDay}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Product Description */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <FileText size={20} />
+                    Product Description
+                  </h4>
+                  <div className="form-group full-width">
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      rows="5"
+                      placeholder="Describe your product quality, farming methods, freshness, etc..."
+                      required
+                    />
+                    <div className="char-count">
+                      {formData.description.length}/500 characters
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quality Indicators */}
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <Award size={20} />
+                    Quality Assurance
+                  </h4>
+                  <div className="quality-badges">
+                    <div className="quality-badge">
+                      <Leaf size={16} />
+                      <span>Organic</span>
+                    </div>
+                    <div className="quality-badge">
+                      <Droplets size={16} />
+                      <span>Fresh</span>
+                    </div>
+                    <div className="quality-badge">
+                      <Shield size={16} />
+                      <span>Pesticide Free</span>
+                    </div>
+                    <div className="quality-badge">
+                      <Sun size={16} />
+                      <span>Farm Fresh</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="modal-actions">
+              {/* Form Actions */}
+              <div className="form-actions">
                 <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? "Creating..." : "Create Item"}
+                  {loading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={16} />
+                      Create Gallery Item
+                    </>
+                  )}
                 </button>
                 <button
                   type="button"
                   className="cancel-btn"
                   onClick={() => setShowCreateModal(false)}
                 >
+                  <X size={16} />
                   Cancel
                 </button>
               </div>
@@ -521,9 +643,20 @@ const FarmerGallery = () => {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-content create-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
-              <h3>Edit Gallery Item</h3>
+              <div className="header-content">
+                <div className="header-icon">
+                  <Edit size={24} />
+                </div>
+                <div>
+                  <h3>Edit Gallery Item</h3>
+                  <p>Update your product information</p>
+                </div>
+              </div>
               <button
                 className="close-btn"
                 onClick={() => setShowEditModal(false)}
@@ -532,100 +665,163 @@ const FarmerGallery = () => {
               </button>
             </div>
 
-            <form onSubmit={handleEdit} className="modal-form">
-              <div className="form-grid">
-                <div className="form-group">
-                  <label>Item Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                  />
+            <form onSubmit={handleEdit} className="enhanced-modal-form">
+              {/* Image Upload Section */}
+              <div className="image-upload-section">
+                <div className="image-preview">
+                  {formData.image ? (
+                    <img src={formData.image} alt="Preview" />
+                  ) : (
+                    <div className="image-placeholder">
+                      <Camera size={48} />
+                      <p>Upload Product Image</p>
+                    </div>
+                  )}
                 </div>
-
-                <div className="form-group">
-                  <label>Price (Rs.)</label>
+                <div className="upload-controls">
+                  <label htmlFor="edit-image-upload" className="upload-btn">
+                    <Camera size={20} />
+                    Change Image
+                  </label>
                   <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Category</label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Location</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Harvest Date</label>
-                  <input
-                    type="date"
-                    name="harvestDay"
-                    value={formData.harvestDay}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Image</label>
-                  <input
+                    id="edit-image-upload"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
+                    style={{ display: "none" }}
                   />
                   <small>Leave empty to keep current image</small>
                 </div>
               </div>
 
-              <div className="form-group full-width">
-                <label>Description</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows="4"
-                  required
-                />
+              {/* Form Fields - Same as create modal */}
+              <div className="form-sections">
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <Package size={20} />
+                    Basic Information
+                  </h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>
+                        <Tag size={16} />
+                        Product Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <DollarSign size={16} />
+                        Price per KG (Rs.)
+                      </label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleInputChange}
+                        min="1"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Grid size={16} />
+                        Category
+                      </label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category.charAt(0).toUpperCase() +
+                              category.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <MapPin size={16} />
+                        Farm Location
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>
+                        <Calendar size={16} />
+                        Harvest Date
+                      </label>
+                      <input
+                        type="date"
+                        name="harvestDay"
+                        value={formData.harvestDay}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <h4 className="section-title">
+                    <FileText size={20} />
+                    Product Description
+                  </h4>
+                  <div className="form-group full-width">
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      rows="5"
+                      required
+                    />
+                    <div className="char-count">
+                      {formData.description.length}/500 characters
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="modal-actions">
+              <div className="form-actions">
                 <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? "Updating..." : "Update Item"}
+                  {loading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={16} />
+                      Update Gallery Item
+                    </>
+                  )}
                 </button>
                 <button
                   type="button"
                   className="cancel-btn"
                   onClick={() => setShowEditModal(false)}
                 >
+                  <X size={16} />
                   Cancel
                 </button>
               </div>
