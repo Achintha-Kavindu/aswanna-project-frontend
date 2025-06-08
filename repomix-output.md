@@ -6830,6 +6830,282 @@ export default HeroSection;
     height: 250px;
   }
 }
+/* Add these styles to your existing ItemsGrid.css */
+
+/* Farmer Preview in Card */
+.farmer-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #666;
+  border-left: 3px solid #4caf50;
+}
+
+/* Enhanced Item Actions */
+.item-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.view-btn,
+.farmer-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.view-btn {
+  background: #3498db;
+  color: white;
+}
+
+.view-btn:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+.farmer-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.farmer-btn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+/* Quick Farmer Info in Product Modal */
+.quick-farmer-info {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.farmer-quick-details {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #4caf50;
+}
+
+.farmer-quick-details p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.view-full-farmer-btn {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.view-full-farmer-btn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+/* Farmer Modal Styles */
+.farmer-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.farmer-modal {
+  background: white;
+  border-radius: 15px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.farmer-header {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+}
+
+.farmer-profile-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-bottom: 1px solid #eee;
+}
+
+.farmer-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #4caf50;
+  flex-shrink: 0;
+}
+
+.farmer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.farmer-basic-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+}
+
+.farmer-type {
+  color: #4caf50;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.farmer-item-info {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.farmer-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.farmer-detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #4caf50;
+}
+
+.farmer-detail-item svg {
+  color: #4caf50;
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+.farmer-detail-item strong {
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.farmer-detail-item p {
+  margin: 0;
+  color: #666;
+  word-break: break-word;
+}
+
+.farmer-contact-actions {
+  padding: 0 2rem 2rem;
+}
+
+.farmer-contact-actions h5 {
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+}
+
+.contact-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.contact-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.email-btn {
+  background: #3498db;
+  color: white;
+}
+
+.email-btn:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+  color: white;
+  text-decoration: none;
+}
+
+.phone-btn {
+  background: #27ae60;
+  color: white;
+}
+
+.phone-btn:hover {
+  background: #219a52;
+  transform: translateY(-2px);
+  color: white;
+  text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .item-actions {
+    flex-direction: column;
+  }
+
+  .farmer-profile-section {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .farmer-details-grid {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+  }
+
+  .contact-buttons {
+    flex-direction: column;
+  }
+}
 ```
 
 ## File: src/components/home/ItemsGrid/ItemsGrid.jsx
@@ -6837,6 +7113,16 @@ export default HeroSection;
 // src/components/home/ItemsGrid/ItemsGrid.jsx
 import React, { useState, useEffect } from "react";
 import api from "../../../utils/api";
+import {
+  User,
+  Eye,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Tag,
+  DollarSign,
+} from "lucide-react";
 import "./ItemsGrid.css";
 
 const ItemsGrid = ({ filters }) => {
@@ -6844,7 +7130,9 @@ const ItemsGrid = ({ filters }) => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedFarmer, setSelectedFarmer] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showFarmerModal, setShowFarmerModal] = useState(false);
   const itemsPerPage = 12;
   const [message, setMessage] = useState("");
 
@@ -6852,7 +7140,6 @@ const ItemsGrid = ({ filters }) => {
     fetchItems();
   }, []);
 
-  // FIXED: Updated fetchItems function
   const fetchItems = async () => {
     try {
       setLoading(true);
@@ -6934,6 +7221,20 @@ const ItemsGrid = ({ filters }) => {
     setShowModal(true);
   };
 
+  // NEW: Handle farmer details view
+  const handleViewFarmer = (item) => {
+    if (item.userId) {
+      setSelectedFarmer({
+        ...item.userId,
+        itemName: item.name,
+        itemType: item.type,
+      });
+      setShowFarmerModal(true);
+    } else {
+      alert("Farmer information not available for this item.");
+    }
+  };
+
   const loadMore = () => {
     setCurrentPage((prev) => prev + 1);
   };
@@ -6996,12 +7297,37 @@ const ItemsGrid = ({ filters }) => {
                     : item.description}
                 </p>
 
-                <button
-                  className="view-btn"
-                  onClick={() => handleViewItem(item)}
-                >
-                  View Details
-                </button>
+                {/* ENHANCED: Show farmer info preview */}
+                {item.userId && (
+                  <div className="farmer-preview">
+                    <User size={14} />
+                    <span>
+                      By: {item.userId.firstName} {item.userId.lastName}
+                    </span>
+                  </div>
+                )}
+
+                {/* ENHANCED: Updated action buttons */}
+                <div className="item-actions">
+                  <button
+                    className="view-btn"
+                    onClick={() => handleViewItem(item)}
+                  >
+                    <Eye size={16} />
+                    View Product
+                  </button>
+
+                  {/* NEW: Farmer details button */}
+                  {item.userId && (
+                    <button
+                      className="farmer-btn"
+                      onClick={() => handleViewFarmer(item)}
+                    >
+                      <User size={16} />
+                      View Farmer
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -7026,7 +7352,7 @@ const ItemsGrid = ({ filters }) => {
         )}
       </div>
 
-      {/* Item Details Modal */}
+      {/* EXISTING: Item Details Modal */}
       {showModal && selectedItem && (
         <div className="item-modal-overlay" onClick={() => setShowModal(false)}>
           <div className="item-modal" onClick={(e) => e.stopPropagation()}>
@@ -7053,33 +7379,45 @@ const ItemsGrid = ({ filters }) => {
                       "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
                   }}
                 />
+                {selectedItem.type === "offer" && (
+                  <div className="modal-offer-badge">SPECIAL OFFER</div>
+                )}
               </div>
 
               <div className="modal-details">
                 <h4>{selectedItem.name}</h4>
                 <p className="modal-price">Rs. {selectedItem.price}</p>
 
-                <div className="detail-item">
-                  <strong>Category:</strong> {selectedItem.category}
-                </div>
-                <div className="detail-item">
-                  <strong>Location:</strong> {selectedItem.location}
-                </div>
-                <div className="detail-item">
-                  <strong>Harvest Date:</strong>{" "}
-                  {selectedItem.harvestDay
-                    ? new Date(selectedItem.harvestDay).toLocaleDateString()
-                    : "N/A"}
-                </div>
-                <div className="detail-item">
-                  <strong>Type:</strong>{" "}
-                  {selectedItem.type === "gallery"
-                    ? "Gallery Item"
-                    : "Special Offer"}
+                {/* Product Information */}
+                <div className="product-info-section">
+                  <h5>Product Information</h5>
+                  <div className="detail-item">
+                    <Tag size={16} />
+                    <strong>Category:</strong> {selectedItem.category}
+                  </div>
+                  <div className="detail-item">
+                    <MapPin size={16} />
+                    <strong>Location:</strong> {selectedItem.location}
+                  </div>
+                  <div className="detail-item">
+                    <Calendar size={16} />
+                    <strong>Harvest Date:</strong>{" "}
+                    {selectedItem.harvestDay
+                      ? new Date(selectedItem.harvestDay).toLocaleDateString()
+                      : "N/A"}
+                  </div>
+                  <div className="detail-item">
+                    <DollarSign size={16} />
+                    <strong>Type:</strong>{" "}
+                    {selectedItem.type === "gallery"
+                      ? "Gallery Item"
+                      : "Special Offer"}
+                  </div>
                 </div>
 
+                {/* Product Description */}
                 <div className="description-section">
-                  <strong>Description:</strong>
+                  <h5>Description</h5>
                   <p>{selectedItem.description}</p>
                 </div>
 
@@ -7088,7 +7426,7 @@ const ItemsGrid = ({ filters }) => {
                   Array.isArray(selectedItem.condition) &&
                   selectedItem.condition.length > 0 && (
                     <div className="conditions-section">
-                      <strong>Offer Conditions:</strong>
+                      <h5>Offer Conditions</h5>
                       <ul>
                         {selectedItem.condition.map((condition, index) => (
                           <li key={index}>{condition}</li>
@@ -7096,6 +7434,142 @@ const ItemsGrid = ({ filters }) => {
                       </ul>
                     </div>
                   )}
+
+                {/* Quick Farmer Info */}
+                {selectedItem.userId && (
+                  <div className="quick-farmer-info">
+                    <h5>Farmer Information</h5>
+                    <div className="farmer-quick-details">
+                      <p>
+                        <strong>Name:</strong> {selectedItem.userId.firstName}{" "}
+                        {selectedItem.userId.lastName}
+                      </p>
+                      <p>
+                        <strong>Location:</strong>{" "}
+                        {selectedItem.userId.location}
+                      </p>
+                      <button
+                        className="view-full-farmer-btn"
+                        onClick={() => {
+                          setShowModal(false);
+                          handleViewFarmer(selectedItem);
+                        }}
+                      >
+                        <User size={16} />
+                        View Full Farmer Details
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NEW: Farmer Details Modal */}
+      {showFarmerModal && selectedFarmer && (
+        <div
+          className="farmer-modal-overlay"
+          onClick={() => setShowFarmerModal(false)}
+        >
+          <div className="farmer-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header farmer-header">
+              <h3>Farmer Details</h3>
+              <button
+                className="modal-close-btn"
+                onClick={() => setShowFarmerModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="modal-content">
+              <div className="farmer-profile-section">
+                <div className="farmer-avatar">
+                  <img
+                    src={
+                      selectedFarmer.img ||
+                      "https://www.w3schools.com/howto/img_avatar.png"
+                    }
+                    alt={selectedFarmer.firstName}
+                    onError={(e) => {
+                      e.target.src =
+                        "https://www.w3schools.com/howto/img_avatar.png";
+                    }}
+                  />
+                </div>
+                <div className="farmer-basic-info">
+                  <h4>
+                    {selectedFarmer.firstName} {selectedFarmer.lastName}
+                  </h4>
+                  <p className="farmer-type">Local Farmer</p>
+                  <p className="farmer-item-info">
+                    Creator of: <strong>{selectedFarmer.itemName}</strong> (
+                    {selectedFarmer.itemType})
+                  </p>
+                </div>
+              </div>
+
+              <div className="farmer-details-grid">
+                <div className="farmer-detail-item">
+                  <Mail size={16} />
+                  <div>
+                    <strong>Email:</strong>
+                    <p>{selectedFarmer.email}</p>
+                  </div>
+                </div>
+
+                {selectedFarmer.phone && (
+                  <div className="farmer-detail-item">
+                    <Phone size={16} />
+                    <div>
+                      <strong>Phone:</strong>
+                      <p>{selectedFarmer.phone}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="farmer-detail-item">
+                  <MapPin size={16} />
+                  <div>
+                    <strong>Farm Location:</strong>
+                    <p>{selectedFarmer.location}</p>
+                  </div>
+                </div>
+
+                <div className="farmer-detail-item">
+                  <Calendar size={16} />
+                  <div>
+                    <strong>Farmer Since:</strong>
+                    <p>
+                      {new Date(selectedFarmer.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Actions */}
+              <div className="farmer-contact-actions">
+                <h5>Contact This Farmer</h5>
+                <div className="contact-buttons">
+                  <a
+                    href={`mailto:${selectedFarmer.email}?subject=Inquiry about ${selectedFarmer.itemName}`}
+                    className="contact-btn email-btn"
+                  >
+                    <Mail size={16} />
+                    Send Email
+                  </a>
+                  {selectedFarmer.phone && (
+                    <a
+                      href={`tel:${selectedFarmer.phone}`}
+                      className="contact-btn phone-btn"
+                    >
+                      <Phone size={16} />
+                      Call Now
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           </div>
