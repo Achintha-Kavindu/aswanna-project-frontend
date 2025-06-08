@@ -7140,6 +7140,7 @@ const ItemsGrid = ({ filters }) => {
     fetchItems();
   }, []);
 
+  // FIXED: Updated fetchItems function
   const fetchItems = async () => {
     try {
       setLoading(true);
@@ -7379,15 +7380,19 @@ const ItemsGrid = ({ filters }) => {
                       "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
                   }}
                 />
+<<<<<<< HEAD
                 {selectedItem.type === "offer" && (
                   <div className="modal-offer-badge">SPECIAL OFFER</div>
                 )}
+=======
+>>>>>>> a9f00650a3d10b9e3a7219c5ffa826667fc40bf5
               </div>
 
               <div className="modal-details">
                 <h4>{selectedItem.name}</h4>
                 <p className="modal-price">Rs. {selectedItem.price}</p>
 
+<<<<<<< HEAD
                 {/* Product Information */}
                 <div className="product-info-section">
                   <h5>Product Information</h5>
@@ -7413,6 +7418,25 @@ const ItemsGrid = ({ filters }) => {
                       ? "Gallery Item"
                       : "Special Offer"}
                   </div>
+=======
+                <div className="detail-item">
+                  <strong>Category:</strong> {selectedItem.category}
+                </div>
+                <div className="detail-item">
+                  <strong>Location:</strong> {selectedItem.location}
+                </div>
+                <div className="detail-item">
+                  <strong>Harvest Date:</strong>{" "}
+                  {selectedItem.harvestDay
+                    ? new Date(selectedItem.harvestDay).toLocaleDateString()
+                    : "N/A"}
+                </div>
+                <div className="detail-item">
+                  <strong>Type:</strong>{" "}
+                  {selectedItem.type === "gallery"
+                    ? "Gallery Item"
+                    : "Special Offer"}
+>>>>>>> a9f00650a3d10b9e3a7219c5ffa826667fc40bf5
                 </div>
 
                 {/* Product Description */}
@@ -7426,7 +7450,11 @@ const ItemsGrid = ({ filters }) => {
                   Array.isArray(selectedItem.condition) &&
                   selectedItem.condition.length > 0 && (
                     <div className="conditions-section">
+<<<<<<< HEAD
                       <h5>Offer Conditions</h5>
+=======
+                      <strong>Offer Conditions:</strong>
+>>>>>>> a9f00650a3d10b9e3a7219c5ffa826667fc40bf5
                       <ul>
                         {selectedItem.condition.map((condition, index) => (
                           <li key={index}>{condition}</li>
@@ -7434,6 +7462,7 @@ const ItemsGrid = ({ filters }) => {
                       </ul>
                     </div>
                   )}
+<<<<<<< HEAD
 
                 {/* Quick Farmer Info */}
                 {selectedItem.userId && (
@@ -7570,6 +7599,8 @@ const ItemsGrid = ({ filters }) => {
                     </a>
                   )}
                 </div>
+=======
+>>>>>>> a9f00650a3d10b9e3a7219c5ffa826667fc40bf5
               </div>
             </div>
           </div>
