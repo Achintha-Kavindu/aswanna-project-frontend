@@ -91,15 +91,94 @@ src/pages/FarmerDashboard.jsx
 src/pages/Home.css
 src/pages/Home.jsx
 src/utils/api.js
+src/utils/supabaseClient.js
 vite.config.js
 ```
 
 # Files
 
+## File: src/utils/supabaseClient.js
+```javascript
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Storage bucket configuration
+export const STORAGE_BUCKET = "images";
+
+// Helper function for uploading images
+export const uploadImage = async (file, folder = "gallery") => {
+  try {
+    // Validate file
+    if (!file) throw new Error("No file provided");
+
+    // Check file size (max 5MB)
+    if (file.size > 20 * 1024 * 1024) {
+      throw new Error("File size should be less than 20MB");
+    }
+
+    // Check file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error("Only JPEG, PNG, and WebP images are allowed");
+    }
+
+    // Generate unique filename
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${folder}/${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2)}.${fileExt}`;
+
+    // Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(fileName, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (error) throw error;
+
+    // Get public URL
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(fileName);
+
+    return {
+      url: publicUrl,
+      path: fileName,
+      success: true,
+    };
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    throw error;
+  }
+};
+
+// Helper function for deleting images
+export const deleteImage = async (imagePath) => {
+  try {
+    const { error } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .remove([imagePath]);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    throw error;
+  }
+};
+```
+
 ## File: .gitignore
 ```
 node_modules
 package-lock.json
+.env
 ```
 
 ## File: .repomixignore
@@ -178,6 +257,7 @@ export default [
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.50.0",
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "lucide-react": "^0.511.0",
@@ -3694,6 +3774,130 @@ export default BuyerProfile;
     padding: 1.5rem;
   }
 }
+/* src/components/common/AuthModal/AuthModal.css */
+/* Existing styles remain the same, add these new styles: */
+
+/* Profile Image Upload Styles */
+.profile-image-section {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.profile-image-label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.profile-image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-image-preview {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #4caf50;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-profile-image {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.remove-profile-image:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+.profile-image-placeholder {
+  width: 100px;
+  height: 100px;
+  border: 2px dashed #ddd;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.profile-image-placeholder:hover {
+  border-color: #4caf50;
+  color: #4caf50;
+  background: #f0f8f0;
+}
+
+.profile-image-placeholder p {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.profile-upload-btn {
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.profile-upload-btn:hover {
+  background: linear-gradient(45deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-image-preview,
+  .profile-image-placeholder {
+    width: 80px;
+    height: 80px;
+  }
+
+  .profile-upload-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
 ```
 
 ## File: src/components/common/AuthModal/AuthModal.jsx
@@ -3701,13 +3905,18 @@ export default BuyerProfile;
 // src/components/common/AuthModal/AuthModal.jsx
 import React, { useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
+import { uploadImage } from "../../../utils/supabaseClient";
+import { Camera, X } from "lucide-react";
 import "./AuthModal.css";
 
 const AuthModal = ({ isOpen, onClose }) => {
   const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -3717,6 +3926,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     phone: "",
     location: "",
     type: "buyer",
+    img: "",
   });
 
   const handleInputChange = (e) => {
@@ -3724,6 +3934,46 @@ const AuthModal = ({ isOpen, onClose }) => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file size (5MB limit)
+      if (file.size > 20 * 1024 * 1024) {
+        setMessage("Image size should be less than 20MB");
+        return;
+      }
+
+      // Validate file type
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        setMessage("Only JPEG, PNG, and WebP images are allowed");
+        return;
+      }
+
+      setImageFile(file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+
+      setMessage(""); // Clear any previous error messages
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setFormData((prev) => ({ ...prev, img: "" }));
   };
 
   const handleSubmit = async (e) => {
@@ -3743,7 +3993,34 @@ const AuthModal = ({ isOpen, onClose }) => {
           setMessage(result.message);
         }
       } else {
-        const result = await register(formData);
+        let imageUrl = "";
+
+        // Upload image to Supabase if file is selected
+        if (imageFile) {
+          setUploading(true);
+          setMessage("Uploading profile image...");
+
+          try {
+            const uploadResult = await uploadImage(imageFile, "profiles");
+            imageUrl = uploadResult.url;
+            setMessage("Profile image uploaded successfully!");
+          } catch (uploadError) {
+            console.error("Image upload failed:", uploadError);
+            setMessage(
+              "Image upload failed, but registration will continue without image."
+            );
+          }
+
+          setUploading(false);
+        }
+
+        // Create registration data
+        const registrationData = {
+          ...formData,
+          ...(imageUrl && { img: imageUrl }),
+        };
+
+        const result = await register(registrationData);
         setMessage(result.message);
         if (result.success) {
           setIsLogin(true);
@@ -3755,13 +4032,17 @@ const AuthModal = ({ isOpen, onClose }) => {
             phone: "",
             location: "",
             type: "buyer",
+            img: "",
           });
+          setImageFile(null);
+          setImagePreview(null);
         }
       }
     } catch (error) {
       setMessage("An error occurred. Please try again.");
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -3793,9 +4074,49 @@ const AuthModal = ({ isOpen, onClose }) => {
         <form onSubmit={handleSubmit} className="auth-form">
           {!isLogin && (
             <>
+              {/* Profile Image Upload Section */}
+              <div className="profile-image-section">
+                <label className="profile-image-label">
+                  Profile Picture (Optional)
+                </label>
+                <div className="profile-image-upload">
+                  {imagePreview ? (
+                    <div className="profile-image-preview">
+                      <img src={imagePreview} alt="Profile Preview" />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="remove-profile-image"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="profile-image-placeholder">
+                      <Camera size={32} />
+                      <p>Add Profile Picture</p>
+                    </div>
+                  )}
+                  <label
+                    htmlFor="profile-image-input"
+                    className="profile-upload-btn"
+                  >
+                    <Camera size={16} />
+                    Choose Image
+                  </label>
+                  <input
+                    type="file"
+                    id="profile-image-input"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: "none" }}
+                  />
+                </div>
+              </div>
+
               <div className="form-row">
                 <div className="form-group">
-                  <label>First Name</label>
+                  <label>First Name *</label>
                   <input
                     type="text"
                     name="firstName"
@@ -3826,7 +4147,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Location</label>
+                  <label>Location *</label>
                   <input
                     type="text"
                     name="location"
@@ -3838,7 +4159,7 @@ const AuthModal = ({ isOpen, onClose }) => {
               </div>
 
               <div className="form-group">
-                <label>Account Type</label>
+                <label>Account Type *</label>
                 <select
                   name="type"
                   value={formData.type}
@@ -3853,7 +4174,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           )}
 
           <div className="form-group">
-            <label>Email</label>
+            <label>Email *</label>
             <input
               type="email"
               name="email"
@@ -3864,7 +4185,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="form-group">
-            <label>Password</label>
+            <label>Password *</label>
             <input
               type="password"
               name="password"
@@ -3884,8 +4205,18 @@ const AuthModal = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          <button type="submit" className="auth-submit-btn" disabled={loading}>
-            {loading ? "Please wait..." : isLogin ? "Sign In" : "Sign Up"}
+          <button
+            type="submit"
+            className="auth-submit-btn"
+            disabled={loading || uploading}
+          >
+            {uploading
+              ? "Uploading Image..."
+              : loading
+              ? "Please wait..."
+              : isLogin
+              ? "Sign In"
+              : "Sign Up"}
           </button>
         </form>
 
@@ -5156,7 +5487,7 @@ export default SearchFilterBar;
 .sidebar {
   width: 280px;
   height: 100vh;
-  background: linear-gradient(135deg, #2c3e50, #34495e);
+  background: linear-gradient(135deg, #1e3c72, #2a5298, #3498db);
   color: white;
   display: flex;
   flex-direction: column;
@@ -5164,148 +5495,432 @@ export default SearchFilterBar;
   left: 0;
   top: 0;
   z-index: 1000;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-header {
   padding: 2rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
 }
 
 .sidebar-header h2 {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   margin: 0 0 1.5rem 0;
-  text-align: center;
-  color: #ecf0f1;
+  font-weight: 700;
+  background: linear-gradient(45deg, #fff, #ecf0f1, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
 }
 
 .user-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
 }
 
 .user-avatar {
-  width: 60px;
-  height: 60px;
+  width: 100px; /* ඔයාට අවශ්ය size එක select කරන්න */
+  height: 100px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid #3498db;
+  border: 4px solid #3498db;
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.user-avatar::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #3498db, #2ecc71, #f39c12);
+  z-index: -1;
+  animation: rotate 3s linear infinite;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.6);
 }
 
 .user-avatar img {
-  width: 100%;
-  height: 100%;
+  width: 120%;
+  height: 120%;
   object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .user-name {
   font-weight: 600;
-  text-align: center;
-  color: #ecf0f1;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.3px;
 }
 
-.back-to-home-btn {
-  width: 100%;
-  background: linear-gradient(45deg, #4caf50, #45a049);
-  color: white;
-  border: none;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
+.user-type-badge {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  background: linear-gradient(
+    45deg,
+    rgba(52, 152, 219, 0.3),
+    rgba(46, 204, 113, 0.3)
+  );
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(52, 152, 219, 0.5);
+  font-size: 0.85rem;
   font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
+  color: #3498db;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+  backdrop-filter: blur(5px);
+}
+
+.back-to-home-btn {
+  background: linear-gradient(45deg, #2ecc71, #27ae60);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.back-to-home-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.back-to-home-btn:hover::before {
+  left: 100%;
 }
 
 .back-to-home-btn:hover {
-  background: linear-gradient(45deg, #45a049, #3d8b40);
-  transform: translateY(-2px);
+  background: linear-gradient(45deg, #27ae60, #2ecc71);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+}
+
+.back-to-home-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(46, 204, 113, 0.3);
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 1rem 0;
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
   overflow-y: auto;
 }
 
+.sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
 .nav-item {
-  width: 100%;
   background: none;
   border: none;
-  color: #bdc3c7;
-  padding: 1rem 1.5rem;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 1.2rem 1.5rem;
   text-align: left;
   cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 1rem;
+  gap: 1rem;
   transition: all 0.3s ease;
-  border-left: 3px solid transparent;
+  border-left: 4px solid transparent;
+  position: relative;
+  margin: 0 0.5rem;
+  border-radius: 0 15px 15px 0;
+}
+
+.nav-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: linear-gradient(45deg, #3498db, #2ecc71);
+  transition: width 0.3s ease;
+  border-radius: 0 15px 15px 0;
+}
+
+.nav-item:hover::before {
+  width: 4px;
 }
 
 .nav-item:hover {
   background: rgba(255, 255, 255, 0.1);
   color: white;
-  border-left-color: #3498db;
+  transform: translateX(8px);
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
 }
 
 .nav-item.active {
-  background: rgba(52, 152, 219, 0.2);
-  color: #3498db;
+  background: linear-gradient(
+    45deg,
+    rgba(52, 152, 219, 0.3),
+    rgba(46, 204, 113, 0.2)
+  );
+  color: white;
   border-left-color: #3498db;
+  box-shadow: inset 0 0 15px rgba(52, 152, 219, 0.3);
+  transform: translateX(8px);
+  font-weight: 600;
+}
+
+.nav-item.active::before {
+  width: 4px;
+  background: linear-gradient(45deg, #3498db, #2ecc71);
+}
+
+.nav-item svg {
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover svg,
+.nav-item.active svg {
+  transform: scale(1.1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .logout-btn {
-  background: rgba(231, 76, 60, 0.2);
-  border: 1px solid #e74c3c;
-  color: #e74c3c;
-  padding: 1rem 1.5rem;
-  margin: 1rem;
-  border-radius: 8px;
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  border: none;
+  padding: 1.2rem 1.5rem;
   cursor: pointer;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 1rem;
+  gap: 0.8rem;
+  justify-content: center;
   transition: all 0.3s ease;
-  flex-shrink: 0;
+  margin: 1rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.logout-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.logout-btn:hover::before {
+  left: 100%;
 }
 
 .logout-btn:hover {
-  background: #e74c3c;
-  color: white;
+  background: linear-gradient(45deg, #c0392b, #a93226);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
 }
 
+.logout-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+}
+
+.logout-btn svg {
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover svg {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* Decorative Elements */
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, #3498db, #2ecc71, #f39c12, #e74c3c);
+  opacity: 0.6;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
     height: auto;
     position: relative;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
   }
 
+  .user-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .user-type-badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.8rem;
+  }
+
+  .sidebar-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .nav-item {
+    padding: 1rem;
+    font-size: 0.9rem;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .nav-item:hover {
+    transform: none;
+  }
+
+  .nav-item.active {
+    transform: none;
+  }
+
+  .back-to-home-btn,
+  .logout-btn {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
   .sidebar-header {
     padding: 1rem;
   }
 
-  .sidebar-header h2 {
-    font-size: 1.1rem;
+  .user-info {
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+  }
+
+  .nav-item {
+    padding: 0.8rem 1rem;
   }
 
   .user-avatar {
     width: 50px;
     height: 50px;
   }
+
+  .sidebar-header h2 {
+    font-size: 1.1rem;
+  }
+}
+
+/* Loading Animation */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.sidebar.loading {
+  animation: pulse 2s infinite;
+}
+
+/* Smooth Transitions */
+* {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 ```
 
@@ -5315,12 +5930,15 @@ export default SearchFilterBar;
 import React from "react";
 import { useAuth } from "../../../context/AuthContext";
 import {
-  ArrowLeft,
+  Home,
   User,
   Users,
   Image,
-  ShoppingBag,
+  Gift,
   LogOut,
+  Settings,
+  ShoppingBag,
+  Shield,
 } from "lucide-react";
 import "./Sidebar.css";
 
@@ -5332,58 +5950,91 @@ const Sidebar = ({ activeSection, setActiveSection, userType }) => {
   };
 
   const getMenuItems = () => {
-    switch (userType) {
+    switch (userType || user?.type) {
       case "admin":
         return [
+          { id: "profile", label: "Profile", icon: User },
           { id: "users", label: "User Management", icon: Users },
           { id: "gallery", label: "Gallery Management", icon: Image },
-          { id: "offers", label: "Offer Management", icon: ShoppingBag },
-          { id: "profile", label: "Profile", icon: User },
+          { id: "offers", label: "Offer Management", icon: Gift },
         ];
       case "farmer":
         return [
           { id: "profile", label: "Profile", icon: User },
-          { id: "gallery", label: "Gallery Items", icon: Image },
-          { id: "offers", label: "Offer Items", icon: ShoppingBag },
+          { id: "gallery", label: "My Gallery", icon: Image },
+          { id: "offers", label: "My Offers", icon: Gift },
         ];
       case "buyer":
-        return [{ id: "profile", label: "Profile", icon: User }];
+        return [
+          { id: "profile", label: "Profile", icon: User },
+          { id: "orders", label: "My Orders", icon: ShoppingBag },
+          { id: "favorites", label: "Favorites", icon: Settings },
+        ];
       default:
         return [];
     }
   };
 
-  const menuItems = getMenuItems();
+  const getUserTypeIcon = () => {
+    switch (userType || user?.type) {
+      case "admin":
+        return <Shield size={16} />;
+      case "farmer":
+        return <Image size={16} />;
+      case "buyer":
+        return <ShoppingBag size={16} />;
+      default:
+        return <User size={16} />;
+    }
+  };
+
+  const getUserTypeBadge = () => {
+    switch (userType || user?.type) {
+      case "admin":
+        return "Administrator";
+      case "farmer":
+        return "Farmer";
+      case "buyer":
+        return "Buyer";
+      default:
+        return "User";
+    }
+  };
+
+  if (!user) return null;
 
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <h2>
-          {userType.charAt(0).toUpperCase() + userType.slice(1)} Dashboard
-        </h2>
+        <h2>අස්වැන්න Dashboard</h2>
+
         <div className="user-info">
           <div className="user-avatar">
             <img
-              src={
-                user?.img || "https://www.w3schools.com/howto/img_avatar.png"
-              }
-              alt={user?.firstName}
+              src={user.img || "https://www.w3schools.com/howto/img_avatar.png"}
+              alt="User Avatar"
             />
           </div>
-          <span className="user-name">
-            {user?.firstName} {user?.lastName}
-          </span>
+          <div className="user-details">
+            <div className="user-name">
+              {user.firstName} {user.lastName}
+            </div>
+            <div className="user-type-badge">
+              {getUserTypeIcon()}
+              <span>{getUserTypeBadge()}</span>
+            </div>
+          </div>
         </div>
 
         <button className="back-to-home-btn" onClick={handleBackToHome}>
-          <ArrowLeft size={16} />
+          <Home size={16} />
           Back to Home
         </button>
       </div>
 
       <nav className="sidebar-nav">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
+        {getMenuItems().map((item) => {
+          const IconComponent = item.icon;
           return (
             <button
               key={item.id}
@@ -5392,8 +6043,8 @@ const Sidebar = ({ activeSection, setActiveSection, userType }) => {
               }`}
               onClick={() => setActiveSection(item.id)}
             >
-              <Icon size={20} />
-              <span>{item.label}</span>
+              <IconComponent size={20} />
+              {item.label}
             </button>
           );
         })}
@@ -5401,7 +6052,7 @@ const Sidebar = ({ activeSection, setActiveSection, userType }) => {
 
       <button className="logout-btn" onClick={logout}>
         <LogOut size={20} />
-        <span>Logout</span>
+        Logout
       </button>
     </div>
   );
@@ -6501,44 +7152,518 @@ const HeroSection = () => {
 export default HeroSection;
 ```
 
-## File: src/components/home/ItemsGrid/ItemsGrid.css
+## File: src/components/home/SearchFilter/SearchFilter.css
 ```css
-/* src/components/home/ItemsGrid/ItemsGrid.css */
-.items-grid-section {
-  background: #f8f9fa;
-  padding: 3rem 0;
+/* src/components/home/SearchFilter/SearchFilter.css */
+.search-filter {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(248, 249, 250, 0.95)
+  );
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  margin: 2rem auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  max-width: 1000px;
 }
 
-.items-container {
+.search-filter::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #4caf50, #2ecc71, #27ae60, #4caf50);
+  background-size: 200% 100%;
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.search-filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
 }
 
-.items-header {
-  margin-bottom: 2rem;
+/* Search Section */
+.search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.search-title {
   text-align: center;
+  margin-bottom: 1rem;
 }
 
-.items-header h3 {
-  font-size: 2rem;
+.search-title h3 {
+  font-size: 1.8rem;
   color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  background: linear-gradient(45deg, #2c3e50, #4caf50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.search-title p {
+  color: #666;
   margin: 0;
+  font-size: 1rem;
+  opacity: 0.8;
 }
 
-.items-loading {
+/* Enhanced Search Bar */
+.search-bar-container {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 3px solid #e9ecef;
+  border-radius: 50px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.search-bar:hover {
+  border-color: #4caf50;
+  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.15);
+  transform: translateY(-2px);
+}
+
+.search-bar:focus-within {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1),
+    0 8px 30px rgba(76, 175, 80, 0.2);
+  transform: translateY(-2px);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1.5rem;
+  color: #6c757d;
+  z-index: 2;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.search-bar:focus-within .search-icon {
+  color: #4caf50;
+  transform: scale(1.1);
+}
+
+.search-input {
+  flex: 1;
+  padding: 1rem 1.5rem 1rem 4rem;
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  outline: none;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.search-input::placeholder {
+  color: #adb5bd;
+  font-weight: 400;
+  transition: all 0.3s ease;
+}
+
+.search-bar:focus-within .search-input::placeholder {
+  color: #dee2e6;
+  transform: translateX(5px);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 4.5rem;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.clear-search-btn:hover {
+  background: #c0392b;
+  opacity: 1;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.search-btn {
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  border-radius: 0 50px 50px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.search-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.search-btn:hover::before {
+  left: 100%;
+}
+
+.search-btn:hover {
+  background: linear-gradient(45deg, #45a049, #3d8b40);
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+}
+
+.search-btn:active {
+  transform: scale(0.98);
+}
+
+/* Filter Section */
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filter-title {
   text-align: center;
-  padding: 4rem 0;
 }
 
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #4caf50;
+.filter-title h4 {
+  font-size: 1.4rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  background: linear-gradient(45deg, #2c3e50, #4caf50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.filter-title p {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Filter Controls */
+.filter-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.filter-icon {
+  color: #4caf50;
+}
+
+/* Enhanced Select Styling */
+.filter-select {
+  position: relative;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.filter-select:hover {
+  border-color: #4caf50;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.1);
+  transform: translateY(-1px);
+}
+
+.filter-select:focus-within {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  transform: translateY(-1px);
+}
+
+.filter-select select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #2c3e50;
+  cursor: pointer;
+  outline: none;
+  font-weight: 500;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234caf50' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 1rem center;
+  background-repeat: no-repeat;
+  background-size: 1.2rem;
+  padding-right: 3rem;
+}
+
+.filter-select select option {
+  padding: 0.5rem;
+  background: white;
+  color: #2c3e50;
+}
+
+/* Price Range Styling */
+.price-range {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.price-input {
+  flex: 1;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  color: #2c3e50;
+  outline: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.price-input:hover {
+  border-color: #4caf50;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.1);
+}
+
+.price-input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.price-separator {
+  color: #666;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Filter Actions */
+.filter-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.filter-btn,
+.clear-filters-btn {
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-btn {
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  color: white;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.filter-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.filter-btn:hover::before {
+  left: 100%;
+}
+
+.filter-btn:hover {
+  background: linear-gradient(45deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.clear-filters-btn {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.clear-filters-btn:hover {
+  background: linear-gradient(45deg, #c0392b, #a93226);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+/* Active Filters Display */
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(76, 175, 80, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(76, 175, 80, 0.1);
+}
+
+.active-filters-label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.filter-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filter-tag button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.filter-tag button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Loading State */
+.search-filter.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.search-filter.loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #4caf50;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
 }
 
 @keyframes spin {
@@ -6550,1217 +7675,125 @@ export default HeroSection;
   }
 }
 
-.items-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.item-card {
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.item-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.item-image-container {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-}
-
-.item-image-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.item-card:hover .item-image-container img {
-  transform: scale(1.05);
-}
-
-.item-type-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: white;
-}
-
-.item-type-badge.gallery {
-  background: linear-gradient(45deg, #3498db, #2980b9);
-}
-
-.item-type-badge.offer {
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
-}
-
-.item-content {
-  padding: 1.5rem;
-}
-
-.item-name {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-}
-
-.item-price {
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: #4caf50;
-  margin: 0 0 1rem 0;
-}
-
-.item-meta {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.item-category,
-.item-location {
-  background: #f8f9fa;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  color: #666;
-  border: 1px solid #e1e5e9;
-}
-
-.item-category {
-  background: linear-gradient(45deg, #e8f5e8, #f0f8f0);
-  color: #4caf50;
-  border-color: #4caf50;
-}
-
-.item-description {
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-.view-btn {
-  width: 100%;
-  background: linear-gradient(45deg, #4caf50, #45a049);
-  color: white;
-  border: none;
-  padding: 0.75rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.view-btn:hover {
-  background: linear-gradient(45deg, #45a049, #3d8b40);
-  transform: translateY(-2px);
-}
-
-.load-more-container {
-  text-align: center;
-}
-
-.load-more-btn {
-  background: linear-gradient(45deg, #3498db, #2980b9);
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.load-more-btn:hover {
-  background: linear-gradient(45deg, #2980b9, #1f5f8b);
-  transform: translateY(-2px);
-}
-
-.no-items {
-  text-align: center;
-  padding: 4rem 0;
-  color: #666;
-}
-
-.no-items h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-/* Modal Styles */
-.item-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.item-modal {
-  background: white;
-  border-radius: 15px;
-  max-width: 800px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-}
-
-.modal-header {
-  background: linear-gradient(45deg, #4caf50, #45a049);
-  color: white;
-  padding: 1.5rem;
-  border-radius: 15px 15px 0 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.modal-close-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 2rem;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-close-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.modal-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  padding: 2rem;
-}
-
-.modal-image img {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 10px;
-}
-
-.modal-details h4 {
-  font-size: 1.8rem;
-  color: #2c3e50;
-  margin: 0 0 1rem 0;
-}
-
-.modal-price {
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: #4caf50;
-  margin-bottom: 1.5rem;
-}
-
-.detail-item {
-  margin-bottom: 1rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
-}
-
-.detail-item strong {
-  color: #2c3e50;
-}
-
-.description-section {
-  margin-top: 1.5rem;
-}
-
-.description-section strong {
-  color: #2c3e50;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.description-section p {
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
-}
-
-@media (max-width: 768px) {
-  .items-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .modal-content {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 1rem;
-  }
-
-  .modal-image img {
-    height: 250px;
-  }
-}
-/* Add these styles to your existing ItemsGrid.css */
-
-/* Farmer Preview in Card */
-.farmer-preview {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0.75rem 0;
-  padding: 0.5rem;
-  background: #f8f9fa;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  color: #666;
-  border-left: 3px solid #4caf50;
-}
-
-/* Enhanced Item Actions */
-.item-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.view-btn,
-.farmer-btn {
-  flex: 1;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-}
-
-.view-btn {
-  background: #3498db;
-  color: white;
-}
-
-.view-btn:hover {
-  background: #2980b9;
-  transform: translateY(-2px);
-}
-
-.farmer-btn {
-  background: #4caf50;
-  color: white;
-}
-
-.farmer-btn:hover {
-  background: #45a049;
-  transform: translateY(-2px);
-}
-
-/* Quick Farmer Info in Product Modal */
-.quick-farmer-info {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #eee;
-}
-
-.farmer-quick-details {
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 8px;
-  border-left: 4px solid #4caf50;
-}
-
-.farmer-quick-details p {
-  margin: 0.5rem 0;
-  color: #666;
-}
-
-.view-full-farmer-btn {
-  background: #4caf50;
-  color: white;
-  border: none;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  transition: all 0.3s ease;
-}
-
-.view-full-farmer-btn:hover {
-  background: #45a049;
-  transform: translateY(-2px);
-}
-
-/* Farmer Modal Styles */
-.farmer-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.farmer-modal {
-  background: white;
-  border-radius: 15px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-}
-
-.farmer-header {
-  background: linear-gradient(135deg, #4caf50, #45a049);
-}
-
-.farmer-profile-section {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 2rem;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border-bottom: 1px solid #eee;
-}
-
-.farmer-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 4px solid #4caf50;
-  flex-shrink: 0;
-}
-
-.farmer-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.farmer-basic-info h4 {
-  margin: 0 0 0.5rem 0;
-  color: #2c3e50;
-  font-size: 1.5rem;
-}
-
-.farmer-type {
-  color: #4caf50;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-}
-
-.farmer-item-info {
-  color: #666;
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.farmer-details-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  padding: 2rem;
-}
-
-.farmer-detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 3px solid #4caf50;
-}
-
-.farmer-detail-item svg {
-  color: #4caf50;
-  margin-top: 0.25rem;
-  flex-shrink: 0;
-}
-
-.farmer-detail-item strong {
-  color: #2c3e50;
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.farmer-detail-item p {
-  margin: 0;
-  color: #666;
-  word-break: break-word;
-}
-
-.farmer-contact-actions {
-  padding: 0 2rem 2rem;
-}
-
-.farmer-contact-actions h5 {
-  color: #2c3e50;
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
-}
-
-.contact-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.contact-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.email-btn {
-  background: #3498db;
-  color: white;
-}
-
-.email-btn:hover {
-  background: #2980b9;
-  transform: translateY(-2px);
-  color: white;
-  text-decoration: none;
-}
-
-.phone-btn {
-  background: #27ae60;
-  color: white;
-}
-
-.phone-btn:hover {
-  background: #219a52;
-  transform: translateY(-2px);
-  color: white;
-  text-decoration: none;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
-  .item-actions {
-    flex-direction: column;
-  }
-
-  .farmer-profile-section {
-    flex-direction: column;
-    text-align: center;
+  .search-filter {
     padding: 1.5rem;
+    margin: 1rem;
+    border-radius: 15px;
   }
 
-  .farmer-details-grid {
+  .search-title h3 {
+    font-size: 1.5rem;
+  }
+
+  .search-bar {
+    border-radius: 15px;
+  }
+
+  .search-btn {
+    border-radius: 0 15px 15px 0;
+    padding: 1rem 1.5rem;
+  }
+
+  .filter-controls {
     grid-template-columns: 1fr;
-    padding: 1.5rem;
+    gap: 1rem;
   }
 
-  .contact-buttons {
+  .price-range {
     flex-direction: column;
-  }
-}
-```
-
-## File: src/components/home/ItemsGrid/ItemsGrid.jsx
-```javascript
-// src/components/home/ItemsGrid/ItemsGrid.jsx
-import React, { useState, useEffect } from "react";
-import api from "../../../utils/api";
-import {
-  User,
-  Eye,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Tag,
-  DollarSign,
-} from "lucide-react";
-import "./ItemsGrid.css";
-
-const ItemsGrid = ({ filters }) => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [selectedFarmer, setSelectedFarmer] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [showFarmerModal, setShowFarmerModal] = useState(false);
-  const itemsPerPage = 12;
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
-  // FIXED: Updated fetchItems function
-  const fetchItems = async () => {
-    try {
-      setLoading(true);
-      console.log("Fetching items from backend...");
-
-      // FIXED: Use correct API endpoints
-      const [galleryResponse, offersResponse] = await Promise.all([
-        api.get("/api/gallery/approved"), // Fixed endpoint
-        api.get("/api/offers/approved"), // Fixed endpoint
-      ]);
-
-      console.log("Gallery API response:", galleryResponse.data);
-      console.log("Offers API response:", offersResponse.data);
-
-      // Process gallery items
-      let galleryItems = [];
-      if (galleryResponse.data && galleryResponse.data.success) {
-        galleryItems = galleryResponse.data.data || [];
-      }
-
-      // Process offers
-      let offerItems = [];
-      if (offersResponse.data && offersResponse.data.success) {
-        offerItems = offersResponse.data.data || [];
-      }
-
-      // Add type identifier to items
-      const processedGalleryItems = galleryItems.map((item) => ({
-        ...item,
-        type: "gallery",
-      }));
-
-      const processedOfferItems = offerItems.map((item) => ({
-        ...item,
-        type: "offer",
-      }));
-
-      // Combine and shuffle items
-      const allItems = [...processedGalleryItems, ...processedOfferItems];
-      const shuffledItems = allItems.sort(() => Math.random() - 0.5);
-
-      console.log(
-        `Total items loaded: ${allItems.length} (${galleryItems.length} gallery + ${offerItems.length} offers)`
-      );
-
-      setItems(shuffledItems);
-
-      if (allItems.length === 0) {
-        setMessage(
-          "No approved items available. Please check if farmers have uploaded items and admin has approved them."
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching items:", error);
-      setMessage(`Failed to load items: ${error.message}`);
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredItems = items.filter((item) => {
-    return (
-      (!filters.name ||
-        item.name.toLowerCase().includes(filters.name.toLowerCase())) &&
-      (!filters.category || item.category === filters.category) &&
-      (!filters.location || item.location === filters.location) &&
-      (!filters.minPrice ||
-        parseInt(item.price) >= parseInt(filters.minPrice)) &&
-      (!filters.maxPrice || parseInt(item.price) <= parseInt(filters.maxPrice))
-    );
-  });
-
-  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-  const currentItems = filteredItems.slice(0, currentPage * itemsPerPage);
-
-  const handleViewItem = (item) => {
-    setSelectedItem(item);
-    setShowModal(true);
-  };
-
-  // NEW: Handle farmer details view
-  const handleViewFarmer = (item) => {
-    if (item.userId) {
-      setSelectedFarmer({
-        ...item.userId,
-        itemName: item.name,
-        itemType: item.type,
-      });
-      setShowFarmerModal(true);
-    } else {
-      alert("Farmer information not available for this item.");
-    }
-  };
-
-  const loadMore = () => {
-    setCurrentPage((prev) => prev + 1);
-  };
-
-  if (loading) {
-    return (
-      <div className="items-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading fresh products...</p>
-      </div>
-    );
+    gap: 0.5rem;
   }
 
-  return (
-    <div className="items-grid-section">
-      <div className="items-container">
-        <div className="items-header">
-          <h3>Available Products ({filteredItems.length})</h3>
-        </div>
-
-        {/* FIXED: Add message display */}
-        {message && (
-          <div className="no-items-message">
-            <p>{message}</p>
-          </div>
-        )}
-
-        <div className="items-grid">
-          {currentItems.map((item) => (
-            <div key={item._id} className="item-card">
-              <div className="item-image-container">
-                <img
-                  src={
-                    item.image ||
-                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"
-                  }
-                  alt={item.name}
-                  onError={(e) => {
-                    e.target.src =
-                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
-                  }}
-                />
-                <div className={`item-type-badge ${item.type}`}>
-                  {item.type === "gallery" ? "Gallery" : "Special Offer"}
-                </div>
-              </div>
-
-              <div className="item-content">
-                <h4 className="item-name">{item.name}</h4>
-                <p className="item-price">Rs. {item.price}</p>
-
-                <div className="item-meta">
-                  <span className="item-category">{item.category}</span>
-                  <span className="item-location">{item.location}</span>
-                </div>
-
-                <p className="item-description">
-                  {item.description && item.description.length > 80
-                    ? `${item.description.substring(0, 80)}...`
-                    : item.description}
-                </p>
-
-                {/* ENHANCED: Show farmer info preview */}
-                {item.userId && (
-                  <div className="farmer-preview">
-                    <User size={14} />
-                    <span>
-                      By: {item.userId.firstName} {item.userId.lastName}
-                    </span>
-                  </div>
-                )}
-
-                {/* ENHANCED: Updated action buttons */}
-                <div className="item-actions">
-                  <button
-                    className="view-btn"
-                    onClick={() => handleViewItem(item)}
-                  >
-                    <Eye size={16} />
-                    View Product
-                  </button>
-
-                  {/* NEW: Farmer details button */}
-                  {item.userId && (
-                    <button
-                      className="farmer-btn"
-                      onClick={() => handleViewFarmer(item)}
-                    >
-                      <User size={16} />
-                      View Farmer
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {currentPage * itemsPerPage < filteredItems.length && (
-          <div className="load-more-container">
-            <button onClick={loadMore} className="load-more-btn">
-              Show More ({filteredItems.length - currentItems.length} remaining)
-            </button>
-          </div>
-        )}
-
-        {filteredItems.length === 0 && !message && (
-          <div className="no-items">
-            <h3>No products found</h3>
-            <p>
-              Try adjusting your search filters or check back later for new
-              products
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* EXISTING: Item Details Modal */}
-      {showModal && selectedItem && (
-        <div className="item-modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="item-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Product Details</h3>
-              <button
-                className="modal-close-btn"
-                onClick={() => setShowModal(false)}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="modal-content">
-              <div className="modal-image">
-                <img
-                  src={
-                    selectedItem.image ||
-                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"
-                  }
-                  alt={selectedItem.name}
-                  onError={(e) => {
-                    e.target.src =
-                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
-                  }}
-                />
-<<<<<<< HEAD
-                {selectedItem.type === "offer" && (
-                  <div className="modal-offer-badge">SPECIAL OFFER</div>
-                )}
-=======
->>>>>>> a9f00650a3d10b9e3a7219c5ffa826667fc40bf5
-              </div>
-
-              <div className="modal-details">
-                <h4>{selectedItem.name}</h4>
-                <p className="modal-price">Rs. {selectedItem.price}</p>
-
-<<<<<<< HEAD
-                {/* Product Information */}
-                <div className="product-info-section">
-                  <h5>Product Information</h5>
-                  <div className="detail-item">
-                    <Tag size={16} />
-                    <strong>Category:</strong> {selectedItem.category}
-                  </div>
-                  <div className="detail-item">
-                    <MapPin size={16} />
-                    <strong>Location:</strong> {selectedItem.location}
-                  </div>
-                  <div className="detail-item">
-                    <Calendar size={16} />
-                    <strong>Harvest Date:</strong>{" "}
-                    {selectedItem.harvestDay
-                      ? new Date(selectedItem.harvestDay).toLocaleDateString()
-                      : "N/A"}
-                  </div>
-                  <div className="detail-item">
-                    <DollarSign size={16} />
-                    <strong>Type:</strong>{" "}
-                    {selectedItem.type === "gallery"
-                      ? "Gallery Item"
-                      : "Special Offer"}
-                  </div>
-=======
-                <div className="detail-item">
-                  <strong>Category:</strong> {selectedItem.category}
-                </div>
-                <div className="detail-item">
-                  <strong>Location:</strong> {selectedItem.location}
-                </div>
-                <div className="detail-item">
-                  <strong>Harvest Date:</strong>{" "}
-                  {selectedItem.harvestDay
-                    ? new Date(selectedItem.harvestDay).toLocaleDateString()
-                    : "N/A"}
-                </div>
-                <div className="detail-item">
-                  <strong>Type:</strong>{" "}
-                  {selectedItem.type === "gallery"
-                    ? "Gallery Item"
-                    : "Special Offer"}
->>>>>>> a9f00650a3d10b9e3a7219c5ffa826667fc40bf5
-                </div>
-
-                {/* Product Description */}
-                <div className="description-section">
-                  <h5>Description</h5>
-                  <p>{selectedItem.description}</p>
-                </div>
-
-                {/* FIXED: Add conditions display for offers */}
-                {selectedItem.condition &&
-                  Array.isArray(selectedItem.condition) &&
-                  selectedItem.condition.length > 0 && (
-                    <div className="conditions-section">
-<<<<<<< HEAD
-                      <h5>Offer Conditions</h5>
-=======
-                      <strong>Offer Conditions:</strong>
->>>>>>> a9f00650a3d10b9e3a7219c5ffa826667fc40bf5
-                      <ul>
-                        {selectedItem.condition.map((condition, index) => (
-                          <li key={index}>{condition}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-<<<<<<< HEAD
-
-                {/* Quick Farmer Info */}
-                {selectedItem.userId && (
-                  <div className="quick-farmer-info">
-                    <h5>Farmer Information</h5>
-                    <div className="farmer-quick-details">
-                      <p>
-                        <strong>Name:</strong> {selectedItem.userId.firstName}{" "}
-                        {selectedItem.userId.lastName}
-                      </p>
-                      <p>
-                        <strong>Location:</strong>{" "}
-                        {selectedItem.userId.location}
-                      </p>
-                      <button
-                        className="view-full-farmer-btn"
-                        onClick={() => {
-                          setShowModal(false);
-                          handleViewFarmer(selectedItem);
-                        }}
-                      >
-                        <User size={16} />
-                        View Full Farmer Details
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* NEW: Farmer Details Modal */}
-      {showFarmerModal && selectedFarmer && (
-        <div
-          className="farmer-modal-overlay"
-          onClick={() => setShowFarmerModal(false)}
-        >
-          <div className="farmer-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header farmer-header">
-              <h3>Farmer Details</h3>
-              <button
-                className="modal-close-btn"
-                onClick={() => setShowFarmerModal(false)}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="modal-content">
-              <div className="farmer-profile-section">
-                <div className="farmer-avatar">
-                  <img
-                    src={
-                      selectedFarmer.img ||
-                      "https://www.w3schools.com/howto/img_avatar.png"
-                    }
-                    alt={selectedFarmer.firstName}
-                    onError={(e) => {
-                      e.target.src =
-                        "https://www.w3schools.com/howto/img_avatar.png";
-                    }}
-                  />
-                </div>
-                <div className="farmer-basic-info">
-                  <h4>
-                    {selectedFarmer.firstName} {selectedFarmer.lastName}
-                  </h4>
-                  <p className="farmer-type">Local Farmer</p>
-                  <p className="farmer-item-info">
-                    Creator of: <strong>{selectedFarmer.itemName}</strong> (
-                    {selectedFarmer.itemType})
-                  </p>
-                </div>
-              </div>
-
-              <div className="farmer-details-grid">
-                <div className="farmer-detail-item">
-                  <Mail size={16} />
-                  <div>
-                    <strong>Email:</strong>
-                    <p>{selectedFarmer.email}</p>
-                  </div>
-                </div>
-
-                {selectedFarmer.phone && (
-                  <div className="farmer-detail-item">
-                    <Phone size={16} />
-                    <div>
-                      <strong>Phone:</strong>
-                      <p>{selectedFarmer.phone}</p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="farmer-detail-item">
-                  <MapPin size={16} />
-                  <div>
-                    <strong>Farm Location:</strong>
-                    <p>{selectedFarmer.location}</p>
-                  </div>
-                </div>
-
-                <div className="farmer-detail-item">
-                  <Calendar size={16} />
-                  <div>
-                    <strong>Farmer Since:</strong>
-                    <p>
-                      {new Date(selectedFarmer.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Contact Actions */}
-              <div className="farmer-contact-actions">
-                <h5>Contact This Farmer</h5>
-                <div className="contact-buttons">
-                  <a
-                    href={`mailto:${selectedFarmer.email}?subject=Inquiry about ${selectedFarmer.itemName}`}
-                    className="contact-btn email-btn"
-                  >
-                    <Mail size={16} />
-                    Send Email
-                  </a>
-                  {selectedFarmer.phone && (
-                    <a
-                      href={`tel:${selectedFarmer.phone}`}
-                      className="contact-btn phone-btn"
-                    >
-                      <Phone size={16} />
-                      Call Now
-                    </a>
-                  )}
-                </div>
-=======
->>>>>>> a9f00650a3d10b9e3a7219c5ffa826667fc40bf5
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default ItemsGrid;
-```
-
-## File: src/components/home/SearchFilter/SearchFilter.css
-```css
-/* src/components/home/SearchFilter/SearchFilter.css */
-.search-filter-section {
-  background: white;
-  padding: 3rem 0;
-  border-top: 1px solid #eee;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.search-filter-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.section-title {
-  text-align: center;
-  font-size: 2.5rem;
-  color: #2c3e50;
-  margin-bottom: 2rem;
-  font-weight: bold;
-}
-
-.search-bar {
-  margin-bottom: 2rem;
-  width: 100%;
-}
-
-.search-input {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  display: block;
-  padding: 1rem 1.5rem;
-  border: 2px solid #e1e5e9;
-  border-radius: 50px;
-  font-size: 1.1rem;
-  outline: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-}
-
-.search-input:focus {
-  border-color: #4caf50;
-  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.2);
-}
-
-.filter-bar {
-  background: #f8f9fa;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.filter-group {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.filter-select {
-  padding: 0.75rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  background: white;
-  cursor: pointer;
-  min-width: 150px;
-  box-sizing: border-box;
-}
-
-.filter-select:focus {
-  outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-}
-
-.price-filter {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: white;
-  padding: 0.5rem;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
-
-.price-input {
-  width: 80px;
-  padding: 0.25rem;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-.price-separator {
-  color: #666;
-  font-weight: bold;
-}
-
-.clear-btn {
-  background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.clear-btn:hover {
-  background: linear-gradient(45deg, #ee5a52, #dc4545);
-  transform: translateY(-2px);
-}
-
-@media (max-width: 768px) {
-  .search-filter-container {
-    padding: 0 1rem;
-  }
-
-  .section-title {
-    font-size: 2rem;
-  }
-
-  .filter-group {
+  .filter-actions {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .filter-select {
-    min-width: auto;
-  }
-
-  .price-filter {
+  .filter-btn,
+  .clear-filters-btn {
     justify-content: center;
   }
+
+  .active-filters {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-filter {
+    padding: 1rem;
+  }
+
+  .search-input {
+    font-size: 1rem;
+    padding: 0.875rem 1rem 0.875rem 3.5rem;
+  }
+
+  .search-icon {
+    left: 1rem;
+  }
+
+  .clear-search-btn {
+    right: 3.5rem;
+    width: 28px;
+    height: 28px;
+  }
+
+  .search-btn {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .filter-select select,
+  .price-input {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .filter-btn,
+  .clear-filters-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation for smooth transitions */
+* {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus styles for accessibility */
+.search-input:focus,
+.filter-select select:focus,
+.price-input:focus,
+.filter-btn:focus,
+.clear-filters-btn:focus,
+.search-btn:focus {
+  outline: 2px solid #4caf50;
+  outline-offset: 2px;
+}
+
+/* Hover effects for better UX */
+.filter-group:hover .filter-label {
+  color: #4caf50;
+}
+
+.filter-group:hover .filter-icon {
+  transform: scale(1.1);
+}
+
+/* Enhanced visual feedback */
+.search-bar-container:hover .search-icon {
+  color: #4caf50;
+  transform: scale(1.05);
+}
+
+/* Smooth color transitions */
+.search-filter * {
+  transition: color 0.3s ease, background-color 0.3s ease,
+    border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 ```
 
@@ -7898,9 +7931,9 @@ export default SearchFilter;
 ## File: src/components/home/SeasonInfo/SeasonInfo.css
 ```css
 /* src/components/home/SeasonInfo/SeasonInfo.css */
-.season-info-section {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+.season-info {
   padding: 4rem 0;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
 }
 
 .season-container {
@@ -7917,136 +7950,491 @@ export default SearchFilter;
 .season-header h2 {
   font-size: 2.5rem;
   color: #2c3e50;
-  margin-bottom: 1rem;
-  font-weight: bold;
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+  background: linear-gradient(45deg, #2c3e50, #27ae60);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .season-header p {
-  font-size: 1.1rem;
   color: #666;
-  max-width: 600px;
-  margin: 0 auto;
+  font-size: 1.1rem;
+  margin: 0;
 }
 
+/* Current Season Highlight */
+.current-season-highlight {
+  margin-bottom: 3rem;
+}
+
+.current-season-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 3px solid #27ae60;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.current-season-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #27ae60, #2ecc71, #4caf50);
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.current-season-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(39, 174, 96, 0.2);
+  border-color: #2ecc71;
+}
+
+.current-season-card .season-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.current-season-card .season-icon {
+  margin-bottom: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.current-season-card h3 {
+  color: #27ae60;
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.current-season-card h4 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.season-sinhala {
+  color: #666;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.season-months {
+  color: #27ae60;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.season-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.click-indicator {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Seasons Grid */
 .seasons-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
-  margin-bottom: 3rem;
 }
 
 .season-card {
   background: white;
   border-radius: 15px;
   padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  cursor: pointer;
   transition: all 0.3s ease;
-  border-top: 4px solid var(--season-color);
+  position: relative;
 }
 
 .season-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #27ae60;
 }
 
-.season-card-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+.season-card.active {
+  border-color: #27ae60;
+  background: linear-gradient(135deg, #f8fff8, #ffffff);
 }
 
-.season-icon-container {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: var(--season-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
+.season-card .season-icon {
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
 }
 
-.season-icon {
-  font-size: 1.5rem;
+.season-card:hover .season-icon {
+  transform: scale(1.1);
 }
 
-.season-info h3 {
+.season-card h4 {
+  color: #2c3e50;
   font-size: 1.3rem;
-  color: #2c3e50;
-  margin: 0 0 0.25rem 0;
-  font-weight: bold;
-}
-
-.season-period {
-  color: var(--season-color);
+  margin: 0 0 0.5rem 0;
   font-weight: 600;
-  margin: 0;
-  font-size: 0.95rem;
 }
 
-.season-description {
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-}
-
-.season-crops h4 {
-  color: #2c3e50;
-  margin: 0 0 0.75rem 0;
-  font-size: 1rem;
-}
-
-.crops-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.crop-tag {
-  background: var(--season-color);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.season-tips {
-  background: white;
-  border-radius: 15px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border-left: 5px solid #4caf50;
-}
-
-.tips-content h3 {
-  color: #2c3e50;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-  text-align: center;
-}
-
-.tips-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.tip-item {
-  background: #f8f9fa;
-  padding: 1.25rem;
-  border-radius: 10px;
-  border-left: 3px solid #4caf50;
-  line-height: 1.5;
-}
-
-.tip-item strong {
-  color: #4caf50;
-  display: block;
+.season-card .season-sinhala {
+  font-size: 0.9rem;
   margin-bottom: 0.5rem;
 }
 
+.season-card .season-months {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.season-preview {
+  color: #666;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Modal Styles */
+.season-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.season-modal {
+  background: white;
+  border-radius: 20px;
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  color: white;
+  padding: 2rem;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.header-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.modal-header .season-sinhala {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.2rem;
+  margin: 0.25rem 0;
+}
+
+.modal-header .season-months {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Modal Content */
+.modal-content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.modal-content h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2c3e50;
+  font-size: 1.3rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  border-bottom: 2px solid #f8f9fa;
+  padding-bottom: 0.5rem;
+}
+
+/* Weather Section */
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.weather-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #27ae60;
+}
+
+.weather-item svg {
+  color: #27ae60;
+  flex-shrink: 0;
+}
+
+.weather-item .label {
+  display: block;
+  color: #666;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.weather-item .value {
+  display: block;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.weather-description {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Crops Section */
+.crops-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.crop-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border-left: 4px solid #27ae60;
+  transition: all 0.3s ease;
+}
+
+.crop-card:hover {
+  background: #f0f8f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.1);
+}
+
+.crop-header {
+  margin-bottom: 1rem;
+}
+
+.crop-header h5 {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin: 0 0 0.25rem 0;
+  font-weight: 600;
+}
+
+.crop-sinhala {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.crop-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.crop-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.crop-info svg {
+  color: #27ae60;
+  flex-shrink: 0;
+}
+
+.crop-regions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.crop-regions svg {
+  color: #27ae60;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+/* Tips Section */
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #27ae60;
+}
+
+.tip-number {
+  background: #27ae60;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Description Section */
+.description-section h4 {
+  color: #2c3e50;
+  font-size: 1.3rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+}
+
+.description-section p {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .season-container {
     padding: 0 1rem;
@@ -8056,26 +8444,55 @@ export default SearchFilter;
     font-size: 2rem;
   }
 
-  .seasons-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .season-card {
+  .current-season-card {
     padding: 1.5rem;
   }
 
-  .season-card-header {
-    flex-direction: column;
-    text-align: center;
+  .current-season-card h4 {
+    font-size: 1.5rem;
   }
 
-  .tips-grid {
+  .season-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .seasons-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .modal-content {
+    padding: 1rem;
+  }
+
+  .weather-grid {
     grid-template-columns: 1fr;
   }
 
-  .season-tips {
-    padding: 2rem 1.5rem;
+  .crops-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .season-modal {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .modal-header {
+    padding: 1.5rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .modal-header h3 {
+    font-size: 1.5rem;
   }
 }
 ```
@@ -8083,116 +8500,426 @@ export default SearchFilter;
 ## File: src/components/home/SeasonInfo/SeasonInfo.jsx
 ```javascript
 // src/components/home/SeasonInfo/SeasonInfo.jsx
-import React from "react";
-import { Calendar, Thermometer, Droplets, Sun } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Calendar,
+  Sun,
+  Cloud,
+  CloudRain,
+  Thermometer,
+  Droplets,
+  Wind,
+  X,
+  MapPin,
+  Clock,
+  TrendingUp,
+  Leaf,
+} from "lucide-react";
 import "./SeasonInfo.css";
 
 const SeasonInfo = () => {
-  const seasons = [
-    {
-      id: 1,
-      season: "Yala Season",
-      period: "April - September",
-      description: "Main cultivation season with southwest monsoon",
-      crops: ["Rice", "Vegetables", "Fruits"],
-      icon: <Droplets className="season-icon" />,
+  const [showModal, setShowModal] = useState(false);
+  const [selectedSeason, setSelectedSeason] = useState(null);
+
+  const getCurrentSeason = () => {
+    const month = new Date().getMonth() + 1;
+    if (month >= 12 || month <= 2) return "winter";
+    if (month >= 3 && month <= 5) return "spring";
+    if (month >= 6 && month <= 8) return "summer";
+    return "autumn";
+  };
+
+  const seasons = {
+    winter: {
+      name: "Winter Season",
+      sinhala: "ශීත කාලය",
+      months: "December - February",
+      icon: <Cloud size={40} />,
       color: "#3498db",
+      temperature: "20°C - 28°C",
+      rainfall: "Low to Moderate",
+      humidity: "60% - 75%",
+      description: "Cool and dry season with pleasant weather conditions",
+      crops: [
+        {
+          name: "Tomatoes",
+          sinhala: "තක්කාලි",
+          season: "Peak harvest",
+          price: "Rs. 150-200/kg",
+          regions: ["Nuwara Eliya", "Badulla", "Kandy"],
+        },
+        {
+          name: "Carrots",
+          sinhala: "කැරට්",
+          season: "Best quality",
+          price: "Rs. 120-180/kg",
+          regions: ["Nuwara Eliya", "Bandarawela"],
+        },
+        {
+          name: "Cabbage",
+          sinhala: "ගෝවා",
+          season: "Peak harvest",
+          price: "Rs. 80-120/kg",
+          regions: ["Nuwara Eliya", "Welimada"],
+        },
+        {
+          name: "Potatoes",
+          sinhala: "අල",
+          season: "Fresh harvest",
+          price: "Rs. 100-150/kg",
+          regions: ["Nuwara Eliya", "Badulla"],
+        },
+      ],
+      tips: [
+        "Best time for highland vegetable cultivation",
+        "Ideal weather for leafy greens",
+        "Good season for root vegetables",
+        "Perfect for cool-season crops",
+      ],
+      weatherPattern:
+        "Cool, dry northeast monsoon period with minimal rainfall",
     },
-    {
-      id: 2,
-      season: "Maha Season",
-      period: "October - March",
-      description: "Secondary season with northeast monsoon",
-      crops: ["Rice", "Coconut", "Spices"],
-      icon: <Calendar className="season-icon" />,
-      color: "#e74c3c",
-    },
-    {
-      id: 3,
-      season: "Dry Season",
-      period: "January - April",
-      description: "Best time for root vegetables and fruits",
-      crops: ["Carrots", "Beetroot", "Mangoes"],
-      icon: <Sun className="season-icon" />,
+    spring: {
+      name: "Spring Season",
+      sinhala: "වසන්ත කාලය",
+      months: "March - May",
+      icon: <Sun size={40} />,
       color: "#f39c12",
+      temperature: "25°C - 32°C",
+      rainfall: "Moderate",
+      humidity: "65% - 80%",
+      description:
+        "Warm season with increasing temperatures and occasional showers",
+      crops: [
+        {
+          name: "Mangoes",
+          sinhala: "අඹ",
+          season: "Peak season",
+          price: "Rs. 200-400/kg",
+          regions: ["Jaffna", "Anuradhapura", "Kurunegala"],
+        },
+        {
+          name: "Watermelon",
+          sinhala: "කොමඩු",
+          season: "Best quality",
+          price: "Rs. 80-120/kg",
+          regions: ["Hambantota", "Monaragala"],
+        },
+        {
+          name: "Pineapple",
+          sinhala: "අන්නාසි",
+          season: "Sweet variety",
+          price: "Rs. 150-250/piece",
+          regions: ["Gampaha", "Kurunegala"],
+        },
+        {
+          name: "Green Beans",
+          sinhala: "බෝංචි",
+          season: "Fresh harvest",
+          price: "Rs. 180-250/kg",
+          regions: ["Kandy", "Matale"],
+        },
+      ],
+      tips: [
+        "Great season for tropical fruits",
+        "Ideal for summer vegetables",
+        "Good time for irrigation crops",
+        "Perfect for fruit tree cultivation",
+      ],
+      weatherPattern: "Inter-monsoon period with hot, humid conditions",
     },
-    {
-      id: 4,
-      season: "Wet Season",
-      period: "May - September",
-      description: "Ideal for leafy vegetables and herbs",
-      crops: ["Spinach", "Kale", "Herbs"],
-      icon: <Thermometer className="season-icon" />,
+    summer: {
+      name: "Summer Season",
+      sinhala: "ග්‍රීෂ්ම කාලය",
+      months: "June - August",
+      icon: <CloudRain size={40} />,
       color: "#27ae60",
+      temperature: "24°C - 30°C",
+      rainfall: "High",
+      humidity: "75% - 90%",
+      description:
+        "Monsoon season with heavy rainfall and lush green landscapes",
+      crops: [
+        {
+          name: "Rice",
+          sinhala: "සහල්",
+          season: "Yala season",
+          price: "Rs. 120-180/kg",
+          regions: ["Polonnaruwa", "Anuradhapura", "Ampara"],
+        },
+        {
+          name: "Coconut",
+          sinhala: "පොල්",
+          season: "Peak harvest",
+          price: "Rs. 80-120/piece",
+          regions: ["Gampaha", "Kalutara", "Puttalam"],
+        },
+        {
+          name: "Banana",
+          sinhala: "කෙසෙල්",
+          season: "Year-round",
+          price: "Rs. 150-200/dozen",
+          regions: ["Kegalle", "Ratnapura"],
+        },
+        {
+          name: "Papaya",
+          sinhala: "පැපොල්",
+          season: "Abundant",
+          price: "Rs. 100-150/kg",
+          regions: ["Puttalam", "Hambantota"],
+        },
+      ],
+      tips: [
+        "Southwest monsoon brings abundant water",
+        "Perfect for rice cultivation",
+        "Ideal for water-loving crops",
+        "Good season for coconut and spices",
+      ],
+      weatherPattern:
+        "Southwest monsoon with heavy rainfall and cooler temperatures",
     },
-  ];
+    autumn: {
+      name: "Autumn Season",
+      sinhala: "සරත් කාලය",
+      months: "September - November",
+      icon: <Wind size={40} />,
+      color: "#e67e22",
+      temperature: "23°C - 29°C",
+      rainfall: "Moderate to High",
+      humidity: "70% - 85%",
+      description:
+        "Post-monsoon season with retreating rains and pleasant weather",
+      crops: [
+        {
+          name: "Onions",
+          sinhala: "ලූණු",
+          season: "Maha season prep",
+          price: "Rs. 200-300/kg",
+          regions: ["Anuradhapura", "Polonnaruwa"],
+        },
+        {
+          name: "Chili",
+          sinhala: "මිරිස්",
+          season: "Peak harvest",
+          price: "Rs. 400-600/kg",
+          regions: ["Matale", "Kurunegala"],
+        },
+        {
+          name: "Eggplant",
+          sinhala: "වම්බටු",
+          season: "Good quality",
+          price: "Rs. 120-180/kg",
+          regions: ["Kandy", "Matale"],
+        },
+        {
+          name: "Okra",
+          sinhala: "බණ්ඩක්කා",
+          season: "Fresh harvest",
+          price: "Rs. 150-220/kg",
+          regions: ["Kurunegala", "Puttalam"],
+        },
+      ],
+      tips: [
+        "Preparation time for Maha season",
+        "Good for spice cultivation",
+        "Ideal for vegetable farming",
+        "Perfect for land preparation",
+      ],
+      weatherPattern: "Second inter-monsoon with decreasing rainfall",
+    },
+  };
+
+  const currentSeason = getCurrentSeason();
+  const currentSeasonData = seasons[currentSeason];
+
+  const openSeasonModal = (seasonKey) => {
+    setSelectedSeason(seasons[seasonKey]);
+    setShowModal(true);
+  };
 
   return (
-    <section className="season-info-section">
+    <div className="season-info">
       <div className="season-container">
         <div className="season-header">
-          <h2>Sri Lankan Harvest Seasons</h2>
-          <p>
-            Understanding our agricultural calendar for the freshest produce
-          </p>
+          <h2>Sri Lankan Agricultural Seasons</h2>
+          <p>Discover the best crops and farming practices for each season</p>
+        </div>
+
+        <div className="current-season-highlight">
+          <div
+            className="current-season-card"
+            onClick={() => openSeasonModal(currentSeason)}
+          >
+            <div
+              className="season-icon"
+              style={{ color: currentSeasonData.color }}
+            >
+              {currentSeasonData.icon}
+            </div>
+            <div className="season-content">
+              <h3>Current Season</h3>
+              <h4>{currentSeasonData.name}</h4>
+              <p className="season-sinhala">{currentSeasonData.sinhala}</p>
+              <p className="season-months">{currentSeasonData.months}</p>
+              <div className="season-stats">
+                <div className="stat">
+                  <Thermometer size={16} />
+                  <span>{currentSeasonData.temperature}</span>
+                </div>
+                <div className="stat">
+                  <Droplets size={16} />
+                  <span>{currentSeasonData.rainfall}</span>
+                </div>
+              </div>
+            </div>
+            <div className="click-indicator">
+              <span>Click for details</span>
+            </div>
+          </div>
         </div>
 
         <div className="seasons-grid">
-          {seasons.map((season) => (
+          {Object.entries(seasons).map(([key, season]) => (
             <div
-              key={season.id}
-              className="season-card"
-              style={{ "--season-color": season.color }}
+              key={key}
+              className={`season-card ${key === currentSeason ? "active" : ""}`}
+              onClick={() => openSeasonModal(key)}
             >
-              <div className="season-card-header">
-                <div className="season-icon-container">{season.icon}</div>
-                <div className="season-info">
-                  <h3>{season.season}</h3>
-                  <p className="season-period">{season.period}</p>
-                </div>
+              <div className="season-icon" style={{ color: season.color }}>
+                {season.icon}
               </div>
-
-              <p className="season-description">{season.description}</p>
-
-              <div className="season-crops">
-                <h4>Main Crops:</h4>
-                <div className="crops-list">
-                  {season.crops.map((crop, index) => (
-                    <span key={index} className="crop-tag">
-                      {crop}
-                    </span>
-                  ))}
-                </div>
+              <h4>{season.name}</h4>
+              <p className="season-sinhala">{season.sinhala}</p>
+              <p className="season-months">{season.months}</p>
+              <div className="season-preview">
+                <span>{season.crops.length} crops in season</span>
               </div>
             </div>
           ))}
         </div>
+      </div>
 
-        <div className="season-tips">
-          <div className="tips-content">
-            <h3>🌱 Seasonal Tips</h3>
-            <div className="tips-grid">
-              <div className="tip-item">
-                <strong>Best Quality:</strong> Shop seasonal produce for maximum
-                freshness and flavor
+      {/* Detailed Season Modal */}
+      {showModal && selectedSeason && (
+        <div
+          className="season-modal-overlay"
+          onClick={() => setShowModal(false)}
+        >
+          <div className="season-modal" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="modal-header"
+              style={{
+                background: `linear-gradient(135deg, ${selectedSeason.color}, ${selectedSeason.color}dd)`,
+              }}
+            >
+              <div className="header-content">
+                <div className="header-icon">{selectedSeason.icon}</div>
+                <div>
+                  <h3>{selectedSeason.name}</h3>
+                  <p className="season-sinhala">{selectedSeason.sinhala}</p>
+                  <p className="season-months">{selectedSeason.months}</p>
+                </div>
               </div>
-              <div className="tip-item">
-                <strong>Lower Prices:</strong> Seasonal items are more
-                affordable during peak harvest
+              <button className="close-btn" onClick={() => setShowModal(false)}>
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="modal-content">
+              {/* Weather Information */}
+              <div className="weather-section">
+                <h4>
+                  <Cloud size={20} />
+                  Weather Conditions
+                </h4>
+                <div className="weather-grid">
+                  <div className="weather-item">
+                    <Thermometer size={18} />
+                    <div>
+                      <span className="label">Temperature</span>
+                      <span className="value">
+                        {selectedSeason.temperature}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="weather-item">
+                    <CloudRain size={18} />
+                    <div>
+                      <span className="label">Rainfall</span>
+                      <span className="value">{selectedSeason.rainfall}</span>
+                    </div>
+                  </div>
+                  <div className="weather-item">
+                    <Droplets size={18} />
+                    <div>
+                      <span className="label">Humidity</span>
+                      <span className="value">{selectedSeason.humidity}</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="weather-description">
+                  {selectedSeason.weatherPattern}
+                </p>
               </div>
-              <div className="tip-item">
-                <strong>Support Local:</strong> Buying seasonal helps support
-                Sri Lankan farmers
+
+              {/* Seasonal Crops */}
+              <div className="crops-section">
+                <h4>
+                  <Leaf size={20} />
+                  Seasonal Crops & Prices
+                </h4>
+                <div className="crops-grid">
+                  {selectedSeason.crops.map((crop, index) => (
+                    <div key={index} className="crop-card">
+                      <div className="crop-header">
+                        <h5>{crop.name}</h5>
+                        <span className="crop-sinhala">{crop.sinhala}</span>
+                      </div>
+                      <div className="crop-details">
+                        <div className="crop-info">
+                          <Clock size={14} />
+                          <span>{crop.season}</span>
+                        </div>
+                        <div className="crop-info">
+                          <TrendingUp size={14} />
+                          <span>{crop.price}</span>
+                        </div>
+                        <div className="crop-regions">
+                          <MapPin size={14} />
+                          <span>{crop.regions.join(", ")}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="tip-item">
-                <strong>Nutrition:</strong> Seasonal produce retains more
-                nutrients and vitamins
+
+              {/* Farming Tips */}
+              <div className="tips-section">
+                <h4>
+                  <Sun size={20} />
+                  Farming Tips
+                </h4>
+                <div className="tips-list">
+                  {selectedSeason.tips.map((tip, index) => (
+                    <div key={index} className="tip-item">
+                      <span className="tip-number">{index + 1}</span>
+                      <span>{tip}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Season Description */}
+              <div className="description-section">
+                <h4>Season Overview</h4>
+                <p>{selectedSeason.description}</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      )}
+    </div>
   );
 };
 
@@ -8920,10 +9647,8 @@ export default Home;
 // src/utils/api.js
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000";
-
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: import.meta.env.API_BASE_URL || "http://localhost:5000",
   timeout: 10000, // 10 second timeout
 });
 
@@ -8959,6 +9684,30 @@ api.interceptors.response.use(
 );
 
 export default api;
+// Gallery API calls
+export const galleryAPI = {
+  // Add new gallery item
+  addItem: async (itemData) => {
+    try {
+      const response = await api.post("/api/gallery/add", itemData);
+      return response.data;
+    } catch (error) {
+      console.error("Error adding gallery item:", error);
+      throw error;
+    }
+  },
+
+  // Get farmer's gallery items
+  getFarmerItems: async (farmerId) => {
+    try {
+      const response = await api.get(`/api/gallery/farmer/${farmerId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching farmer gallery items:", error);
+      throw error;
+    }
+  },
+};
 ```
 
 ## File: vite.config.js
@@ -10099,11 +10848,12 @@ export default UserManagement;
   transition: all 0.3s ease;
   width: 100%;
   box-sizing: border-box;
+  border: 2px solid #27ae60;
 }
 
 .item-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(39, 174, 96, 0.2);
 }
 
 .item-image {
@@ -10136,6 +10886,22 @@ export default UserManagement;
 
 .status-badge.approved {
   background: #4caf50;
+}
+
+/* Gallery Badge */
+.gallery-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(45deg, #27ae60, #2ecc71);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(39, 174, 96, 0.4);
+  z-index: 2;
 }
 
 .item-content {
@@ -10298,16 +11064,7 @@ export default UserManagement;
   margin: 0 auto 1rem;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Enhanced Modal Styles - Smaller & Wider */
+/* Enhanced Modal Styles for Gallery */
 .create-modal {
   max-width: 900px;
   width: 90%;
@@ -10330,6 +11087,16 @@ export default UserManagement;
   z-index: 2000;
   padding: 2rem;
   box-sizing: border-box;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .modal-header {
@@ -10478,6 +11245,87 @@ export default UserManagement;
   color: #6c757d;
   font-size: 0.8rem;
   text-align: center;
+}
+
+.form-help {
+  color: #6c757d;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Image Upload Styles */
+.preview-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.remove-image-btn:hover {
+  background: #e74c3c;
+  transform: scale(1.1);
+}
+
+.current-image-label {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  z-index: 2;
+}
+
+/* Gallery Badge Preview */
+.gallery-badge-preview {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: linear-gradient(45deg, #27ae60, #2ecc71);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+  z-index: 2;
+}
+
+/* Gallery Overlay */
+.gallery-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(39, 174, 96, 0.1),
+    rgba(46, 204, 113, 0.1)
+  );
+  pointer-events: none;
 }
 
 /* Form Sections */
@@ -10642,6 +11490,7 @@ export default UserManagement;
   border-top: 2px solid white;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin-right: 8px;
 }
 
 /* View Modal */
@@ -10730,6 +11579,52 @@ export default UserManagement;
   color: #666;
 }
 
+/* View Modal Gallery Badge */
+.modal-gallery-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: linear-gradient(45deg, #27ae60, #2ecc71);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 3px 10px rgba(39, 174, 96, 0.4);
+  z-index: 2;
+}
+
+/* Gallery Highlights */
+.gallery-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(45deg, #e8f5e8, #d4edda);
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 2px solid #c3e6cb;
+  color: #27ae60;
+  font-weight: 500;
+  text-align: center;
+  justify-content: center;
+}
+
+/* Gallery Actions */
+.gallery-actions {
+  background: linear-gradient(45deg, #e8f5e8, #d4edda);
+  padding: 1.5rem;
+  border-radius: 0 0 12px 12px;
+  border-top: 2px solid #c3e6cb;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .farmer-gallery {
@@ -10792,6 +11687,10 @@ export default UserManagement;
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .gallery-highlights {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {
@@ -10816,6 +11715,53 @@ export default UserManagement;
     width: 30px;
     height: 30px;
   }
+
+  .gallery-highlights {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animation for smooth transitions */
+* {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus styles for accessibility */
+.search-input:focus,
+.filter-select:focus,
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+.submit-btn:focus,
+.cancel-btn:focus {
+  outline: 2px solid #27ae60;
+  outline-offset: 2px;
+}
+
+/* Hover effects for better UX */
+.form-group:hover label {
+  color: #27ae60;
+}
+
+/* Enhanced visual feedback */
+.search-bar-container:hover .search-icon {
+  color: #27ae60;
+  transform: scale(1.05);
+}
+
+/* Smooth color transitions */
+.farmer-gallery * {
+  transition: color 0.3s ease, background-color 0.3s ease,
+    border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 ```
 
@@ -11058,7 +12004,11 @@ export default UserManagement;
   border-color: #e74c3c;
   box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
 }
-
+.form-help {
+  color: #6c757d;
+  font-size: 0.8rem;
+  text-align: center;
+}
 .price-input-wrapper {
   position: relative;
   display: flex;
@@ -11274,6 +12224,1637 @@ export default UserManagement;
   .offer-highlights {
     grid-template-columns: 1fr;
   }
+}
+/* Offer-specific Image Upload Styles */
+.offer-preview {
+  position: relative;
+  overflow: hidden;
+}
+
+.offer-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 193, 7, 0.1),
+    rgba(255, 152, 0, 0.1)
+  );
+  pointer-events: none;
+}
+
+.offer-badge-preview {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: linear-gradient(45deg, #ff9800, #ff5722);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+  z-index: 2;
+}
+
+.offer-upload {
+  background: linear-gradient(45deg, #ff9800, #ff5722);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.offer-upload:hover {
+  background: linear-gradient(45deg, #f57c00, #e64a19);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+}
+
+/* Offer Form Styling */
+.offer-modal {
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.offer-title {
+  color: #ff9800;
+  border-bottom: 2px solid #ff9800;
+  padding-bottom: 8px;
+}
+
+.price-input-wrapper {
+  position: relative;
+}
+
+.price-label {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(45deg, #ff9800, #ff5722);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Conditions Styling */
+.conditions-input-section {
+  background: #fff8e1;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 2px solid #ffcc02;
+}
+
+.condition-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.condition-input-wrapper input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #ffcc02;
+  border-radius: 8px;
+  background: white;
+}
+
+.add-condition-btn {
+  background: #ff9800;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.add-condition-btn:hover:not(:disabled) {
+  background: #f57c00;
+  transform: translateY(-1px);
+}
+
+.add-condition-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.conditions-list {
+  margin-top: 1rem;
+}
+
+.conditions-list h5 {
+  color: #ff9800;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.condition-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 2px solid #ff9800;
+  color: #ff9800;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  margin: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.remove-condition {
+  background: #ff5722;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s ease;
+}
+
+.remove-condition:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+}
+
+/* Offer Highlights */
+.offer-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(45deg, #fff3e0, #ffcc02);
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 2px solid #ffcc02;
+  color: #e65100;
+  font-weight: 500;
+  text-align: center;
+  justify-content: center;
+}
+
+/* Offer Card Specific Styles */
+.offer-card .offer-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(45deg, #ff9800, #ff5722);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 15px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.4);
+  z-index: 2;
+}
+
+.offer-conditions {
+  background: #fff8e1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border-left: 4px solid #ff9800;
+  margin: 0.5rem 0;
+}
+
+.offer-conditions strong {
+  color: #ff9800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.offer-conditions ul {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1rem;
+  list-style: none;
+}
+
+.offer-conditions li {
+  position: relative;
+  padding-left: 1rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.offer-conditions li:before {
+  content: "•";
+  color: #ff9800;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+/* Offer Submit Button */
+.offer-submit {
+  background: linear-gradient(45deg, #ff9800, #ff5722);
+  border: none;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.offer-submit:hover:not(:disabled) {
+  background: linear-gradient(45deg, #f57c00, #e64a19);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+}
+
+/* View Modal Offer Badge */
+.modal-offer-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: linear-gradient(45deg, #ff9800, #ff5722);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 3px 10px rgba(255, 152, 0, 0.4);
+  z-index: 2;
+}
+
+/* Conditions View List */
+.conditions-view-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.conditions-view-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #fff8e1;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  border-left: 4px solid #ff9800;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.conditions-view-list li svg {
+  color: #ff9800;
+  flex-shrink: 0;
+}
+
+/* Offer Actions */
+.offer-actions {
+  background: linear-gradient(45deg, #fff3e0, #ffcc02);
+  padding: 1.5rem;
+  border-radius: 0 0 12px 12px;
+  border-top: 2px solid #ffcc02;
+}
+
+/* Loading Spinner for Offers */
+.loading-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+/* Responsive Design for Offers */
+@media (max-width: 768px) {
+  .offer-modal {
+    max-width: 95vw;
+    margin: 1rem;
+  }
+
+  .offer-highlights {
+    grid-template-columns: 1fr;
+  }
+
+  .condition-input-wrapper {
+    flex-direction: column;
+  }
+
+  .price-label {
+    position: static;
+    transform: none;
+    display: inline-block;
+    margin-top: 0.5rem;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+```
+
+## File: src/components/home/ItemsGrid/ItemsGrid.css
+```css
+.items-grid-section {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  padding: 3rem 0;
+  min-height: 70vh;
+}
+
+.items-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.items-header {
+  margin-bottom: 3rem;
+  text-align: center;
+  position: relative;
+}
+
+.items-header::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #4caf50, #2ecc71);
+  border-radius: 2px;
+}
+
+.items-header h3 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  background: linear-gradient(45deg, #2c3e50, #4caf50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.items-header p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.items-loading {
+  text-align: center;
+  padding: 4rem 0;
+  background: white;
+  border-radius: 20px;
+  margin: 2rem 0;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #4caf50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1.5rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.items-loading p {
+  color: #666;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.item-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  border: 1px solid rgba(76, 175, 80, 0.1);
+  cursor: pointer;
+  max-width: 320px;
+}
+
+.item-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.item-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4caf50, #2ecc71, #27ae60);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.item-card:hover::before {
+  opacity: 1;
+}
+
+.item-image-container {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.item-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.4s ease;
+}
+
+.item-card:hover .item-image-container img {
+  transform: scale(1.1);
+}
+
+.item-image-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(76, 175, 80, 0.1),
+    rgba(46, 204, 113, 0.1)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.item-card:hover .item-image-container::after {
+  opacity: 1;
+}
+
+.item-type-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0.3rem 0.6rem;
+  border-radius: 15px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}
+
+.item-type-badge.gallery {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+}
+
+.item-type-badge.offer {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.item-content {
+  padding: 1.2rem;
+  position: relative;
+}
+
+.item-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.4rem 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.item-price {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #27ae60;
+  margin: 0 0 0.8rem 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+}
+
+.item-price::before {
+  content: "Rs.";
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.item-price::after {
+  content: "/kg";
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.item-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+}
+
+.item-category,
+.item-location {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.item-category {
+  background: linear-gradient(45deg, #e8f5e8, #d4edda);
+  color: #27ae60;
+  border: 1px solid #c3e6cb;
+}
+
+.item-location {
+  background: linear-gradient(45deg, #e3f2fd, #bbdefb);
+  color: #1976d2;
+  border: 1px solid #90caf9;
+}
+
+.item-description {
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.farmer-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.4rem 0;
+  padding: 0.4rem;
+  background: rgba(76, 175, 80, 0.05);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #666;
+  border-left: 3px solid #4caf50;
+  transition: all 0.3s ease;
+}
+
+.farmer-preview:hover {
+  background: rgba(76, 175, 80, 0.1);
+  transform: translateX(5px);
+}
+
+.farmer-preview svg {
+  color: #4caf50;
+  flex-shrink: 0;
+}
+
+.item-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.view-btn,
+.farmer-btn {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.view-btn::before,
+.farmer-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.view-btn:hover::before,
+.farmer-btn:hover::before {
+  left: 100%;
+}
+
+.view-btn {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.view-btn:hover {
+  background: linear-gradient(45deg, #2980b9, #21618c);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+}
+
+.farmer-btn {
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  color: white;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.farmer-btn:hover {
+  background: linear-gradient(45deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+.load-more-container {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.load-more-btn {
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.load-more-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.load-more-btn:hover::before {
+  left: 100%;
+}
+
+.load-more-btn:hover {
+  background: linear-gradient(45deg, #45a049, #3d8b40);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+.no-items,
+.no-items-message {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #666;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin: 2rem 0;
+}
+
+.no-items h3 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+}
+
+.no-items p,
+.no-items-message p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.item-modal-overlay,
+.farmer-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.item-modal,
+.farmer-modal {
+  background: white;
+  border-radius: 20px;
+  max-width: 1100px;
+  width: 95%;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: white;
+  padding: 1.5rem 2rem;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.farmer-header {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.modal-close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  padding: 2rem;
+  min-height: 500px;
+  max-height: 75vh;
+  overflow: hidden;
+  align-items: flex-start;
+}
+
+.modal-image {
+  position: relative;
+  width: 300px;
+  min-width: 300px;
+  height: 400px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 3px solid #4caf50;
+  order: 1;
+}
+
+.modal-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.modal-image:hover img {
+  transform: scale(1.05);
+}
+
+.modal-offer-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  z-index: 10;
+  animation: pulse 2s infinite;
+}
+
+.modal-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  overflow-y: auto;
+  padding-right: 1rem;
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 1px solid #e9ecef;
+  order: 2;
+  max-height: 100%;
+}
+
+.modal-details::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal-details::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+.modal-details::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  border-radius: 5px;
+  border: 2px solid #f1f1f1;
+}
+
+.modal-details::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #45a049, #3d8b40);
+}
+
+.modal-details h4 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  font-weight: 800;
+  line-height: 1.2;
+  background: linear-gradient(45deg, #2c3e50, #4caf50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modal-price {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #4caf50;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+  border-radius: 12px;
+  border-left: 5px solid #4caf50;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.1);
+}
+
+.modal-price::before {
+  content: "Rs.";
+  font-size: 1.3rem;
+  opacity: 0.8;
+  color: #27ae60;
+}
+
+.modal-price::after {
+  content: "/kg";
+  font-size: 1.1rem;
+  color: #666;
+  font-weight: 600;
+}
+
+.product-info-section,
+.description-section,
+.conditions-section,
+.quick-farmer-info {
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border-left: 5px solid #4caf50;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.product-info-section:hover,
+.description-section:hover,
+.conditions-section:hover,
+.quick-farmer-info:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.1);
+}
+
+.product-info-section h5,
+.description-section h5,
+.conditions-section h5,
+.quick-farmer-info h5 {
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+
+.product-info-section h5 svg,
+.description-section h5 svg,
+.conditions-section h5 svg,
+.quick-farmer-info h5 svg {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 0.3rem;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  padding: 0.8rem;
+  background: rgba(76, 175, 80, 0.05);
+  border-radius: 10px;
+  color: #666;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.detail-item:hover {
+  background: rgba(76, 175, 80, 0.1);
+  transform: translateX(5px);
+}
+
+.detail-item svg {
+  color: #4caf50;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  background: white;
+  padding: 0.2rem;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+}
+
+.detail-item strong {
+  color: #2c3e50;
+  margin-right: 0.5rem;
+  min-width: 100px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.description-section p {
+  color: #666;
+  line-height: 1.7;
+  margin: 0;
+  font-size: 1rem;
+  text-align: justify;
+}
+
+.conditions-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.conditions-section li {
+  padding: 1rem;
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  border-radius: 10px;
+  margin-bottom: 0.8rem;
+  border-left: 4px solid #4caf50;
+  color: #666;
+  font-size: 0.9rem;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.conditions-section li:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.1);
+}
+
+.conditions-section li::before {
+  content: "✓";
+  position: absolute;
+  left: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #4caf50;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.farmer-quick-details {
+  background: linear-gradient(135deg, #ffffff, #f0f8f0);
+  padding: 1.2rem;
+  border-radius: 12px;
+  border-left: 4px solid #4caf50;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.1);
+}
+
+.farmer-quick-details p {
+  margin: 0.6rem 0;
+  color: #666;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.farmer-quick-details p strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.view-full-farmer-btn {
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.view-full-farmer-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.view-full-farmer-btn:hover::before {
+  left: 100%;
+}
+
+.view-full-farmer-btn:hover {
+  background: linear-gradient(45deg, #45a049, #3d8b40);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.farmer-profile-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-bottom: 1px solid #eee;
+}
+
+.farmer-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #4caf50;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.farmer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.farmer-basic-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.farmer-type {
+  color: #4caf50;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.farmer-item-info {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.farmer-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.farmer-detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 3px solid #4caf50;
+  transition: all 0.3s ease;
+}
+
+.farmer-detail-item:hover {
+  background: rgba(76, 175, 80, 0.05);
+  transform: translateY(-2px);
+}
+
+.farmer-detail-item svg {
+  color: #4caf50;
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+.farmer-detail-item strong {
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.farmer-detail-item p {
+  margin: 0;
+  color: #666;
+  word-break: break-word;
+}
+
+.farmer-contact-actions {
+  padding: 0 2rem 2rem;
+}
+
+.farmer-contact-actions h5 {
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.contact-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.contact-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.contact-btn:hover::before {
+  left: 100%;
+}
+
+.email-btn {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.email-btn:hover {
+  background: linear-gradient(45deg, #2980b9, #21618c);
+  transform: translateY(-2px);
+  color: white;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+}
+
+.phone-btn {
+  background: linear-gradient(45deg, #27ae60, #219a52);
+  color: white;
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.phone-btn:hover {
+  background: linear-gradient(45deg, #219a52, #1e8449);
+  transform: translateY(-2px);
+  color: white;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(39, 174, 96, 0.4);
+}
+
+@media (min-width: 769px) {
+  .modal-content {
+    display: flex !important;
+    flex-direction: row !important;
+  }
+
+  .modal-image {
+    order: 1 !important;
+    width: 300px !important;
+    min-width: 300px !important;
+  }
+
+  .modal-details {
+    order: 2 !important;
+    flex: 1 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .items-container {
+    padding: 0 1rem;
+  }
+
+  .items-header h3 {
+    font-size: 2rem;
+  }
+
+  .items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .item-content {
+    padding: 1rem;
+  }
+
+  .item-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .item-image-container {
+    height: 160px;
+  }
+
+  .modal-content {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    max-height: 85vh;
+  }
+
+  .modal-image {
+    width: 100%;
+    min-width: auto;
+    height: 200px;
+    order: -1;
+  }
+
+  .modal-details {
+    max-height: 400px;
+    padding: 1rem;
+    order: 1;
+  }
+
+  .modal-details h4 {
+    font-size: 1.5rem;
+  }
+
+  .modal-price {
+    font-size: 1.4rem;
+  }
+
+  .farmer-profile-section {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .farmer-details-grid {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+  }
+
+  .contact-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .items-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .item-content {
+    padding: 0.8rem;
+  }
+
+  .item-name {
+    font-size: 1rem;
+  }
+
+  .item-price {
+    font-size: 1.2rem;
+  }
+
+  .item-image-container {
+    height: 150px;
+  }
+
+  .item-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .items-header h3 {
+    font-size: 1.8rem;
+  }
+
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-image {
+    height: 180px;
+  }
+
+  .modal-details {
+    max-height: 350px;
+  }
+
+  .product-info-section,
+  .description-section,
+  .conditions-section,
+  .quick-farmer-info {
+    padding: 1rem;
+  }
+
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .detail-item strong {
+    min-width: auto;
+  }
+}
+
+.items-grid.compact {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.items-grid.compact .item-card {
+  max-width: 250px;
+}
+
+.items-grid.compact .item-image-container {
+  height: 140px;
+}
+
+.items-grid.compact .item-content {
+  padding: 1rem;
+}
+
+.items-grid.compact .item-name {
+  font-size: 1rem;
+}
+
+.items-grid.compact .item-price {
+  font-size: 1.2rem;
+}
+
+.item-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.item-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.item-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.item-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.item-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.item-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.item-card:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+* {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.view-btn:focus,
+.farmer-btn:focus,
+.load-more-btn:focus,
+.contact-btn:focus {
+  outline: 3px solid rgba(76, 175, 80, 0.3);
+  outline-offset: 2px;
+}
+
+.item-card:active {
+  transform: translateY(-4px) scale(1.01);
+}
+
+.view-btn:active,
+.farmer-btn:active {
+  transform: translate;
 }
 ```
 
@@ -11849,6 +14430,7 @@ export default OfferManagement;
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import api from "../../../utils/api";
+import { uploadImage, deleteImage } from "../../../utils/supabaseClient";
 import {
   Plus,
   Eye,
@@ -11880,6 +14462,7 @@ const FarmerGallery = () => {
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -11887,6 +14470,8 @@ const FarmerGallery = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [message, setMessage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -11970,26 +14555,52 @@ const FarmerGallery = () => {
     const file = e.target.files[0];
     if (file) {
       // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        setMessage("Image size should be less than 5MB");
+      if (file.size > 20 * 1024 * 1024) {
+        setMessage("Image size should be less than 20MB");
         return;
       }
 
+      // Validate file type
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        setMessage("Only JPEG, PNG, and WebP images are allowed");
+        return;
+      }
+
+      setImageFile(file);
+
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
+        setImagePreview(reader.result);
         setFormData((prev) => ({
           ...prev,
           image: reader.result,
         }));
       };
       reader.readAsDataURL(file);
+
+      setMessage(""); // Clear any previous error messages
     } else {
       // Clear image if no file selected
+      setImageFile(null);
+      setImagePreview(null);
       setFormData((prev) => ({
         ...prev,
         image: "",
       }));
     }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setFormData((prev) => ({ ...prev, image: "" }));
   };
 
   const resetForm = () => {
@@ -12002,6 +14613,8 @@ const FarmerGallery = () => {
       description: "",
       harvestDay: "",
     });
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const handleCreate = async (e) => {
@@ -12025,8 +14638,22 @@ const FarmerGallery = () => {
 
     try {
       setLoading(true);
+      let imageUrl = "";
+      let imagePath = "";
 
-      // Create form data object - image is optional
+      // Upload image to Supabase if file is selected
+      if (imageFile) {
+        setUploading(true);
+        setMessage("Uploading image...");
+
+        const uploadResult = await uploadImage(imageFile, "gallery");
+        imageUrl = uploadResult.url;
+        imagePath = uploadResult.path;
+
+        setMessage("Image uploaded successfully!");
+      }
+
+      // Create form data object
       const submitData = {
         name,
         price,
@@ -12034,8 +14661,8 @@ const FarmerGallery = () => {
         location,
         description,
         harvestDay,
-        // Only include image if provided
-        ...(formData.image && { image: formData.image }),
+        ...(imageUrl && { image: imageUrl }),
+        ...(imagePath && { imagePath: imagePath }),
       };
 
       await api.post("/api/gallery/create", submitData);
@@ -12048,7 +14675,17 @@ const FarmerGallery = () => {
     } catch (error) {
       console.error("Error creating gallery item:", error);
 
-      // ADDED: Better error message for duplicate itemId
+      // If backend fails but image was uploaded, try to delete the image
+      if (imagePath && error.response?.status >= 400) {
+        try {
+          await deleteImage(imagePath);
+          console.log("Cleaned up uploaded image due to backend error");
+        } catch (deleteError) {
+          console.error("Failed to cleanup image:", deleteError);
+        }
+      }
+
+      // Better error message for duplicate itemId
       if (error.response?.data?.error === "Duplicate itemId generated") {
         setMessage("Please try again. System is generating a new ID.");
       } else {
@@ -12056,6 +14693,9 @@ const FarmerGallery = () => {
           error.response?.data?.message || "Failed to create gallery item"
         );
       }
+    } finally {
+      setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -12080,8 +14720,22 @@ const FarmerGallery = () => {
 
     try {
       setLoading(true);
+      let imageUrl = formData.image; // Keep existing image URL
+      let imagePath = "";
 
-      // Create form data object - image is optional
+      // Upload new image to Supabase if file is selected
+      if (imageFile) {
+        setUploading(true);
+        setMessage("Uploading new image...");
+
+        const uploadResult = await uploadImage(imageFile, "gallery");
+        imageUrl = uploadResult.url;
+        imagePath = uploadResult.path;
+
+        setMessage("New image uploaded successfully!");
+      }
+
+      // Create form data object
       const submitData = {
         name,
         price,
@@ -12089,8 +14743,8 @@ const FarmerGallery = () => {
         location,
         description,
         harvestDay,
-        // Only include image if provided
-        ...(formData.image && { image: formData.image }),
+        ...(imageUrl && { image: imageUrl }),
+        ...(imagePath && { imagePath: imagePath }),
       };
 
       await api.put(`/api/gallery/update/${selectedItem.itemId}`, submitData);
@@ -12101,10 +14755,22 @@ const FarmerGallery = () => {
       resetForm();
       fetchMyItems();
     } catch (error) {
-      setMessage("Failed to update gallery item. Please try again.");
       console.error("Update error:", error);
+
+      // If backend fails but new image was uploaded, try to delete the image
+      if (imagePath && error.response?.status >= 400) {
+        try {
+          await deleteImage(imagePath);
+          console.log("Cleaned up uploaded image due to backend error");
+        } catch (deleteError) {
+          console.error("Failed to cleanup image:", deleteError);
+        }
+      }
+
+      setMessage("Failed to update gallery item. Please try again.");
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -12132,6 +14798,8 @@ const FarmerGallery = () => {
       description: item.description,
       harvestDay: item.harvestDay ? item.harvestDay.split("T")[0] : "",
     });
+    setImageFile(null);
+    setImagePreview(null);
     setShowEditModal(true);
   };
 
@@ -12379,8 +15047,17 @@ const FarmerGallery = () => {
               {/* Image Upload Section */}
               <div className="image-upload-section">
                 <div className="image-preview">
-                  {formData.image ? (
-                    <img src={formData.image} alt="Preview" />
+                  {imagePreview ? (
+                    <div className="preview-container">
+                      <img src={imagePreview} alt="Preview" />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="remove-image-btn"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
@@ -12396,14 +15073,15 @@ const FarmerGallery = () => {
                   </label>
                   <input
                     type="file"
-                    id="image"
+                    id="image-upload"
                     accept="image/*"
                     onChange={handleImageChange}
-                    // Remove required attribute
                     style={{ display: "none" }}
                   />
                   <small className="form-help">
-                    You can add an image later if needed. Max size: 5MB
+                    {uploading
+                      ? "Uploading..."
+                      : "Max size: 10MB (JPEG, PNG, WebP)"}
                   </small>
                 </div>
               </div>
@@ -12550,8 +15228,17 @@ const FarmerGallery = () => {
 
               {/* Form Actions */}
               <div className="form-actions">
-                <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? (
+                <button
+                  type="submit"
+                  className="submit-btn"
+                  disabled={loading || uploading}
+                >
+                  {uploading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Uploading Image...
+                    </>
+                  ) : loading ? (
                     <>
                       <div className="loading-spinner-small"></div>
                       Creating...
@@ -12606,8 +15293,22 @@ const FarmerGallery = () => {
               {/* Image Upload Section */}
               <div className="image-upload-section">
                 <div className="image-preview">
-                  {formData.image ? (
-                    <img src={formData.image} alt="Preview" />
+                  {imagePreview ? (
+                    <div className="preview-container">
+                      <img src={imagePreview} alt="Preview" />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="remove-image-btn"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : formData.image ? (
+                    <div className="preview-container">
+                      <img src={formData.image} alt="Current" />
+                      <div className="current-image-label">Current Image</div>
+                    </div>
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
@@ -12628,7 +15329,11 @@ const FarmerGallery = () => {
                     onChange={handleImageChange}
                     style={{ display: "none" }}
                   />
-                  <small>Optional: Leave empty to keep current image</small>
+                  <small>
+                    {uploading
+                      ? "Uploading..."
+                      : "Optional: Leave empty to keep current image"}
+                  </small>
                 </div>
               </div>
 
@@ -12741,8 +15446,17 @@ const FarmerGallery = () => {
               </div>
 
               <div className="form-actions">
-                <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? (
+                <button
+                  type="submit"
+                  className="submit-btn"
+                  disabled={loading || uploading}
+                >
+                  {uploading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Uploading Image...
+                    </>
+                  ) : loading ? (
                     <>
                       <div className="loading-spinner-small"></div>
                       Updating...
@@ -12852,12 +15566,497 @@ const FarmerGallery = () => {
 export default FarmerGallery;
 ```
 
+## File: src/components/home/ItemsGrid/ItemsGrid.jsx
+```javascript
+// src/components/home/ItemsGrid/ItemsGrid.jsx
+import React, { useState, useEffect } from "react";
+import api from "../../../utils/api";
+import {
+  User,
+  Eye,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Tag,
+  DollarSign,
+} from "lucide-react";
+import "./ItemsGrid.css";
+
+const ItemsGrid = ({ filters }) => {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedFarmer, setSelectedFarmer] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showFarmerModal, setShowFarmerModal] = useState(false);
+  const itemsPerPage = 12;
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const fetchItems = async () => {
+    try {
+      setLoading(true);
+      console.log("Fetching items from backend...");
+
+      // FIXED: Use correct API endpoints
+      const [galleryResponse, offersResponse] = await Promise.all([
+        api.get("/api/gallery/approved"), // Fixed endpoint
+        api.get("/api/offers/approved"), // Fixed endpoint
+      ]);
+
+      console.log("Gallery API response:", galleryResponse.data);
+      console.log("Offers API response:", offersResponse.data);
+
+      // Process gallery items
+      let galleryItems = [];
+      if (galleryResponse.data && galleryResponse.data.success) {
+        galleryItems = galleryResponse.data.data || [];
+      }
+
+      // Process offers
+      let offerItems = [];
+      if (offersResponse.data && offersResponse.data.success) {
+        offerItems = offersResponse.data.data || [];
+      }
+
+      // Add type identifier to items
+      const processedGalleryItems = galleryItems.map((item) => ({
+        ...item,
+        type: "gallery",
+      }));
+
+      const processedOfferItems = offerItems.map((item) => ({
+        ...item,
+        type: "offer",
+      }));
+
+      // Combine and shuffle items
+      const allItems = [...processedGalleryItems, ...processedOfferItems];
+      const shuffledItems = allItems.sort(() => Math.random() - 0.5);
+
+      console.log(
+        `Total items loaded: ${allItems.length} (${galleryItems.length} gallery + ${offerItems.length} offers)`
+      );
+
+      setItems(shuffledItems);
+
+      if (allItems.length === 0) {
+        setMessage(
+          "No approved items available. Please check if farmers have uploaded items and admin has approved them."
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      setMessage(`Failed to load items: ${error.message}`);
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredItems = items.filter((item) => {
+    return (
+      (!filters.name ||
+        item.name.toLowerCase().includes(filters.name.toLowerCase())) &&
+      (!filters.category || item.category === filters.category) &&
+      (!filters.location || item.location === filters.location) &&
+      (!filters.minPrice ||
+        parseInt(item.price) >= parseInt(filters.minPrice)) &&
+      (!filters.maxPrice || parseInt(item.price) <= parseInt(filters.maxPrice))
+    );
+  });
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const currentItems = filteredItems.slice(0, currentPage * itemsPerPage);
+
+  const handleViewItem = (item) => {
+    setSelectedItem(item);
+    setShowModal(true);
+  };
+
+  // NEW: Handle farmer details view
+  const handleViewFarmer = (item) => {
+    if (item.userId) {
+      setSelectedFarmer({
+        ...item.userId,
+        itemName: item.name,
+        itemType: item.type,
+      });
+      setShowFarmerModal(true);
+    } else {
+      alert("Farmer information not available for this item.");
+    }
+  };
+
+  const loadMore = () => {
+    setCurrentPage((prev) => prev + 1);
+  };
+
+  if (loading) {
+    return (
+      <div className="items-loading">
+        <div className="loading-spinner"></div>
+        <p>Loading fresh products...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="items-grid-section">
+      <div className="items-container">
+        <div className="items-header">
+          <h3>Available Products ({filteredItems.length})</h3>
+        </div>
+
+        {/* FIXED: Add message display */}
+        {message && (
+          <div className="no-items-message">
+            <p>{message}</p>
+          </div>
+        )}
+
+        <div className="items-grid">
+          {currentItems.map((item) => (
+            <div key={item._id} className="item-card">
+              <div className="item-image-container">
+                <img
+                  src={
+                    item.image ||
+                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"
+                  }
+                  alt={item.name}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+                  }}
+                />
+                <div className={`item-type-badge ${item.type}`}>
+                  {item.type === "gallery" ? "Gallery" : "Special Offer"}
+                </div>
+              </div>
+
+              <div className="item-content">
+                <h4 className="item-name">{item.name}</h4>
+                <p className="item-price">Rs. {item.price}</p>
+
+                <div className="item-meta">
+                  <span className="item-category">{item.category}</span>
+                  <span className="item-location">{item.location}</span>
+                </div>
+
+                <p className="item-description">
+                  {item.description && item.description.length > 80
+                    ? `${item.description.substring(0, 80)}...`
+                    : item.description}
+                </p>
+
+                {/* ENHANCED: Show farmer info preview */}
+                {item.userId && (
+                  <div className="farmer-preview">
+                    <User size={14} />
+                    <span>Farmer : {item.owner.name}</span>
+                  </div>
+                )}
+                {item.userId && (
+                  <div className="farmer-preview">
+                    <User size={14} />
+                    <span>Phone : {item.owner.phone}</span>
+                  </div>
+                )}
+                {item.userId && (
+                  <div className="farmer-preview">
+                    <User size={14} />
+                    <span>Location : {item.owner.location}</span>
+                  </div>
+                )}
+
+                {/* ENHANCED: Updated action buttons */}
+                <div className="item-actions">
+                  <button
+                    className="view-btn"
+                    onClick={() => handleViewItem(item)}
+                  >
+                    <Eye size={16} />
+                    View Product
+                  </button>
+
+                  {/* NEW: Farmer details button */}
+                  {item.userId && (
+                    <button
+                      className="farmer-btn"
+                      onClick={() => handleViewFarmer(item)}
+                    >
+                      <User size={16} />
+                      View Farmer
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {currentPage * itemsPerPage < filteredItems.length && (
+          <div className="load-more-container">
+            <button onClick={loadMore} className="load-more-btn">
+              Show More ({filteredItems.length - currentItems.length} remaining)
+            </button>
+          </div>
+        )}
+
+        {filteredItems.length === 0 && !message && (
+          <div className="no-items">
+            <h3>No products found</h3>
+            <p>
+              Try adjusting your search filters or check back later for new
+              products
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* EXISTING: Item Details Modal */}
+      {showModal && selectedItem && (
+        <div className="item-modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="item-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Product Details</h3>
+              <button
+                className="modal-close-btn"
+                onClick={() => setShowModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="modal-content">
+              <div className="modal-image">
+                <img
+                  src={
+                    selectedItem.image ||
+                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400"
+                  }
+                  alt={selectedItem.name}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
+                  }}
+                />
+                {selectedItem.type === "offer" && (
+                  <div className="modal-offer-badge">SPECIAL OFFER</div>
+                )}
+              </div>
+
+              <div className="modal-details">
+                <h4>{selectedItem.name}</h4>
+                <p className="modal-price">Rs. {selectedItem.price}</p>
+
+                {/* Product Information */}
+                <div className="product-info-section">
+                  <h5>Product Information</h5>
+                  <div className="detail-item">
+                    <Tag size={16} />
+                    <strong>Category:</strong> {selectedItem.category}
+                  </div>
+                  <div className="detail-item">
+                    <MapPin size={16} />
+                    <strong>Location:</strong> {selectedItem.location}
+                  </div>
+                  <div className="detail-item">
+                    <Calendar size={16} />
+                    <strong>Harvest Date:</strong>{" "}
+                    {selectedItem.harvestDay
+                      ? new Date(selectedItem.harvestDay).toLocaleDateString()
+                      : "N/A"}
+                  </div>
+                  <div className="detail-item">
+                    <DollarSign size={16} />
+                    <strong>Type:</strong>{" "}
+                    {selectedItem.type === "gallery"
+                      ? "Gallery Item"
+                      : "Special Offer"}
+                  </div>
+                </div>
+
+                {/* Product Description */}
+                <div className="description-section">
+                  <h5>Description</h5>
+                  <p>{selectedItem.description}</p>
+                </div>
+
+                {/* FIXED: Add conditions display for offers */}
+                {selectedItem.condition &&
+                  Array.isArray(selectedItem.condition) &&
+                  selectedItem.condition.length > 0 && (
+                    <div className="conditions-section">
+                      <h5>Offer Conditions</h5>
+                      <ul>
+                        {selectedItem.condition.map((condition, index) => (
+                          <li key={index}>{condition}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                {/* Quick Farmer Info */}
+                {selectedItem.userId && (
+                  <div className="quick-farmer-info">
+                    <h5>Farmer Information</h5>
+                    <div className="farmer-quick-details">
+                      <p>
+                        <strong>Name:</strong> {selectedItem.userId.firstName}{" "}
+                        {selectedItem.userId.lastName}
+                      </p>
+                      <p>
+                        <strong>Location:</strong>{" "}
+                        {selectedItem.userId.location}
+                      </p>
+                      <button
+                        className="view-full-farmer-btn"
+                        onClick={() => {
+                          setShowModal(false);
+                          handleViewFarmer(selectedItem);
+                        }}
+                      >
+                        <User size={16} />
+                        View Full Farmer Details
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NEW: Farmer Details Modal */}
+      {showFarmerModal && selectedFarmer && (
+        <div
+          className="farmer-modal-overlay"
+          onClick={() => setShowFarmerModal(false)}
+        >
+          <div className="farmer-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header farmer-header">
+              <h3>Farmer Details</h3>
+              <button
+                className="modal-close-btn"
+                onClick={() => setShowFarmerModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="modal-content">
+              <div className="farmer-profile-section">
+                <div className="farmer-avatar">
+                  <img
+                    src={
+                      selectedFarmer.img ||
+                      "https://www.w3schools.com/howto/img_avatar.png"
+                    }
+                    alt={selectedFarmer.firstName}
+                    onError={(e) => {
+                      e.target.src =
+                        "https://www.w3schools.com/howto/img_avatar.png";
+                    }}
+                  />
+                </div>
+                <div className="farmer-basic-info">
+                  <h4>
+                    {selectedFarmer.firstName} {selectedFarmer.lastName}
+                  </h4>
+                  <p className="farmer-type">Local Farmer</p>
+                  <p className="farmer-item-info">
+                    Creator of: <strong>{selectedFarmer.itemName}</strong> (
+                    {selectedFarmer.itemType})
+                  </p>
+                </div>
+              </div>
+
+              <div className="farmer-details-grid">
+                <div className="farmer-detail-item">
+                  <Mail size={16} />
+                  <div>
+                    <strong>Email:</strong>
+                    <p>{selectedFarmer.email}</p>
+                  </div>
+                </div>
+
+                {selectedFarmer.phone && (
+                  <div className="farmer-detail-item">
+                    <Phone size={16} />
+                    <div>
+                      <strong>Phone:</strong>
+                      <p>{selectedFarmer.phone}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="farmer-detail-item">
+                  <MapPin size={16} />
+                  <div>
+                    <strong>Farm Location:</strong>
+                    <p>{selectedFarmer.location}</p>
+                  </div>
+                </div>
+
+                <div className="farmer-detail-item">
+                  <Calendar size={16} />
+                  <div>
+                    <strong>Farmer Since:</strong>
+                    <p>
+                      {new Date(selectedFarmer.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Actions */}
+              <div className="farmer-contact-actions">
+                <h5>Contact This Farmer</h5>
+                <div className="contact-buttons">
+                  <a
+                    href={`mailto:${selectedFarmer.email}?subject=Inquiry about ${selectedFarmer.itemName}`}
+                    className="contact-btn email-btn"
+                  >
+                    <Mail size={16} />
+                    Send Email
+                  </a>
+                  {selectedFarmer.phone && (
+                    <a
+                      href={`tel:${selectedFarmer.phone}`}
+                      className="contact-btn phone-btn"
+                    >
+                      <Phone size={16} />
+                      Call Now
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ItemsGrid;
+```
+
 ## File: src/components/farmer/FarmerOffers/FarmerOffers.jsx
 ```javascript
 // src/components/farmer/FarmerOffers/FarmerOffers.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import api from "../../../utils/api";
+import { uploadImage, deleteImage } from "../../../utils/supabaseClient";
 import {
   Plus,
   Eye,
@@ -12867,21 +16066,20 @@ import {
   Filter,
   X,
   RefreshCw,
-  AlertCircle,
   Save,
   Camera,
-  Gift,
-  Percent,
+  Package,
   Tag,
   DollarSign,
   Grid,
   MapPin,
   Calendar,
   FileText,
-  Star,
-  Clock,
-  Truck,
   Award,
+  Leaf,
+  Droplets,
+  Shield,
+  Sun,
 } from "lucide-react";
 import "./FarmerOffers.css";
 
@@ -12890,6 +16088,7 @@ const FarmerOffers = () => {
   const [offers, setOffers] = useState([]);
   const [filteredOffers, setFilteredOffers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -12897,6 +16096,8 @@ const FarmerOffers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [message, setMessage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -12906,10 +16107,9 @@ const FarmerOffers = () => {
     location: "",
     description: "",
     harvestDay: "",
-    condition: [],
+    conditions: [],
+    newCondition: "",
   });
-
-  const [newCondition, setNewCondition] = useState("");
 
   const categories = [
     "vegetables",
@@ -12983,21 +16183,41 @@ const FarmerOffers = () => {
     const file = e.target.files[0];
     if (file) {
       // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        setMessage("Image size should be less than 5MB");
+      if (file.size > 20 * 1024 * 1024) {
+        setMessage("Image size should be less than 20MB");
         return;
       }
 
+      // Validate file type
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        setMessage("Only JPEG, PNG, and WebP images are allowed");
+        return;
+      }
+
+      setImageFile(file);
+
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
+        setImagePreview(reader.result);
         setFormData((prev) => ({
           ...prev,
           image: reader.result,
         }));
       };
       reader.readAsDataURL(file);
+
+      setMessage(""); // Clear any previous error messages
     } else {
       // Clear image if no file selected
+      setImageFile(null);
+      setImagePreview(null);
       setFormData((prev) => ({
         ...prev,
         image: "",
@@ -13005,20 +16225,26 @@ const FarmerOffers = () => {
     }
   };
 
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setFormData((prev) => ({ ...prev, image: "" }));
+  };
+
   const addCondition = () => {
-    if (newCondition.trim()) {
+    if (formData.newCondition.trim()) {
       setFormData((prev) => ({
         ...prev,
-        condition: [...prev.condition, newCondition.trim()],
+        conditions: [...prev.conditions, prev.newCondition.trim()],
+        newCondition: "",
       }));
-      setNewCondition("");
     }
   };
 
   const removeCondition = (index) => {
     setFormData((prev) => ({
       ...prev,
-      condition: prev.condition.filter((_, i) => i !== index),
+      conditions: prev.conditions.filter((_, i) => i !== index),
     }));
   };
 
@@ -13031,9 +16257,11 @@ const FarmerOffers = () => {
       location: "",
       description: "",
       harvestDay: "",
-      condition: [],
+      conditions: [],
+      newCondition: "",
     });
-    setNewCondition("");
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const handleCreate = async (e) => {
@@ -13057,8 +16285,22 @@ const FarmerOffers = () => {
 
     try {
       setLoading(true);
+      let imageUrl = "";
+      let imagePath = "";
 
-      // Create form data object - image is optional
+      // Upload image to Supabase if file is selected
+      if (imageFile) {
+        setUploading(true);
+        setMessage("Uploading image...");
+
+        const uploadResult = await uploadImage(imageFile, "offers");
+        imageUrl = uploadResult.url;
+        imagePath = uploadResult.path;
+
+        setMessage("Image uploaded successfully!");
+      }
+
+      // Create form data object
       const submitData = {
         name,
         price,
@@ -13066,9 +16308,9 @@ const FarmerOffers = () => {
         location,
         description,
         harvestDay,
-        condition: formData.condition,
-        // Only include image if provided
-        ...(formData.image && { image: formData.image }),
+        condition: formData.conditions,
+        ...(imageUrl && { image: imageUrl }),
+        ...(imagePath && { imagePath: imagePath }),
       };
 
       await api.post("/api/offers", submitData);
@@ -13079,14 +16321,25 @@ const FarmerOffers = () => {
       resetForm();
       fetchMyOffers();
     } catch (error) {
-      setMessage("Failed to create offer. Please try again.");
-      console.error("Create error:", error);
+      console.error("Error creating offer:", error);
+
+      // If backend fails but image was uploaded, try to delete the image
+      if (imagePath && error.response?.status >= 400) {
+        try {
+          await deleteImage(imagePath);
+          console.log("Cleaned up uploaded image due to backend error");
+        } catch (deleteError) {
+          console.error("Failed to cleanup image:", deleteError);
+        }
+      }
+
+      setMessage(error.response?.data?.message || "Failed to create offer");
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
-  // FarmerOffers.jsx එකේ handleEdit function
   const handleEdit = async (e) => {
     e.preventDefault();
 
@@ -13108,8 +16361,22 @@ const FarmerOffers = () => {
 
     try {
       setLoading(true);
+      let imageUrl = formData.image; // Keep existing image URL
+      let imagePath = "";
 
-      // Create form data object - image is optional
+      // Upload new image to Supabase if file is selected
+      if (imageFile) {
+        setUploading(true);
+        setMessage("Uploading new image...");
+
+        const uploadResult = await uploadImage(imageFile, "offers");
+        imageUrl = uploadResult.url;
+        imagePath = uploadResult.path;
+
+        setMessage("New image uploaded successfully!");
+      }
+
+      // Create form data object
       const submitData = {
         name,
         price,
@@ -13117,32 +16384,33 @@ const FarmerOffers = () => {
         location,
         description,
         harvestDay,
-        condition: formData.condition,
-        // Only include image if provided
-        ...(formData.image && { image: formData.image }),
+        condition: formData.conditions,
+        ...(imageUrl && { image: imageUrl }),
+        ...(imagePath && { imagePath: imagePath }),
       };
 
-      console.log("Updating offer:", selectedOffer.itemId, submitData);
-
-      // Make sure using correct API endpoint with itemId
-      const response = await api.put(
-        `/api/offers/update/${selectedOffer.itemId}`,
-        submitData
-      );
-
-      if (response.data.success) {
-        setMessage("Offer updated successfully! Waiting for admin approval.");
-        setShowEditModal(false);
-        resetForm();
-        fetchMyOffers();
-      } else {
-        setMessage("Failed to update offer");
-      }
+      await api.put(`/api/offers/update/${selectedOffer.itemId}`, submitData);
+      setMessage("Offer updated successfully! Waiting for admin approval.");
+      setShowEditModal(false);
+      resetForm();
+      fetchMyOffers();
     } catch (error) {
       console.error("Update error:", error);
-      setMessage(error.response?.data?.message || "Failed to update offer");
+
+      // If backend fails but new image was uploaded, try to delete the image
+      if (imagePath && error.response?.status >= 400) {
+        try {
+          await deleteImage(imagePath);
+          console.log("Cleaned up uploaded image due to backend error");
+        } catch (deleteError) {
+          console.error("Failed to cleanup image:", deleteError);
+        }
+      }
+
+      setMessage("Failed to update offer. Please try again.");
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -13169,8 +16437,11 @@ const FarmerOffers = () => {
       location: offer.location,
       description: offer.description,
       harvestDay: offer.harvestDay ? offer.harvestDay.split("T")[0] : "",
-      condition: offer.condition || [],
+      conditions: offer.condition || [],
+      newCondition: "",
     });
+    setImageFile(null);
+    setImagePreview(null);
     setShowEditModal(true);
   };
 
@@ -13195,11 +16466,11 @@ const FarmerOffers = () => {
       <div className="offers-header">
         <div className="header-content">
           <h2>My Special Offers</h2>
-          <p>Manage your special promotional offers</p>
+          <p>Create and manage your special promotional offers</p>
         </div>
         <button className="create-btn" onClick={() => setShowCreateModal(true)}>
           <Plus size={20} />
-          Create New Offer
+          Create Special Offer
         </button>
       </div>
 
@@ -13226,7 +16497,7 @@ const FarmerOffers = () => {
               <Search className="search-icon" size={20} />
               <input
                 type="text"
-                placeholder="Search by offer name, category, or location..."
+                placeholder="Search by name, category, or location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
@@ -13343,8 +16614,8 @@ const FarmerOffers = () => {
                 <div className="offer-conditions">
                   <strong>Conditions:</strong>
                   <ul>
-                    {offer.condition.slice(0, 2).map((cond, index) => (
-                      <li key={index}>{cond}</li>
+                    {offer.condition.slice(0, 2).map((condition, index) => (
+                      <li key={index}>{condition}</li>
                     ))}
                     {offer.condition.length > 2 && (
                       <li>+{offer.condition.length - 2} more...</li>
@@ -13386,7 +16657,7 @@ const FarmerOffers = () => {
           <h3>No special offers found</h3>
           <p>
             {offers.length === 0
-              ? "Create your first special offer to attract more customers!"
+              ? "Create your first special offer to attract more buyers!"
               : "No offers match your search criteria"}
           </p>
           {offers.length === 0 && (
@@ -13408,17 +16679,17 @@ const FarmerOffers = () => {
           onClick={() => setShowCreateModal(false)}
         >
           <div
-            className="modal-content create-modal offer-modal"
+            className="modal-content offer-modal"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-header offer-header">
+            <div className="modal-header">
               <div className="header-content">
-                <div className="header-icon offer-icon">
-                  <Gift size={24} />
+                <div className="header-icon">
+                  <Plus size={24} />
                 </div>
                 <div>
                   <h3>Create Special Offer</h3>
-                  <p>Create an attractive offer for your products</p>
+                  <p>Create an attractive promotional offer</p>
                 </div>
               </div>
               <button
@@ -13429,25 +16700,30 @@ const FarmerOffers = () => {
               </button>
             </div>
 
-            <form
-              onSubmit={handleCreate}
-              className="enhanced-modal-form offer-form"
-            >
+            <form onSubmit={handleCreate} className="offer-form">
               {/* Image Upload Section */}
               <div className="image-upload-section">
                 <div className="image-preview offer-preview">
-                  {formData.image ? (
-                    <>
-                      <img src={formData.image} alt="Preview" />
-                      <div className="offer-overlay">
-                        <div className="offer-badge-preview">SPECIAL OFFER</div>
-                      </div>
-                    </>
+                  {imagePreview ? (
+                    <div className="preview-container">
+                      <img src={imagePreview} alt="Preview" />
+                      <div className="offer-overlay"></div>
+                      <div className="offer-badge-preview">SPECIAL OFFER</div>
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="remove-image-btn"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
                       <p>Upload Offer Image (Optional)</p>
-                      <span>Make it attractive!</span>
+                      <small>
+                        Make your offer more attractive with an image
+                      </small>
                     </div>
                   )}
                 </div>
@@ -13461,38 +16737,39 @@ const FarmerOffers = () => {
                   </label>
                   <input
                     type="file"
-                    id="image"
+                    id="offer-image-upload"
                     accept="image/*"
                     onChange={handleImageChange}
-                    // Remove required attribute
                     style={{ display: "none" }}
                   />
                   <small className="form-help">
-                    Optional: High-quality images get more attention!
+                    {uploading
+                      ? "Uploading..."
+                      : "Max size: 10MB (JPEG, PNG, WebP)"}
                   </small>
                 </div>
               </div>
 
               {/* Form Fields */}
               <div className="form-sections">
-                {/* Offer Details */}
+                {/* Basic Information */}
                 <div className="form-section">
                   <h4 className="section-title offer-title">
-                    <Percent size={20} />
-                    Offer Details
+                    <Package size={20} />
+                    Offer Information
                   </h4>
                   <div className="form-grid">
                     <div className="form-group">
                       <label>
                         <Tag size={16} />
-                        Offer Name *
+                        Product Name *
                       </label>
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        placeholder="e.g., Weekend Special - Fresh Mangoes"
+                        placeholder="e.g., Premium Organic Tomatoes"
                         required
                       />
                     </div>
@@ -13500,7 +16777,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <DollarSign size={16} />
-                        Special Price (Rs.) *
+                        Special Price per KG (Rs.) *
                       </label>
                       <div className="price-input-wrapper">
                         <input
@@ -13512,7 +16789,7 @@ const FarmerOffers = () => {
                           min="1"
                           required
                         />
-                        <span className="price-label">per KG</span>
+                        <span className="price-label">Special Price</span>
                       </div>
                     </div>
 
@@ -13540,14 +16817,14 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <MapPin size={16} />
-                        Location *
+                        Farm Location *
                       </label>
                       <input
                         type="text"
                         name="location"
                         value={formData.location}
                         onChange={handleInputChange}
-                        placeholder="e.g., Galle, Sri Lanka"
+                        placeholder="e.g., Kandy, Sri Lanka"
                         required
                       />
                     </div>
@@ -13570,7 +16847,7 @@ const FarmerOffers = () => {
 
                 {/* Offer Description */}
                 <div className="form-section">
-                  <h4 className="section-title">
+                  <h4 className="section-title offer-title">
                     <FileText size={20} />
                     Offer Description
                   </h4>
@@ -13579,8 +16856,8 @@ const FarmerOffers = () => {
                       name="description"
                       value={formData.description}
                       onChange={handleInputChange}
-                      rows="4"
-                      placeholder="Describe what makes this offer special, discount details, quality, etc..."
+                      rows="5"
+                      placeholder="Describe your special offer, quality, freshness, and why buyers should choose this deal..."
                       required
                     />
                     <div className="char-count">
@@ -13589,48 +16866,53 @@ const FarmerOffers = () => {
                   </div>
                 </div>
 
-                {/* Special Conditions */}
+                {/* Offer Conditions */}
                 <div className="form-section">
-                  <h4 className="section-title">
-                    <AlertCircle size={20} />
-                    Terms & Conditions (Optional)
+                  <h4 className="section-title offer-title">
+                    <Award size={20} />
+                    Offer Conditions (Optional)
                   </h4>
-
                   <div className="conditions-input-section">
                     <div className="condition-input-wrapper">
                       <input
                         type="text"
-                        value={newCondition}
-                        onChange={(e) => setNewCondition(e.target.value)}
-                        placeholder="e.g., Minimum 5kg order, Valid for 7 days"
-                        onKeyPress={(e) =>
-                          e.key === "Enter" &&
-                          (e.preventDefault(), addCondition())
+                        value={formData.newCondition}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            newCondition: e.target.value,
+                          }))
                         }
+                        placeholder="e.g., Minimum order 10kg, Valid until stock lasts"
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addCondition();
+                          }
+                        }}
                       />
                       <button
                         type="button"
                         onClick={addCondition}
                         className="add-condition-btn"
-                        disabled={!newCondition.trim()}
+                        disabled={!formData.newCondition.trim()}
                       >
                         <Plus size={16} />
                         Add
                       </button>
                     </div>
-
-                    {formData.condition.length > 0 && (
+                    {formData.conditions.length > 0 && (
                       <div className="conditions-list">
-                        <h5>Added Conditions:</h5>
-                        {formData.condition.map((cond, index) => (
+                        <h5>Offer Conditions:</h5>
+                        {formData.conditions.map((condition, index) => (
                           <div key={index} className="condition-tag">
-                            <span>{cond}</span>
+                            <span>{condition}</span>
                             <button
                               type="button"
                               onClick={() => removeCondition(index)}
                               className="remove-condition"
                             >
-                              <X size={14} />
+                              <X size={12} />
                             </button>
                           </div>
                         ))}
@@ -13641,58 +16923,65 @@ const FarmerOffers = () => {
 
                 {/* Offer Highlights */}
                 <div className="form-section">
-                  <h4 className="section-title">
-                    <Star size={20} />
+                  <h4 className="section-title offer-title">
+                    <Award size={20} />
                     Offer Highlights
                   </h4>
                   <div className="offer-highlights">
                     <div className="highlight-item">
-                      <Percent size={16} />
-                      <span>Special Discount</span>
+                      <Leaf size={16} />
+                      <span>Special Price</span>
                     </div>
                     <div className="highlight-item">
-                      <Clock size={16} />
+                      <Droplets size={16} />
+                      <span>Fresh Quality</span>
+                    </div>
+                    <div className="highlight-item">
+                      <Shield size={16} />
                       <span>Limited Time</span>
                     </div>
                     <div className="highlight-item">
-                      <Truck size={16} />
-                      <span>Fresh Delivery</span>
-                    </div>
-                    <div className="highlight-item">
-                      <Award size={16} />
-                      <span>Premium Quality</span>
+                      <Sun size={16} />
+                      <span>Farm Direct</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Form Actions */}
-              <div className="form-actions offer-actions">
-                <button
-                  type="submit"
-                  className="submit-btn offer-submit"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <div className="loading-spinner-small"></div>
-                      Creating Offer...
-                    </>
-                  ) : (
-                    <>
-                      <Gift size={16} />
-                      Create Special Offer
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  <X size={16} />
-                  Cancel
-                </button>
+              <div className="offer-actions">
+                <div className="form-actions">
+                  <button
+                    type="submit"
+                    className="submit-btn offer-submit"
+                    disabled={loading || uploading}
+                  >
+                    {uploading ? (
+                      <>
+                        <div className="loading-spinner-small"></div>
+                        Uploading Image...
+                      </>
+                    ) : loading ? (
+                      <>
+                        <div className="loading-spinner-small"></div>
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <Save size={16} />
+                        Create Special Offer
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => setShowCreateModal(false)}
+                  >
+                    <X size={16} />
+                    Cancel
+                  </button>
+                </div>
               </div>
             </form>
           </div>
@@ -13703,17 +16992,17 @@ const FarmerOffers = () => {
       {showEditModal && (
         <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
           <div
-            className="modal-content create-modal offer-modal"
+            className="modal-content offer-modal"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-header offer-header">
+            <div className="modal-header">
               <div className="header-content">
-                <div className="header-icon offer-icon">
+                <div className="header-icon">
                   <Edit size={24} />
                 </div>
                 <div>
                   <h3>Edit Special Offer</h3>
-                  <p>Update your offer details</p>
+                  <p>Update your promotional offer</p>
                 </div>
               </div>
               <button
@@ -13724,25 +17013,35 @@ const FarmerOffers = () => {
               </button>
             </div>
 
-            <form
-              onSubmit={handleEdit}
-              className="enhanced-modal-form offer-form"
-            >
+            <form onSubmit={handleEdit} className="offer-form">
               {/* Image Upload Section */}
               <div className="image-upload-section">
                 <div className="image-preview offer-preview">
-                  {formData.image ? (
-                    <>
-                      <img src={formData.image} alt="Preview" />
-                      <div className="offer-overlay">
-                        <div className="offer-badge-preview">SPECIAL OFFER</div>
-                      </div>
-                    </>
+                  {imagePreview ? (
+                    <div className="preview-container">
+                      <img src={imagePreview} alt="Preview" />
+                      <div className="offer-overlay"></div>
+                      <div className="offer-badge-preview">SPECIAL OFFER</div>
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="remove-image-btn"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : formData.image ? (
+                    <div className="preview-container">
+                      <img src={formData.image} alt="Current" />
+                      <div className="offer-overlay"></div>
+                      <div className="offer-badge-preview">SPECIAL OFFER</div>
+                      <div className="current-image-label">Current Image</div>
+                    </div>
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
                       <p>Upload Offer Image (Optional)</p>
-                      <span>Leave empty to keep current image</span>
+                      <small>Leave empty to keep current image</small>
                     </div>
                   )}
                 </div>
@@ -13761,22 +17060,26 @@ const FarmerOffers = () => {
                     onChange={handleImageChange}
                     style={{ display: "none" }}
                   />
-                  <small>Optional: Leave empty to keep current image</small>
+                  <small>
+                    {uploading
+                      ? "Uploading..."
+                      : "Optional: Leave empty to keep current image"}
+                  </small>
                 </div>
               </div>
 
-              {/* Same form sections as create modal */}
+              {/* Form Fields - Same as create modal */}
               <div className="form-sections">
                 <div className="form-section">
                   <h4 className="section-title offer-title">
-                    <Percent size={20} />
-                    Offer Details
+                    <Package size={20} />
+                    Offer Information
                   </h4>
                   <div className="form-grid">
                     <div className="form-group">
                       <label>
                         <Tag size={16} />
-                        Offer Name *
+                        Product Name *
                       </label>
                       <input
                         type="text"
@@ -13790,7 +17093,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <DollarSign size={16} />
-                        Special Price (Rs.) *
+                        Special Price per KG (Rs.) *
                       </label>
                       <div className="price-input-wrapper">
                         <input
@@ -13801,7 +17104,7 @@ const FarmerOffers = () => {
                           min="1"
                           required
                         />
-                        <span className="price-label">per KG</span>
+                        <span className="price-label">Special Price</span>
                       </div>
                     </div>
 
@@ -13829,7 +17132,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <MapPin size={16} />
-                        Location *
+                        Farm Location *
                       </label>
                       <input
                         type="text"
@@ -13857,7 +17160,7 @@ const FarmerOffers = () => {
                 </div>
 
                 <div className="form-section">
-                  <h4 className="section-title">
+                  <h4 className="section-title offer-title">
                     <FileText size={20} />
                     Offer Description
                   </h4>
@@ -13866,7 +17169,7 @@ const FarmerOffers = () => {
                       name="description"
                       value={formData.description}
                       onChange={handleInputChange}
-                      rows="4"
+                      rows="5"
                       required
                     />
                     <div className="char-count">
@@ -13876,46 +17179,51 @@ const FarmerOffers = () => {
                 </div>
 
                 <div className="form-section">
-                  <h4 className="section-title">
-                    <AlertCircle size={20} />
-                    Terms & Conditions (Optional)
+                  <h4 className="section-title offer-title">
+                    <Award size={20} />
+                    Offer Conditions (Optional)
                   </h4>
-
                   <div className="conditions-input-section">
                     <div className="condition-input-wrapper">
                       <input
                         type="text"
-                        value={newCondition}
-                        onChange={(e) => setNewCondition(e.target.value)}
-                        placeholder="e.g., Minimum 5kg order, Valid for 7 days"
-                        onKeyPress={(e) =>
-                          e.key === "Enter" &&
-                          (e.preventDefault(), addCondition())
+                        value={formData.newCondition}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            newCondition: e.target.value,
+                          }))
                         }
+                        placeholder="Add new condition"
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addCondition();
+                          }
+                        }}
                       />
                       <button
                         type="button"
                         onClick={addCondition}
                         className="add-condition-btn"
-                        disabled={!newCondition.trim()}
+                        disabled={!formData.newCondition.trim()}
                       >
                         <Plus size={16} />
                         Add
                       </button>
                     </div>
-
-                    {formData.condition.length > 0 && (
+                    {formData.conditions.length > 0 && (
                       <div className="conditions-list">
-                        <h5>Added Conditions:</h5>
-                        {formData.condition.map((cond, index) => (
+                        <h5>Offer Conditions:</h5>
+                        {formData.conditions.map((condition, index) => (
                           <div key={index} className="condition-tag">
-                            <span>{cond}</span>
+                            <span>{condition}</span>
                             <button
                               type="button"
                               onClick={() => removeCondition(index)}
                               className="remove-condition"
                             >
-                              <X size={14} />
+                              <X size={12} />
                             </button>
                           </div>
                         ))}
@@ -13925,32 +17233,39 @@ const FarmerOffers = () => {
                 </div>
               </div>
 
-              <div className="form-actions offer-actions">
-                <button
-                  type="submit"
-                  className="submit-btn offer-submit"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <div className="loading-spinner-small"></div>
-                      Updating Offer...
-                    </>
-                  ) : (
-                    <>
-                      <Save size={16} />
-                      Update Special Offer
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowEditModal(false)}
-                >
-                  <X size={16} />
-                  Cancel
-                </button>
+              <div className="offer-actions">
+                <div className="form-actions">
+                  <button
+                    type="submit"
+                    className="submit-btn offer-submit"
+                    disabled={loading || uploading}
+                  >
+                    {uploading ? (
+                      <>
+                        <div className="loading-spinner-small"></div>
+                        Uploading Image...
+                      </>
+                    ) : loading ? (
+                      <>
+                        <div className="loading-spinner-small"></div>
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Save size={16} />
+                        Update Special Offer
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => setShowEditModal(false)}
+                  >
+                    <X size={16} />
+                    Cancel
+                  </button>
+                </div>
               </div>
             </form>
           </div>
@@ -13986,7 +17301,7 @@ const FarmerOffers = () => {
                 <div className={`status-badge ${selectedOffer.status}`}>
                   {selectedOffer.status.toUpperCase()}
                 </div>
-                <div className="offer-badge">SPECIAL OFFER</div>
+                <div className="modal-offer-badge">SPECIAL OFFER</div>
               </div>
 
               <div className="view-details">
@@ -13994,7 +17309,7 @@ const FarmerOffers = () => {
 
                 <div className="detail-grid">
                   <div className="detail-item">
-                    <span className="detail-label">Price</span>
+                    <span className="detail-label">Special Price</span>
                     <span className="detail-value">
                       Rs. {selectedOffer.price}
                     </span>
@@ -14030,12 +17345,12 @@ const FarmerOffers = () => {
                 {selectedOffer.condition &&
                   selectedOffer.condition.length > 0 && (
                     <div className="conditions-section">
-                      <h5>Special Conditions</h5>
+                      <h5>Offer Conditions</h5>
                       <ul className="conditions-view-list">
-                        {selectedOffer.condition.map((cond, index) => (
+                        {selectedOffer.condition.map((condition, index) => (
                           <li key={index}>
-                            <AlertCircle size={14} />
-                            {cond}
+                            <Award size={14} />
+                            {condition}
                           </li>
                         ))}
                       </ul>

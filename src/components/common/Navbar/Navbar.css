@@ -1,13 +1,15 @@
 /* src/components/common/Navbar/Navbar.css */
 .navbar {
-  background: linear-gradient(135deg, #4caf50, #45a049);
+  background: linear-gradient(135deg, #4caf50, #45a049, #27ae60);
   padding: 1rem 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
   z-index: 1000;
   width: 100%;
   box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .navbar-container {
@@ -21,23 +23,59 @@
   box-sizing: border-box;
 }
 
+/* Enhanced Brand */
 .navbar-brand {
   cursor: pointer;
   user-select: none;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 12px;
+}
+
+.navbar-brand:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
 }
 
 .navbar-brand h2 {
   color: white;
   margin: 0;
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 2rem;
+  font-weight: 800;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #ffffff, #f0f8f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1px;
 }
 
+/* Brand Icon */
+.navbar-brand::before {
+  content: "🌱";
+  font-size: 1.8rem;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Enhanced Menu */
 .navbar-menu {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .navbar-user,
@@ -47,60 +85,136 @@
   gap: 1rem;
 }
 
+/* Enhanced User Greeting */
 .user-greeting {
   color: white;
-  font-weight: 500;
+  font-weight: 600;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   white-space: nowrap;
-}
-
-.navbar-btn {
   padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+/* Enhanced Buttons */
+.navbar-btn {
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.login-btn,
-.dashboard-btn {
-  background: white;
+/* Button Hover Effect */
+.navbar-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.navbar-btn:hover::before {
+  left: 100%;
+}
+
+/* Login Button */
+.login-btn {
+  background: linear-gradient(45deg, #ffffff, #f8f9fa);
   color: #4caf50;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.login-btn:hover,
-.dashboard-btn:hover {
-  background: #f0f0f0;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.login-btn:hover {
+  background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  color: #45a049;
 }
 
-.logout-btn {
-  background: rgba(255, 255, 255, 0.2);
+/* Dashboard Button */
+.dashboard-btn {
+  background: linear-gradient(45deg, #2196f3, #1976d2);
   color: white;
-  border: 1px solid white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.dashboard-btn:hover {
+  background: linear-gradient(45deg, #1976d2, #1565c0);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+}
+
+/* Logout Button */
+.logout-btn {
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.1)
+  );
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .logout-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.2)
+  );
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
+/* Active States */
+.navbar-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced Mobile Design */
 @media (max-width: 768px) {
   .navbar-container {
     padding: 0 1rem;
   }
 
   .navbar-brand h2 {
+    font-size: 1.6rem;
+  }
+
+  .navbar-brand::before {
     font-size: 1.5rem;
   }
 
+  .navbar-menu {
+    gap: 0.75rem;
+  }
+
   .navbar-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
   }
 
   .user-greeting {
@@ -109,12 +223,133 @@
 }
 
 @media (max-width: 480px) {
+  .navbar {
+    padding: 0.75rem 0;
+  }
+
+  .navbar-brand h2 {
+    font-size: 1.4rem;
+  }
+
   .navbar-menu {
     gap: 0.5rem;
   }
 
   .navbar-btn {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.75rem;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .navbar-brand::before {
+    font-size: 1.3rem;
+  }
+}
+
+/* Scroll Effect */
+.navbar.scrolled {
+  background: linear-gradient(
+    135deg,
+    rgba(76, 175, 80, 0.95),
+    rgba(69, 160, 73, 0.95),
+    rgba(39, 174, 96, 0.95)
+  );
+  backdrop-filter: blur(15px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading Animation */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+/* Button Focus States */
+.navbar-btn:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.3);
+  outline-offset: 2px;
+}
+
+/* Enhanced Hover Effects */
+.navbar-btn {
+  position: relative;
+  z-index: 1;
+}
+
+.navbar-btn:hover {
+  z-index: 2;
+}
+
+/* Glassmorphism Effect */
+.navbar-user,
+.navbar-guest {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Enhanced Typography */
+.navbar-brand h2 {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+}
+
+.navbar-brand h2::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: width 0.3s ease;
+}
+
+.navbar-brand:hover h2::after {
+  width: 100%;
+}
+
+/* Button Icons */
+.login-btn::before {
+  content: "👤 ";
+  margin-right: 0.25rem;
+}
+
+.dashboard-btn::before {
+  content: "📊 ";
+  margin-right: 0.25rem;
+}
+
+.logout-btn::before {
+  content: "🚪 ";
+  margin-right: 0.25rem;
+}
+
+/* Responsive Button Text */
+@media (max-width: 480px) {
+  .login-btn::before,
+  .dashboard-btn::before,
+  .logout-btn::before {
+    margin-right: 0;
+  }
+
+  .navbar-btn {
+    font-size: 0;
+  }
+
+  .navbar-btn::before {
+    font-size: 1rem;
   }
 }

@@ -38,3 +38,27 @@ api.interceptors.response.use(
 );
 
 export default api;
+// Gallery API calls
+export const galleryAPI = {
+  // Add new gallery item
+  addItem: async (itemData) => {
+    try {
+      const response = await api.post("/api/gallery/add", itemData);
+      return response.data;
+    } catch (error) {
+      console.error("Error adding gallery item:", error);
+      throw error;
+    }
+  },
+
+  // Get farmer's gallery items
+  getFarmerItems: async (farmerId) => {
+    try {
+      const response = await api.get(`/api/gallery/farmer/${farmerId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching farmer gallery items:", error);
+      throw error;
+    }
+  },
+};

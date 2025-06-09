@@ -189,9 +189,19 @@ const ItemsGrid = ({ filters }) => {
                 {item.userId && (
                   <div className="farmer-preview">
                     <User size={14} />
-                    <span>
-                      By: {item.userId.firstName} {item.userId.lastName}
-                    </span>
+                    <span>Farmer : {item.owner.name}</span>
+                  </div>
+                )}
+                {item.userId && (
+                  <div className="farmer-preview">
+                    <User size={14} />
+                    <span>Phone : {item.owner.phone}</span>
+                  </div>
+                )}
+                {item.userId && (
+                  <div className="farmer-preview">
+                    <User size={14} />
+                    <span>Location : {item.owner.location}</span>
                   </div>
                 )}
 

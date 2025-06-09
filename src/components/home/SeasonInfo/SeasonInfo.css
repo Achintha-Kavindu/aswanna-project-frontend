@@ -1,7 +1,7 @@
 /* src/components/home/SeasonInfo/SeasonInfo.css */
-.season-info-section {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+.season-info {
   padding: 4rem 0;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
 }
 
 .season-container {
@@ -18,136 +18,491 @@
 .season-header h2 {
   font-size: 2.5rem;
   color: #2c3e50;
-  margin-bottom: 1rem;
-  font-weight: bold;
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+  background: linear-gradient(45deg, #2c3e50, #27ae60);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .season-header p {
-  font-size: 1.1rem;
   color: #666;
-  max-width: 600px;
-  margin: 0 auto;
+  font-size: 1.1rem;
+  margin: 0;
 }
 
+/* Current Season Highlight */
+.current-season-highlight {
+  margin-bottom: 3rem;
+}
+
+.current-season-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 3px solid #27ae60;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.current-season-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #27ae60, #2ecc71, #4caf50);
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.current-season-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(39, 174, 96, 0.2);
+  border-color: #2ecc71;
+}
+
+.current-season-card .season-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.current-season-card .season-icon {
+  margin-bottom: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.current-season-card h3 {
+  color: #27ae60;
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.current-season-card h4 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.season-sinhala {
+  color: #666;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.season-months {
+  color: #27ae60;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.season-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.click-indicator {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Seasons Grid */
 .seasons-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
-  margin-bottom: 3rem;
 }
 
 .season-card {
   background: white;
   border-radius: 15px;
   padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  cursor: pointer;
   transition: all 0.3s ease;
-  border-top: 4px solid var(--season-color);
+  position: relative;
 }
 
 .season-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #27ae60;
 }
 
-.season-card-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+.season-card.active {
+  border-color: #27ae60;
+  background: linear-gradient(135deg, #f8fff8, #ffffff);
 }
 
-.season-icon-container {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: var(--season-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
+.season-card .season-icon {
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
 }
 
-.season-icon {
-  font-size: 1.5rem;
+.season-card:hover .season-icon {
+  transform: scale(1.1);
 }
 
-.season-info h3 {
+.season-card h4 {
+  color: #2c3e50;
   font-size: 1.3rem;
-  color: #2c3e50;
-  margin: 0 0 0.25rem 0;
-  font-weight: bold;
-}
-
-.season-period {
-  color: var(--season-color);
+  margin: 0 0 0.5rem 0;
   font-weight: 600;
-  margin: 0;
-  font-size: 0.95rem;
 }
 
-.season-description {
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-}
-
-.season-crops h4 {
-  color: #2c3e50;
-  margin: 0 0 0.75rem 0;
-  font-size: 1rem;
-}
-
-.crops-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.crop-tag {
-  background: var(--season-color);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.season-tips {
-  background: white;
-  border-radius: 15px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border-left: 5px solid #4caf50;
-}
-
-.tips-content h3 {
-  color: #2c3e50;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-  text-align: center;
-}
-
-.tips-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.tip-item {
-  background: #f8f9fa;
-  padding: 1.25rem;
-  border-radius: 10px;
-  border-left: 3px solid #4caf50;
-  line-height: 1.5;
-}
-
-.tip-item strong {
-  color: #4caf50;
-  display: block;
+.season-card .season-sinhala {
+  font-size: 0.9rem;
   margin-bottom: 0.5rem;
 }
 
+.season-card .season-months {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.season-preview {
+  color: #666;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Modal Styles */
+.season-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.season-modal {
+  background: white;
+  border-radius: 20px;
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  color: white;
+  padding: 2rem;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.header-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.modal-header .season-sinhala {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.2rem;
+  margin: 0.25rem 0;
+}
+
+.modal-header .season-months {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Modal Content */
+.modal-content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.modal-content h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2c3e50;
+  font-size: 1.3rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  border-bottom: 2px solid #f8f9fa;
+  padding-bottom: 0.5rem;
+}
+
+/* Weather Section */
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.weather-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #27ae60;
+}
+
+.weather-item svg {
+  color: #27ae60;
+  flex-shrink: 0;
+}
+
+.weather-item .label {
+  display: block;
+  color: #666;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.weather-item .value {
+  display: block;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.weather-description {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Crops Section */
+.crops-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.crop-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border-left: 4px solid #27ae60;
+  transition: all 0.3s ease;
+}
+
+.crop-card:hover {
+  background: #f0f8f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.1);
+}
+
+.crop-header {
+  margin-bottom: 1rem;
+}
+
+.crop-header h5 {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin: 0 0 0.25rem 0;
+  font-weight: 600;
+}
+
+.crop-sinhala {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.crop-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.crop-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.crop-info svg {
+  color: #27ae60;
+  flex-shrink: 0;
+}
+
+.crop-regions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.crop-regions svg {
+  color: #27ae60;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+/* Tips Section */
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #27ae60;
+}
+
+.tip-number {
+  background: #27ae60;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Description Section */
+.description-section h4 {
+  color: #2c3e50;
+  font-size: 1.3rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+}
+
+.description-section p {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .season-container {
     padding: 0 1rem;
@@ -157,25 +512,413 @@
     font-size: 2rem;
   }
 
-  .seasons-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .season-card {
+  .current-season-card {
     padding: 1.5rem;
   }
 
-  .season-card-header {
-    flex-direction: column;
-    text-align: center;
+  .current-season-card h4 {
+    font-size: 1.5rem;
   }
 
-  .tips-grid {
+  .season-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .seasons-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .modal-content {
+    padding: 1rem;
+  }
+
+  .weather-grid {
     grid-template-columns: 1fr;
   }
 
-  .season-tips {
-    padding: 2rem 1.5rem;
+  .crops-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .season-modal {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .modal-header {
+    padding: 1.5rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .modal-header h3 {
+    font-size: 1.5rem;
+  }
+}
+/* Previous styles remain the same, add these new styles: */
+
+/* Storage Guidelines Section */
+.storage-guidelines-section {
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 2px solid #e9ecef;
+}
+
+.storage-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.storage-header h2 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+  background: linear-gradient(45deg, #2c3e50, #27ae60);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.storage-header p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Storage Grid */
+.storage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.storage-card {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.storage-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #27ae60;
+}
+
+.storage-card .storage-icon {
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.storage-card:hover .storage-icon {
+  transform: scale(1.1);
+}
+
+.storage-card h4 {
+  color: #2c3e50;
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.storage-card .storage-sinhala {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.storage-card .storage-description {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.storage-card .storage-preview {
+  color: #27ae60;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Storage Modal Specific Styles */
+.storage-modal {
+  max-width: 1000px;
+}
+
+.storage-overview {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #27ae60;
+}
+
+.storage-overview h4 {
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.storage-overview .storage-description {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Storage Items Grid */
+.storage-items-section h4 {
+  color: #2c3e50;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+
+.storage-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.storage-item-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border-left: 4px solid #27ae60;
+  transition: all 0.3s ease;
+}
+
+.storage-item-card:hover {
+  background: #f0f8f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.1);
+}
+
+.storage-item-header {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+
+.storage-item-header h5 {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  margin: 0 0 0.25rem 0;
+  font-weight: 600;
+}
+
+.storage-item-sinhala {
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Storage Conditions */
+.storage-conditions {
+  margin-bottom: 1rem;
+}
+
+.condition-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.condition-item svg {
+  color: #27ae60;
+  flex-shrink: 0;
+}
+
+.condition-item strong {
+  color: #2c3e50;
+}
+
+/* Storage Method */
+.storage-method {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.storage-method h6 {
+  color: #2c3e50;
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.storage-method p {
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Storage Tips */
+.storage-tips {
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.storage-tips h6 {
+  color: #2c3e50;
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.storage-tips ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.storage-tips li {
+  color: #666;
+  font-size: 0.8rem;
+  margin-bottom: 0.3rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.storage-tips li::before {
+  content: "•";
+  color: #27ae60;
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+/* General Storage Tips */
+.general-storage-tips {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #f39c12;
+}
+
+.general-storage-tips h4 {
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.general-tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.75rem;
+}
+
+.general-tip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 8px;
+  color: #666;
+  font-size: 0.85rem;
+  border: 1px solid #e9ecef;
+}
+
+.general-tip svg {
+  color: #27ae60;
+  flex-shrink: 0;
+}
+
+/* Enhanced Crop Storage Info */
+.crop-storage {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #27ae60;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  background: rgba(39, 174, 96, 0.1);
+  border-radius: 6px;
+}
+
+.crop-storage svg {
+  color: #27ae60;
+  flex-shrink: 0;
+}
+
+/* Responsive Design for Storage */
+@media (max-width: 768px) {
+  .storage-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .storage-items-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .general-tips-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .storage-modal {
+    width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  .storage-header h2 {
+    font-size: 2rem;
+  }
+
+  .storage-card {
+    padding: 1.5rem;
+  }
+
+  .storage-item-card {
+    padding: 1rem;
   }
 }

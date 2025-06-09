@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import api from "../../../utils/api";
+import { uploadImage, deleteImage } from "../../../utils/supabaseClient";
 import {
   Plus,
   Eye,
@@ -33,6 +34,7 @@ const FarmerGallery = () => {
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -40,6 +42,8 @@ const FarmerGallery = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [message, setMessage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -123,26 +127,52 @@ const FarmerGallery = () => {
     const file = e.target.files[0];
     if (file) {
       // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        setMessage("Image size should be less than 5MB");
+      if (file.size > 20 * 1024 * 1024) {
+        setMessage("Image size should be less than 20MB");
         return;
       }
 
+      // Validate file type
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        setMessage("Only JPEG, PNG, and WebP images are allowed");
+        return;
+      }
+
+      setImageFile(file);
+
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
+        setImagePreview(reader.result);
         setFormData((prev) => ({
           ...prev,
           image: reader.result,
         }));
       };
       reader.readAsDataURL(file);
+
+      setMessage(""); // Clear any previous error messages
     } else {
       // Clear image if no file selected
+      setImageFile(null);
+      setImagePreview(null);
       setFormData((prev) => ({
         ...prev,
         image: "",
       }));
     }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setFormData((prev) => ({ ...prev, image: "" }));
   };
 
   const resetForm = () => {
@@ -155,6 +185,8 @@ const FarmerGallery = () => {
       description: "",
       harvestDay: "",
     });
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const handleCreate = async (e) => {
@@ -178,8 +210,22 @@ const FarmerGallery = () => {
 
     try {
       setLoading(true);
+      let imageUrl = "";
+      let imagePath = "";
 
-      // Create form data object - image is optional
+      // Upload image to Supabase if file is selected
+      if (imageFile) {
+        setUploading(true);
+        setMessage("Uploading image...");
+
+        const uploadResult = await uploadImage(imageFile, "gallery");
+        imageUrl = uploadResult.url;
+        imagePath = uploadResult.path;
+
+        setMessage("Image uploaded successfully!");
+      }
+
+      // Create form data object
       const submitData = {
         name,
         price,
@@ -187,8 +233,8 @@ const FarmerGallery = () => {
         location,
         description,
         harvestDay,
-        // Only include image if provided
-        ...(formData.image && { image: formData.image }),
+        ...(imageUrl && { image: imageUrl }),
+        ...(imagePath && { imagePath: imagePath }),
       };
 
       await api.post("/api/gallery/create", submitData);
@@ -201,7 +247,17 @@ const FarmerGallery = () => {
     } catch (error) {
       console.error("Error creating gallery item:", error);
 
-      // ADDED: Better error message for duplicate itemId
+      // If backend fails but image was uploaded, try to delete the image
+      if (imagePath && error.response?.status >= 400) {
+        try {
+          await deleteImage(imagePath);
+          console.log("Cleaned up uploaded image due to backend error");
+        } catch (deleteError) {
+          console.error("Failed to cleanup image:", deleteError);
+        }
+      }
+
+      // Better error message for duplicate itemId
       if (error.response?.data?.error === "Duplicate itemId generated") {
         setMessage("Please try again. System is generating a new ID.");
       } else {
@@ -209,6 +265,9 @@ const FarmerGallery = () => {
           error.response?.data?.message || "Failed to create gallery item"
         );
       }
+    } finally {
+      setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -233,8 +292,22 @@ const FarmerGallery = () => {
 
     try {
       setLoading(true);
+      let imageUrl = formData.image; // Keep existing image URL
+      let imagePath = "";
 
-      // Create form data object - image is optional
+      // Upload new image to Supabase if file is selected
+      if (imageFile) {
+        setUploading(true);
+        setMessage("Uploading new image...");
+
+        const uploadResult = await uploadImage(imageFile, "gallery");
+        imageUrl = uploadResult.url;
+        imagePath = uploadResult.path;
+
+        setMessage("New image uploaded successfully!");
+      }
+
+      // Create form data object
       const submitData = {
         name,
         price,
@@ -242,8 +315,8 @@ const FarmerGallery = () => {
         location,
         description,
         harvestDay,
-        // Only include image if provided
-        ...(formData.image && { image: formData.image }),
+        ...(imageUrl && { image: imageUrl }),
+        ...(imagePath && { imagePath: imagePath }),
       };
 
       await api.put(`/api/gallery/update/${selectedItem.itemId}`, submitData);
@@ -254,10 +327,22 @@ const FarmerGallery = () => {
       resetForm();
       fetchMyItems();
     } catch (error) {
-      setMessage("Failed to update gallery item. Please try again.");
       console.error("Update error:", error);
+
+      // If backend fails but new image was uploaded, try to delete the image
+      if (imagePath && error.response?.status >= 400) {
+        try {
+          await deleteImage(imagePath);
+          console.log("Cleaned up uploaded image due to backend error");
+        } catch (deleteError) {
+          console.error("Failed to cleanup image:", deleteError);
+        }
+      }
+
+      setMessage("Failed to update gallery item. Please try again.");
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -285,6 +370,8 @@ const FarmerGallery = () => {
       description: item.description,
       harvestDay: item.harvestDay ? item.harvestDay.split("T")[0] : "",
     });
+    setImageFile(null);
+    setImagePreview(null);
     setShowEditModal(true);
   };
 
@@ -532,8 +619,17 @@ const FarmerGallery = () => {
               {/* Image Upload Section */}
               <div className="image-upload-section">
                 <div className="image-preview">
-                  {formData.image ? (
-                    <img src={formData.image} alt="Preview" />
+                  {imagePreview ? (
+                    <div className="preview-container">
+                      <img src={imagePreview} alt="Preview" />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="remove-image-btn"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
@@ -549,14 +645,15 @@ const FarmerGallery = () => {
                   </label>
                   <input
                     type="file"
-                    id="image"
+                    id="image-upload"
                     accept="image/*"
                     onChange={handleImageChange}
-                    // Remove required attribute
                     style={{ display: "none" }}
                   />
                   <small className="form-help">
-                    You can add an image later if needed. Max size: 5MB
+                    {uploading
+                      ? "Uploading..."
+                      : "Max size: 10MB (JPEG, PNG, WebP)"}
                   </small>
                 </div>
               </div>
@@ -703,8 +800,17 @@ const FarmerGallery = () => {
 
               {/* Form Actions */}
               <div className="form-actions">
-                <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? (
+                <button
+                  type="submit"
+                  className="submit-btn"
+                  disabled={loading || uploading}
+                >
+                  {uploading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Uploading Image...
+                    </>
+                  ) : loading ? (
                     <>
                       <div className="loading-spinner-small"></div>
                       Creating...
@@ -759,8 +865,22 @@ const FarmerGallery = () => {
               {/* Image Upload Section */}
               <div className="image-upload-section">
                 <div className="image-preview">
-                  {formData.image ? (
-                    <img src={formData.image} alt="Preview" />
+                  {imagePreview ? (
+                    <div className="preview-container">
+                      <img src={imagePreview} alt="Preview" />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="remove-image-btn"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : formData.image ? (
+                    <div className="preview-container">
+                      <img src={formData.image} alt="Current" />
+                      <div className="current-image-label">Current Image</div>
+                    </div>
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
@@ -781,7 +901,11 @@ const FarmerGallery = () => {
                     onChange={handleImageChange}
                     style={{ display: "none" }}
                   />
-                  <small>Optional: Leave empty to keep current image</small>
+                  <small>
+                    {uploading
+                      ? "Uploading..."
+                      : "Optional: Leave empty to keep current image"}
+                  </small>
                 </div>
               </div>
 
@@ -894,8 +1018,17 @@ const FarmerGallery = () => {
               </div>
 
               <div className="form-actions">
-                <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? (
+                <button
+                  type="submit"
+                  className="submit-btn"
+                  disabled={loading || uploading}
+                >
+                  {uploading ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      Uploading Image...
+                    </>
+                  ) : loading ? (
                     <>
                       <div className="loading-spinner-small"></div>
                       Updating...

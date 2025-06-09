@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import api from "../../../utils/api";
+import { uploadImage, deleteImage } from "../../../utils/supabaseClient";
 import {
   Plus,
   Eye,
@@ -11,21 +12,20 @@ import {
   Filter,
   X,
   RefreshCw,
-  AlertCircle,
   Save,
   Camera,
-  Gift,
-  Percent,
+  Package,
   Tag,
   DollarSign,
   Grid,
   MapPin,
   Calendar,
   FileText,
-  Star,
-  Clock,
-  Truck,
   Award,
+  Leaf,
+  Droplets,
+  Shield,
+  Sun,
 } from "lucide-react";
 import "./FarmerOffers.css";
 
@@ -34,6 +34,7 @@ const FarmerOffers = () => {
   const [offers, setOffers] = useState([]);
   const [filteredOffers, setFilteredOffers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -41,6 +42,8 @@ const FarmerOffers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [message, setMessage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -50,10 +53,9 @@ const FarmerOffers = () => {
     location: "",
     description: "",
     harvestDay: "",
-    condition: [],
+    conditions: [],
+    newCondition: "",
   });
-
-  const [newCondition, setNewCondition] = useState("");
 
   const categories = [
     "vegetables",
@@ -127,21 +129,41 @@ const FarmerOffers = () => {
     const file = e.target.files[0];
     if (file) {
       // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        setMessage("Image size should be less than 5MB");
+      if (file.size > 20 * 1024 * 1024) {
+        setMessage("Image size should be less than 20MB");
         return;
       }
 
+      // Validate file type
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        setMessage("Only JPEG, PNG, and WebP images are allowed");
+        return;
+      }
+
+      setImageFile(file);
+
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
+        setImagePreview(reader.result);
         setFormData((prev) => ({
           ...prev,
           image: reader.result,
         }));
       };
       reader.readAsDataURL(file);
+
+      setMessage(""); // Clear any previous error messages
     } else {
       // Clear image if no file selected
+      setImageFile(null);
+      setImagePreview(null);
       setFormData((prev) => ({
         ...prev,
         image: "",
@@ -149,20 +171,26 @@ const FarmerOffers = () => {
     }
   };
 
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setFormData((prev) => ({ ...prev, image: "" }));
+  };
+
   const addCondition = () => {
-    if (newCondition.trim()) {
+    if (formData.newCondition.trim()) {
       setFormData((prev) => ({
         ...prev,
-        condition: [...prev.condition, newCondition.trim()],
+        conditions: [...prev.conditions, prev.newCondition.trim()],
+        newCondition: "",
       }));
-      setNewCondition("");
     }
   };
 
   const removeCondition = (index) => {
     setFormData((prev) => ({
       ...prev,
-      condition: prev.condition.filter((_, i) => i !== index),
+      conditions: prev.conditions.filter((_, i) => i !== index),
     }));
   };
 
@@ -175,9 +203,11 @@ const FarmerOffers = () => {
       location: "",
       description: "",
       harvestDay: "",
-      condition: [],
+      conditions: [],
+      newCondition: "",
     });
-    setNewCondition("");
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const handleCreate = async (e) => {
@@ -201,8 +231,22 @@ const FarmerOffers = () => {
 
     try {
       setLoading(true);
+      let imageUrl = "";
+      let imagePath = "";
 
-      // Create form data object - image is optional
+      // Upload image to Supabase if file is selected
+      if (imageFile) {
+        setUploading(true);
+        setMessage("Uploading image...");
+
+        const uploadResult = await uploadImage(imageFile, "offers");
+        imageUrl = uploadResult.url;
+        imagePath = uploadResult.path;
+
+        setMessage("Image uploaded successfully!");
+      }
+
+      // Create form data object
       const submitData = {
         name,
         price,
@@ -210,9 +254,9 @@ const FarmerOffers = () => {
         location,
         description,
         harvestDay,
-        condition: formData.condition,
-        // Only include image if provided
-        ...(formData.image && { image: formData.image }),
+        condition: formData.conditions,
+        ...(imageUrl && { image: imageUrl }),
+        ...(imagePath && { imagePath: imagePath }),
       };
 
       await api.post("/api/offers", submitData);
@@ -223,14 +267,25 @@ const FarmerOffers = () => {
       resetForm();
       fetchMyOffers();
     } catch (error) {
-      setMessage("Failed to create offer. Please try again.");
-      console.error("Create error:", error);
+      console.error("Error creating offer:", error);
+
+      // If backend fails but image was uploaded, try to delete the image
+      if (imagePath && error.response?.status >= 400) {
+        try {
+          await deleteImage(imagePath);
+          console.log("Cleaned up uploaded image due to backend error");
+        } catch (deleteError) {
+          console.error("Failed to cleanup image:", deleteError);
+        }
+      }
+
+      setMessage(error.response?.data?.message || "Failed to create offer");
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
-  // FarmerOffers.jsx එකේ handleEdit function
   const handleEdit = async (e) => {
     e.preventDefault();
 
@@ -252,8 +307,22 @@ const FarmerOffers = () => {
 
     try {
       setLoading(true);
+      let imageUrl = formData.image; // Keep existing image URL
+      let imagePath = "";
 
-      // Create form data object - image is optional
+      // Upload new image to Supabase if file is selected
+      if (imageFile) {
+        setUploading(true);
+        setMessage("Uploading new image...");
+
+        const uploadResult = await uploadImage(imageFile, "offers");
+        imageUrl = uploadResult.url;
+        imagePath = uploadResult.path;
+
+        setMessage("New image uploaded successfully!");
+      }
+
+      // Create form data object
       const submitData = {
         name,
         price,
@@ -261,32 +330,33 @@ const FarmerOffers = () => {
         location,
         description,
         harvestDay,
-        condition: formData.condition,
-        // Only include image if provided
-        ...(formData.image && { image: formData.image }),
+        condition: formData.conditions,
+        ...(imageUrl && { image: imageUrl }),
+        ...(imagePath && { imagePath: imagePath }),
       };
 
-      console.log("Updating offer:", selectedOffer.itemId, submitData);
-
-      // Make sure using correct API endpoint with itemId
-      const response = await api.put(
-        `/api/offers/update/${selectedOffer.itemId}`,
-        submitData
-      );
-
-      if (response.data.success) {
-        setMessage("Offer updated successfully! Waiting for admin approval.");
-        setShowEditModal(false);
-        resetForm();
-        fetchMyOffers();
-      } else {
-        setMessage("Failed to update offer");
-      }
+      await api.put(`/api/offers/update/${selectedOffer.itemId}`, submitData);
+      setMessage("Offer updated successfully! Waiting for admin approval.");
+      setShowEditModal(false);
+      resetForm();
+      fetchMyOffers();
     } catch (error) {
       console.error("Update error:", error);
-      setMessage(error.response?.data?.message || "Failed to update offer");
+
+      // If backend fails but new image was uploaded, try to delete the image
+      if (imagePath && error.response?.status >= 400) {
+        try {
+          await deleteImage(imagePath);
+          console.log("Cleaned up uploaded image due to backend error");
+        } catch (deleteError) {
+          console.error("Failed to cleanup image:", deleteError);
+        }
+      }
+
+      setMessage("Failed to update offer. Please try again.");
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -313,8 +383,11 @@ const FarmerOffers = () => {
       location: offer.location,
       description: offer.description,
       harvestDay: offer.harvestDay ? offer.harvestDay.split("T")[0] : "",
-      condition: offer.condition || [],
+      conditions: offer.condition || [],
+      newCondition: "",
     });
+    setImageFile(null);
+    setImagePreview(null);
     setShowEditModal(true);
   };
 
@@ -339,11 +412,11 @@ const FarmerOffers = () => {
       <div className="offers-header">
         <div className="header-content">
           <h2>My Special Offers</h2>
-          <p>Manage your special promotional offers</p>
+          <p>Create and manage your special promotional offers</p>
         </div>
         <button className="create-btn" onClick={() => setShowCreateModal(true)}>
           <Plus size={20} />
-          Create New Offer
+          Create Special Offer
         </button>
       </div>
 
@@ -370,7 +443,7 @@ const FarmerOffers = () => {
               <Search className="search-icon" size={20} />
               <input
                 type="text"
-                placeholder="Search by offer name, category, or location..."
+                placeholder="Search by name, category, or location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
@@ -487,8 +560,8 @@ const FarmerOffers = () => {
                 <div className="offer-conditions">
                   <strong>Conditions:</strong>
                   <ul>
-                    {offer.condition.slice(0, 2).map((cond, index) => (
-                      <li key={index}>{cond}</li>
+                    {offer.condition.slice(0, 2).map((condition, index) => (
+                      <li key={index}>{condition}</li>
                     ))}
                     {offer.condition.length > 2 && (
                       <li>+{offer.condition.length - 2} more...</li>
@@ -530,7 +603,7 @@ const FarmerOffers = () => {
           <h3>No special offers found</h3>
           <p>
             {offers.length === 0
-              ? "Create your first special offer to attract more customers!"
+              ? "Create your first special offer to attract more buyers!"
               : "No offers match your search criteria"}
           </p>
           {offers.length === 0 && (
@@ -552,17 +625,17 @@ const FarmerOffers = () => {
           onClick={() => setShowCreateModal(false)}
         >
           <div
-            className="modal-content create-modal offer-modal"
+            className="modal-content offer-modal"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-header offer-header">
+            <div className="modal-header">
               <div className="header-content">
-                <div className="header-icon offer-icon">
-                  <Gift size={24} />
+                <div className="header-icon">
+                  <Plus size={24} />
                 </div>
                 <div>
                   <h3>Create Special Offer</h3>
-                  <p>Create an attractive offer for your products</p>
+                  <p>Create an attractive promotional offer</p>
                 </div>
               </div>
               <button
@@ -573,25 +646,30 @@ const FarmerOffers = () => {
               </button>
             </div>
 
-            <form
-              onSubmit={handleCreate}
-              className="enhanced-modal-form offer-form"
-            >
+            <form onSubmit={handleCreate} className="offer-form">
               {/* Image Upload Section */}
               <div className="image-upload-section">
                 <div className="image-preview offer-preview">
-                  {formData.image ? (
-                    <>
-                      <img src={formData.image} alt="Preview" />
-                      <div className="offer-overlay">
-                        <div className="offer-badge-preview">SPECIAL OFFER</div>
-                      </div>
-                    </>
+                  {imagePreview ? (
+                    <div className="preview-container">
+                      <img src={imagePreview} alt="Preview" />
+                      <div className="offer-overlay"></div>
+                      <div className="offer-badge-preview">SPECIAL OFFER</div>
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="remove-image-btn"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
                       <p>Upload Offer Image (Optional)</p>
-                      <span>Make it attractive!</span>
+                      <small>
+                        Make your offer more attractive with an image
+                      </small>
                     </div>
                   )}
                 </div>
@@ -605,38 +683,39 @@ const FarmerOffers = () => {
                   </label>
                   <input
                     type="file"
-                    id="image"
+                    id="offer-image-upload"
                     accept="image/*"
                     onChange={handleImageChange}
-                    // Remove required attribute
                     style={{ display: "none" }}
                   />
                   <small className="form-help">
-                    Optional: High-quality images get more attention!
+                    {uploading
+                      ? "Uploading..."
+                      : "Max size: 10MB (JPEG, PNG, WebP)"}
                   </small>
                 </div>
               </div>
 
               {/* Form Fields */}
               <div className="form-sections">
-                {/* Offer Details */}
+                {/* Basic Information */}
                 <div className="form-section">
                   <h4 className="section-title offer-title">
-                    <Percent size={20} />
-                    Offer Details
+                    <Package size={20} />
+                    Offer Information
                   </h4>
                   <div className="form-grid">
                     <div className="form-group">
                       <label>
                         <Tag size={16} />
-                        Offer Name *
+                        Product Name *
                       </label>
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        placeholder="e.g., Weekend Special - Fresh Mangoes"
+                        placeholder="e.g., Premium Organic Tomatoes"
                         required
                       />
                     </div>
@@ -644,7 +723,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <DollarSign size={16} />
-                        Special Price (Rs.) *
+                        Special Price per KG (Rs.) *
                       </label>
                       <div className="price-input-wrapper">
                         <input
@@ -656,7 +735,7 @@ const FarmerOffers = () => {
                           min="1"
                           required
                         />
-                        <span className="price-label">per KG</span>
+                        <span className="price-label">Special Price</span>
                       </div>
                     </div>
 
@@ -684,14 +763,14 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <MapPin size={16} />
-                        Location *
+                        Farm Location *
                       </label>
                       <input
                         type="text"
                         name="location"
                         value={formData.location}
                         onChange={handleInputChange}
-                        placeholder="e.g., Galle, Sri Lanka"
+                        placeholder="e.g., Kandy, Sri Lanka"
                         required
                       />
                     </div>
@@ -714,7 +793,7 @@ const FarmerOffers = () => {
 
                 {/* Offer Description */}
                 <div className="form-section">
-                  <h4 className="section-title">
+                  <h4 className="section-title offer-title">
                     <FileText size={20} />
                     Offer Description
                   </h4>
@@ -723,8 +802,8 @@ const FarmerOffers = () => {
                       name="description"
                       value={formData.description}
                       onChange={handleInputChange}
-                      rows="4"
-                      placeholder="Describe what makes this offer special, discount details, quality, etc..."
+                      rows="5"
+                      placeholder="Describe your special offer, quality, freshness, and why buyers should choose this deal..."
                       required
                     />
                     <div className="char-count">
@@ -733,48 +812,53 @@ const FarmerOffers = () => {
                   </div>
                 </div>
 
-                {/* Special Conditions */}
+                {/* Offer Conditions */}
                 <div className="form-section">
-                  <h4 className="section-title">
-                    <AlertCircle size={20} />
-                    Terms & Conditions (Optional)
+                  <h4 className="section-title offer-title">
+                    <Award size={20} />
+                    Offer Conditions (Optional)
                   </h4>
-
                   <div className="conditions-input-section">
                     <div className="condition-input-wrapper">
                       <input
                         type="text"
-                        value={newCondition}
-                        onChange={(e) => setNewCondition(e.target.value)}
-                        placeholder="e.g., Minimum 5kg order, Valid for 7 days"
-                        onKeyPress={(e) =>
-                          e.key === "Enter" &&
-                          (e.preventDefault(), addCondition())
+                        value={formData.newCondition}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            newCondition: e.target.value,
+                          }))
                         }
+                        placeholder="e.g., Minimum order 10kg, Valid until stock lasts"
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addCondition();
+                          }
+                        }}
                       />
                       <button
                         type="button"
                         onClick={addCondition}
                         className="add-condition-btn"
-                        disabled={!newCondition.trim()}
+                        disabled={!formData.newCondition.trim()}
                       >
                         <Plus size={16} />
                         Add
                       </button>
                     </div>
-
-                    {formData.condition.length > 0 && (
+                    {formData.conditions.length > 0 && (
                       <div className="conditions-list">
-                        <h5>Added Conditions:</h5>
-                        {formData.condition.map((cond, index) => (
+                        <h5>Offer Conditions:</h5>
+                        {formData.conditions.map((condition, index) => (
                           <div key={index} className="condition-tag">
-                            <span>{cond}</span>
+                            <span>{condition}</span>
                             <button
                               type="button"
                               onClick={() => removeCondition(index)}
                               className="remove-condition"
                             >
-                              <X size={14} />
+                              <X size={12} />
                             </button>
                           </div>
                         ))}
@@ -785,58 +869,65 @@ const FarmerOffers = () => {
 
                 {/* Offer Highlights */}
                 <div className="form-section">
-                  <h4 className="section-title">
-                    <Star size={20} />
+                  <h4 className="section-title offer-title">
+                    <Award size={20} />
                     Offer Highlights
                   </h4>
                   <div className="offer-highlights">
                     <div className="highlight-item">
-                      <Percent size={16} />
-                      <span>Special Discount</span>
+                      <Leaf size={16} />
+                      <span>Special Price</span>
                     </div>
                     <div className="highlight-item">
-                      <Clock size={16} />
+                      <Droplets size={16} />
+                      <span>Fresh Quality</span>
+                    </div>
+                    <div className="highlight-item">
+                      <Shield size={16} />
                       <span>Limited Time</span>
                     </div>
                     <div className="highlight-item">
-                      <Truck size={16} />
-                      <span>Fresh Delivery</span>
-                    </div>
-                    <div className="highlight-item">
-                      <Award size={16} />
-                      <span>Premium Quality</span>
+                      <Sun size={16} />
+                      <span>Farm Direct</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Form Actions */}
-              <div className="form-actions offer-actions">
-                <button
-                  type="submit"
-                  className="submit-btn offer-submit"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <div className="loading-spinner-small"></div>
-                      Creating Offer...
-                    </>
-                  ) : (
-                    <>
-                      <Gift size={16} />
-                      Create Special Offer
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  <X size={16} />
-                  Cancel
-                </button>
+              <div className="offer-actions">
+                <div className="form-actions">
+                  <button
+                    type="submit"
+                    className="submit-btn offer-submit"
+                    disabled={loading || uploading}
+                  >
+                    {uploading ? (
+                      <>
+                        <div className="loading-spinner-small"></div>
+                        Uploading Image...
+                      </>
+                    ) : loading ? (
+                      <>
+                        <div className="loading-spinner-small"></div>
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <Save size={16} />
+                        Create Special Offer
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => setShowCreateModal(false)}
+                  >
+                    <X size={16} />
+                    Cancel
+                  </button>
+                </div>
               </div>
             </form>
           </div>
@@ -847,17 +938,17 @@ const FarmerOffers = () => {
       {showEditModal && (
         <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
           <div
-            className="modal-content create-modal offer-modal"
+            className="modal-content offer-modal"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-header offer-header">
+            <div className="modal-header">
               <div className="header-content">
-                <div className="header-icon offer-icon">
+                <div className="header-icon">
                   <Edit size={24} />
                 </div>
                 <div>
                   <h3>Edit Special Offer</h3>
-                  <p>Update your offer details</p>
+                  <p>Update your promotional offer</p>
                 </div>
               </div>
               <button
@@ -868,25 +959,35 @@ const FarmerOffers = () => {
               </button>
             </div>
 
-            <form
-              onSubmit={handleEdit}
-              className="enhanced-modal-form offer-form"
-            >
+            <form onSubmit={handleEdit} className="offer-form">
               {/* Image Upload Section */}
               <div className="image-upload-section">
                 <div className="image-preview offer-preview">
-                  {formData.image ? (
-                    <>
-                      <img src={formData.image} alt="Preview" />
-                      <div className="offer-overlay">
-                        <div className="offer-badge-preview">SPECIAL OFFER</div>
-                      </div>
-                    </>
+                  {imagePreview ? (
+                    <div className="preview-container">
+                      <img src={imagePreview} alt="Preview" />
+                      <div className="offer-overlay"></div>
+                      <div className="offer-badge-preview">SPECIAL OFFER</div>
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="remove-image-btn"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : formData.image ? (
+                    <div className="preview-container">
+                      <img src={formData.image} alt="Current" />
+                      <div className="offer-overlay"></div>
+                      <div className="offer-badge-preview">SPECIAL OFFER</div>
+                      <div className="current-image-label">Current Image</div>
+                    </div>
                   ) : (
                     <div className="image-placeholder">
                       <Camera size={48} />
                       <p>Upload Offer Image (Optional)</p>
-                      <span>Leave empty to keep current image</span>
+                      <small>Leave empty to keep current image</small>
                     </div>
                   )}
                 </div>
@@ -905,22 +1006,26 @@ const FarmerOffers = () => {
                     onChange={handleImageChange}
                     style={{ display: "none" }}
                   />
-                  <small>Optional: Leave empty to keep current image</small>
+                  <small>
+                    {uploading
+                      ? "Uploading..."
+                      : "Optional: Leave empty to keep current image"}
+                  </small>
                 </div>
               </div>
 
-              {/* Same form sections as create modal */}
+              {/* Form Fields - Same as create modal */}
               <div className="form-sections">
                 <div className="form-section">
                   <h4 className="section-title offer-title">
-                    <Percent size={20} />
-                    Offer Details
+                    <Package size={20} />
+                    Offer Information
                   </h4>
                   <div className="form-grid">
                     <div className="form-group">
                       <label>
                         <Tag size={16} />
-                        Offer Name *
+                        Product Name *
                       </label>
                       <input
                         type="text"
@@ -934,7 +1039,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <DollarSign size={16} />
-                        Special Price (Rs.) *
+                        Special Price per KG (Rs.) *
                       </label>
                       <div className="price-input-wrapper">
                         <input
@@ -945,7 +1050,7 @@ const FarmerOffers = () => {
                           min="1"
                           required
                         />
-                        <span className="price-label">per KG</span>
+                        <span className="price-label">Special Price</span>
                       </div>
                     </div>
 
@@ -973,7 +1078,7 @@ const FarmerOffers = () => {
                     <div className="form-group">
                       <label>
                         <MapPin size={16} />
-                        Location *
+                        Farm Location *
                       </label>
                       <input
                         type="text"
@@ -1001,7 +1106,7 @@ const FarmerOffers = () => {
                 </div>
 
                 <div className="form-section">
-                  <h4 className="section-title">
+                  <h4 className="section-title offer-title">
                     <FileText size={20} />
                     Offer Description
                   </h4>
@@ -1010,7 +1115,7 @@ const FarmerOffers = () => {
                       name="description"
                       value={formData.description}
                       onChange={handleInputChange}
-                      rows="4"
+                      rows="5"
                       required
                     />
                     <div className="char-count">
@@ -1020,46 +1125,51 @@ const FarmerOffers = () => {
                 </div>
 
                 <div className="form-section">
-                  <h4 className="section-title">
-                    <AlertCircle size={20} />
-                    Terms & Conditions (Optional)
+                  <h4 className="section-title offer-title">
+                    <Award size={20} />
+                    Offer Conditions (Optional)
                   </h4>
-
                   <div className="conditions-input-section">
                     <div className="condition-input-wrapper">
                       <input
                         type="text"
-                        value={newCondition}
-                        onChange={(e) => setNewCondition(e.target.value)}
-                        placeholder="e.g., Minimum 5kg order, Valid for 7 days"
-                        onKeyPress={(e) =>
-                          e.key === "Enter" &&
-                          (e.preventDefault(), addCondition())
+                        value={formData.newCondition}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            newCondition: e.target.value,
+                          }))
                         }
+                        placeholder="Add new condition"
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addCondition();
+                          }
+                        }}
                       />
                       <button
                         type="button"
                         onClick={addCondition}
                         className="add-condition-btn"
-                        disabled={!newCondition.trim()}
+                        disabled={!formData.newCondition.trim()}
                       >
                         <Plus size={16} />
                         Add
                       </button>
                     </div>
-
-                    {formData.condition.length > 0 && (
+                    {formData.conditions.length > 0 && (
                       <div className="conditions-list">
-                        <h5>Added Conditions:</h5>
-                        {formData.condition.map((cond, index) => (
+                        <h5>Offer Conditions:</h5>
+                        {formData.conditions.map((condition, index) => (
                           <div key={index} className="condition-tag">
-                            <span>{cond}</span>
+                            <span>{condition}</span>
                             <button
                               type="button"
                               onClick={() => removeCondition(index)}
                               className="remove-condition"
                             >
-                              <X size={14} />
+                              <X size={12} />
                             </button>
                           </div>
                         ))}
@@ -1069,32 +1179,39 @@ const FarmerOffers = () => {
                 </div>
               </div>
 
-              <div className="form-actions offer-actions">
-                <button
-                  type="submit"
-                  className="submit-btn offer-submit"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <div className="loading-spinner-small"></div>
-                      Updating Offer...
-                    </>
-                  ) : (
-                    <>
-                      <Save size={16} />
-                      Update Special Offer
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowEditModal(false)}
-                >
-                  <X size={16} />
-                  Cancel
-                </button>
+              <div className="offer-actions">
+                <div className="form-actions">
+                  <button
+                    type="submit"
+                    className="submit-btn offer-submit"
+                    disabled={loading || uploading}
+                  >
+                    {uploading ? (
+                      <>
+                        <div className="loading-spinner-small"></div>
+                        Uploading Image...
+                      </>
+                    ) : loading ? (
+                      <>
+                        <div className="loading-spinner-small"></div>
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Save size={16} />
+                        Update Special Offer
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => setShowEditModal(false)}
+                  >
+                    <X size={16} />
+                    Cancel
+                  </button>
+                </div>
               </div>
             </form>
           </div>
@@ -1130,7 +1247,7 @@ const FarmerOffers = () => {
                 <div className={`status-badge ${selectedOffer.status}`}>
                   {selectedOffer.status.toUpperCase()}
                 </div>
-                <div className="offer-badge">SPECIAL OFFER</div>
+                <div className="modal-offer-badge">SPECIAL OFFER</div>
               </div>
 
               <div className="view-details">
@@ -1138,7 +1255,7 @@ const FarmerOffers = () => {
 
                 <div className="detail-grid">
                   <div className="detail-item">
-                    <span className="detail-label">Price</span>
+                    <span className="detail-label">Special Price</span>
                     <span className="detail-value">
                       Rs. {selectedOffer.price}
                     </span>
@@ -1174,12 +1291,12 @@ const FarmerOffers = () => {
                 {selectedOffer.condition &&
                   selectedOffer.condition.length > 0 && (
                     <div className="conditions-section">
-                      <h5>Special Conditions</h5>
+                      <h5>Offer Conditions</h5>
                       <ul className="conditions-view-list">
-                        {selectedOffer.condition.map((cond, index) => (
+                        {selectedOffer.condition.map((condition, index) => (
                           <li key={index}>
-                            <AlertCircle size={14} />
-                            {cond}
+                            <Award size={14} />
+                            {condition}
                           </li>
                         ))}
                       </ul>
